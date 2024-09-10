@@ -19,7 +19,7 @@ import { Label } from "@/components/ui/label";
 import { ButtonLink } from "@/components/buttonlink";
 import { Gavetinha } from "@/components/gaveta";
 import { Badge } from "@/components/ui/badge";
-import { ChevronLeft, IterationCw, Loader2 } from "lucide-react";
+import { ChevronLeft, CircleMinus, CirclePlus, IterationCw, Loader2 } from "lucide-react";
 import { DialogLevita } from "@/components/dialog-levita";
 import { Calendar } from "@/components/ui/calendar";
 import PageHeader from "@/components/pgtitle";
@@ -38,7 +38,26 @@ export default async function Home() {
   var escalas = await fetchEscalas();
   return (
     <main className="max-w-6xl mx-auto my-12">
-      <PageHeader urlBack="/v0" title="Escalas" subtitle="Visualização das Escalas" />
+
+      <nav>
+        <div className="flex items-center gap-3">
+          {
+            <Link href="/v0" className="w-auto text-4xl justify-center p-2 cursor-pointer outline outline-1 outline-rose-400/50 hover:bg-rose-400 hover:text-black rounded-lg">
+              <ChevronLeft className="size-10" />
+            </Link>}
+          <h1 className="font-extrabold tracking-tight text-5xl">Escalas</h1>
+          {
+            <div className="flex items-end translate-x-full px-4">
+              <Button variant={"outline"} className="px-4"><CirclePlus className="mr-2" />Adicionar Escala</Button>
+              <Button variant={"outline"} className="px-4"><CircleMinus className="mr-2" />Remover Escala</Button>
+            </div>}
+        </div>
+        <br />
+        <h2 className="scroll-m-20 border-b text-base text-neutral-700 tracking-tight transition-colors first:mt-0">
+          Visualizando das Escalas</h2>
+      </nav>
+      <br />
+
 
       <div className="grid grid-cols-4 gap-8">
         {escalas.map(escala => (
@@ -46,7 +65,7 @@ export default async function Home() {
             <CardHeader>
               <CardTitle className={"text-rose-400"
                 // escala.domingo?"text-rose-400":escala.quarta?"text-amber-400":"text-sky-400"
-                }>
+              }>
                 {escala.titulo}
               </CardTitle>
               {convertDateFormat(escala.data)}
@@ -55,21 +74,21 @@ export default async function Home() {
               </CardDescription>
             </CardHeader>
             <CardContent key={escala.id}>
-              <a className="text-rose-400">Ministro: </a>{escala.ministro.nome}<br/>
-              <a className="text-rose-400">Violão: </a>{escala.violao ? escala.violao.nome : <a className="text-zinc-50/50">Não inserido.</a>}<br/>
-              <a className="text-rose-400">Teclado: </a>{escala.teclado ? escala.teclado.nome : <a className="text-zinc-50/50">Não inserido.</a>}<br/>
-              <a className="text-rose-400">Bateria: </a>{escala.bateria ? escala.bateria.nome : <a className="text-zinc-50/50">Não inserido.</a>}<br/>
-              <a className="text-rose-400">Baixo: </a>{escala.baixo ? escala.baixo.nome : <a className="text-zinc-50/50">Não inserido.</a>}<br/>
-              <a className="text-rose-400">Guitarra: </a>{escala.guitarra ? escala.guitarra.nome : <a className="text-zinc-50/50">Não inserido.</a>}<br/>
+              <a className="text-rose-400">Ministro: </a>{escala.ministro.nome}<br />
+              <a className="text-rose-400">Violão: </a>{escala.violao ? escala.violao.nome : <a className="text-zinc-50/50">Não inserido.</a>}<br />
+              <a className="text-rose-400">Teclado: </a>{escala.teclado ? escala.teclado.nome : <a className="text-zinc-50/50">Não inserido.</a>}<br />
+              <a className="text-rose-400">Bateria: </a>{escala.bateria ? escala.bateria.nome : <a className="text-zinc-50/50">Não inserido.</a>}<br />
+              <a className="text-rose-400">Baixo: </a>{escala.baixo ? escala.baixo.nome : <a className="text-zinc-50/50">Não inserido.</a>}<br />
+              <a className="text-rose-400">Guitarra: </a>{escala.guitarra ? escala.guitarra.nome : <a className="text-zinc-50/50">Não inserido.</a>}<br />
             </CardContent>
             <CardFooter className="flex mt-auto inset-x-0 bottom-0">
               {/* <DialogLevita escala={levita} key={levita.id} /> */}
               {escala.domingo ?
                 <Badge className="bg-rose-400 hover:bg-rose-400/80">Domingo</Badge>
                 : escala.quarta ?
-                <Badge className="bg-amber-400 transition-colors hover:bg-amber-400/80">Quarta</Badge>
-                :
-                <Badge className="bg-sky-400 hover:bg-sky-400/80">Especial</Badge>
+                  <Badge className="bg-amber-400 transition-colors hover:bg-amber-400/80">Quarta</Badge>
+                  :
+                  <Badge className="bg-sky-400 hover:bg-sky-400/80">Especial</Badge>
               }
             </CardFooter>
           </Card>
@@ -79,8 +98,8 @@ export default async function Home() {
   )
 }
 
-export function convertDateFormat(dateString:Date) {
+export function convertDateFormat(dateString: Date) {
   const date = new Date(dateString);
 
-  return String((date.getDate()+1) + '/' + (date.getMonth()+1) + '/' + date.getFullYear())
+  return String((date.getDate() + 1) + '/' + (date.getMonth() + 1) + '/' + date.getFullYear())
 }

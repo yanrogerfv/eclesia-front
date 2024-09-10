@@ -88,6 +88,44 @@
     }
   }
 
+  .serene {
+    /* Name: custom color palette
+       Author: Ilias Ism
+       URL: https://gradient.page */
+
+    /* CSS: .bg-gradient { background: var(--gradient) } */
+    --gradient: #05a8a3;
+
+    --background: 189 61.099999999999994% 2.72%;
+    --foreground: 189 9.399999999999999% 96.7%;
+
+    --muted: 189 94% 20.740000000000002%;
+    --muted-foreground: 189 9.399999999999999% 53.4%;
+
+    --popover: 189 80.98% 6.460000000000001%;
+    --popover-foreground: 189 9.399999999999999% 96.7%;
+
+    --card: 189 80.98% 6.460000000000001%;
+    --card-foreground: 189 9.399999999999999% 96.7%;
+
+    --border: 189 94% 20.740000000000002%;
+    --input: 189 94% 20.740000000000002%;
+
+    --primary: 189 94% 34%;
+    --primary-foreground: 189 9.399999999999999% 96.7%;
+
+    --secondary: 189 94% 20.740000000000002%;
+    --secondary-foreground: 189 9.399999999999999% 96.7%;
+
+    --accent: 189 94% 20.740000000000002%;
+    --accent-foreground: 189 9.399999999999999% 96.7%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 189 9.399999999999999% 96.7%;
+
+    --ring: 189 94% 34%;
+}
+
   @layer base {
     * {
       @apply border-border;

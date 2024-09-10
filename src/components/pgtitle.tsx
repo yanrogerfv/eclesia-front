@@ -1,6 +1,6 @@
 "use client"
 
-import { ChevronLeft } from "lucide-react"
+import { ChevronLeft, CircleMinus, CirclePlus } from "lucide-react"
 import Link from "next/link"
 import { Button } from "./ui/button"
 
@@ -9,6 +9,7 @@ interface props {
 }
 
 export default function PageHeader(props: props): JSX.Element {
+    const titleSingular = props.title.substring(0, props.title.length-1);
     return (
         <>
             <nav>
@@ -19,8 +20,9 @@ export default function PageHeader(props: props): JSX.Element {
                         </Link>) : <></>}
                     <h1 className="font-extrabold tracking-tight text-5xl">{props.title}</h1>
                     {(props.urlBack != "null") ?
-                    <div className="flex items-end inset-x-full">
-                        <Button variant={"outline"} className="flex translate-x-[42vw]">aaa</Button>
+                    <div className="flex items-end translate-x-full px-4">
+                        <Button variant={"outline"} className="px-4"><CirclePlus className="mr-2"/>Adicionar {titleSingular}</Button>
+                        <Button variant={"outline"} className="px-4"><CircleMinus className="mr-2"/>Remover {titleSingular}</Button>
                     </div> : <></>}
                 </div>
                 <br />

@@ -38,3 +38,13 @@ export interface Escala {
     musicas: Array<Musica>,
     observacoes: string
 }
+
+export async function fetchLevitas() {
+    var levita = await (fetch('http://localhost:1004/v1/levita'));
+    if (!levita.ok)
+      throw new Error(`HTTP error! status: ${levita.status}`);
+    var data: Levita[] = await levita.json() as Levita[];
+    return data as Levita[];
+  }
+
+export var levitas = await fetchLevitas();
