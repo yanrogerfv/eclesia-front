@@ -86,7 +86,7 @@ export default async function Home() {
                         contato={levita.contato}
                         disponivel={levita.disponivel}
                     />
-                    <DialogLevita levita={levita}></DialogLevita>
+                    {/* <DialogLevita levita={levita}></DialogLevita> */}
                 </div>
             </div>
         </main>

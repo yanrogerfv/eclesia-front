@@ -1,4 +1,3 @@
-
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,7 +15,7 @@ import Router, { useRouter } from 'next/router';
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { ChevronLeft, CircleMinus, CirclePlus, IterationCw, ListFilter, Loader2, UserMinus, UserPlus } from "lucide-react";
-import { DialogAddLevita, DialogLevita } from "@/components/dialog-levita";
+import { DialogAddLevita, DialogLevita, DialogRemoveLevita } from "@/components/dialog-levita";
 import {
   Dialog,
   DialogContent,
@@ -30,38 +29,15 @@ import ModalLevita from "@/components/modal";
 import PageHeader from "@/components/pgtitle";
 import { Input } from "@/components/ui/input";
 import { UUID } from "crypto";
-import { Levita } from "@/components/apiObjects";
+import { levitas, fetchLevitas, Levita } from "@/components/apiObjects";
 
-export async function fetchLevitas() {
-  var levita = await (fetch('http://localhost:1004/v1/levita'));
-  if (!levita.ok)
-    throw new Error(`HTTP error! status: ${levita.status}`);
-  var data: Levita[] = await levita.json() as Levita[];
-  return data as Levita[];
-}
-
-export default async function Home() {
-
-  var levitas = await fetchLevitas();
-  // const [searchItem, setSearchItem] = useState('')
-  // const [filteredUsers, setFilteredUsers] = useState(levitas)
-
-  // const handleInputChange = (e: { target: { value: any; }; }) => {
-  //   const searchTerm = e.target.value;
-  //   setSearchItem(searchTerm)
-
-  //   const filteredItems = levitas.filter((levita) =>
-  //     levita.nome.toLowerCase().includes(searchTerm.toLowerCase())
-  //   );
-
-  //   setFilteredUsers(filteredItems);
-  // }
+export default function Home() {
 
   return (
     <main className="max-w-6xl mx-auto my-12">
         <div className="flex items-center gap-3">
           {
-            <Link href="/v0" className="w-auto text-4xl justify-center p-2 cursor-pointer outline outline-1 outline-rose-400/50 hover:bg-rose-400 hover:text-black rounded-lg">
+            <Link href="/v0" className="w-auto text-4xl justify-center p-2 cursor-pointer outline outline-1 outline-teal-400/50 hover:bg-teal-500 hover:text-black rounded-lg">
               <ChevronLeft className="size-10" />
             </Link>}
           <h1 className="font-extrabold tracking-tight text-5xl">Levitas</h1>
@@ -69,7 +45,8 @@ export default async function Home() {
             <div className="translate-x-full">
               <DialogAddLevita/>
               {/* <Button variant={"outline"} className="mr-16"><CirclePlus className="mx-2" />Adicionar Levita</Button> */}
-              <Button variant={"outline"} className="mr-16"><CircleMinus className="mx-2" />Remover Levita</Button>
+              <DialogRemoveLevita/>
+              {/* <Button variant={"outline"} className="mr-16"><CircleMinus className="mx-2" />Remover Levita</Button> */}
             </div>}
         </div>
         <br />
@@ -85,10 +62,11 @@ export default async function Home() {
 
       <div className="flex w-full items-center space-x-2">
         <ListFilter
-          className="w-auto text-4xl justify-center size-9 p-1 cursor-pointer outline outline-1 outline-rose-400/25 hover:bg-rose-400 hover:text-black rounded-md
+          className="w-auto text-4xl justify-center size-9 p-1 cursor-pointer outline outline-1 outline-teal-500/45 hover:bg-teal-500 hover:text-black rounded-md
                     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" />
-        <Input className="flex" type="search" /* value={searchItem} onChange={handleInputChange} */ placeholder="Procure por um Levita" />
-        <Button type="submit" className="">Buscar</Button>
+        <Input className="flex" type="search"  /*value={searchItem} onChange={handleInputChange}*/  placeholder="Procure por um Levita" />
+        {/* <Search /> */}
+        <Button type="submit" className="bg-teal-600 hover:bg-teal-500">Buscar</Button>
       </div>
       <br />
 
@@ -96,7 +74,7 @@ export default async function Home() {
         {levitas.map(levita => (
           <Card key={levita.id}>
             <CardHeader>
-              <CardTitle className="flex">{levita.nome}
+              <CardTitle className="flex text-teal-500">{levita.nome}
               </CardTitle>
               <CardDescription>
                 {levita.email ? levita.email : levita.contato}
@@ -108,7 +86,12 @@ export default async function Home() {
                 transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 m-1">{instrumento.nome.toUpperCase()}</div>))}
             </CardContent>
             <CardFooter className="flex justify-stretch">
-              <DialogLevita levita={levita} key={levita.id} />
+              <DialogLevita key={levita.id}
+                  nome={levita.nome} 
+                  email={levita.email}
+                  contato={levita.contato} 
+                  disponivel={levita.disponivel} 
+                  instrumentos={levita.instrumentos} />
               {/* <BadgeDisponivel disp={levita.disponivel} chav={levita.id.toString()} /> */}
             </CardFooter>
           </Card>

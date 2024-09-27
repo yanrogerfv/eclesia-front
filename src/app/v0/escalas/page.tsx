@@ -20,7 +20,6 @@ import { ButtonLink } from "@/components/buttonlink";
 import { Gavetinha } from "@/components/gaveta";
 import { Badge } from "@/components/ui/badge";
 import { ChevronLeft, CircleMinus, CirclePlus, IterationCw, Loader2 } from "lucide-react";
-import { DialogLevita } from "@/components/dialog-levita";
 import { Calendar } from "@/components/ui/calendar";
 import PageHeader from "@/components/pgtitle";
 import { Escala } from "@/components/apiObjects";
