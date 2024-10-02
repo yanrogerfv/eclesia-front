@@ -49,13 +49,4 @@ export async function fetchLevitas() {
 
 export var levitas = await fetchLevitas();
 
-export async function postLevita(levita:Levita) {
-    var response = await (fetch('http://localhost:1004/v1/levita',
-    {
-        method: 'POST'
-    }));
-    if (!response.ok)
-        throw new Error(`HTTP error! status: ${response.status}`);
-    var data: Levita[] = await response.json() as Levita[];
-    return data as Levita[];
-}
+

@@ -15,7 +15,7 @@ export default function PageHeader(props: props): JSX.Element {
             <nav>
                 <div className="flex items-center gap-3">
                     {(props.urlBack != "null") ?
-                        (<Link href={props.urlBack} className="w-auto text-4xl justify-center p-2 cursor-pointer outline outline-1 outline-rose-400/50 hover:bg-rose-400 hover:text-black rounded-lg">
+                        (<Link href={props.urlBack} className="w-auto text-4xl justify-center p-2 cursor-pointer outline outline-1 outline-cyan-400/40 hover:bg-teal-400 hover:text-black rounded-lg">
                             <ChevronLeft className="size-10" />
                         </Link>) : <></>}
                     <h1 className="font-extrabold tracking-tight text-5xl">{props.title}</h1>

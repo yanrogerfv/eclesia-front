@@ -41,7 +41,7 @@ export default async function Home() {
       <nav>
         <div className="flex items-center gap-3">
           {
-            <Link href="/v0" className="w-auto text-4xl justify-center p-2 cursor-pointer outline outline-1 outline-rose-400/50 hover:bg-rose-400 hover:text-black rounded-lg">
+            <Link href="/v0" className="w-auto text-4xl justify-center p-2 cursor-pointer outline outline-1 outline-cyan-400/50 hover:bg-teal-400 hover:text-black rounded-lg">
               <ChevronLeft className="size-10" />
             </Link>}
           <h1 className="font-extrabold tracking-tight text-5xl">Escalas</h1>
@@ -62,8 +62,8 @@ export default async function Home() {
         {escalas.map(escala => (
           <Card key={escala.id} >
             <CardHeader>
-              <CardTitle className={"text-rose-400"
-                // escala.domingo?"text-rose-400":escala.quarta?"text-amber-400":"text-sky-400"
+              <CardTitle className={
+                escala.domingo?"text-teal-400":escala.quarta?"text-emerald-400":"text-sky-400"
               }>
                 {escala.titulo}
               </CardTitle>
@@ -73,21 +73,21 @@ export default async function Home() {
               </CardDescription>
             </CardHeader>
             <CardContent key={escala.id}>
-              <a className="text-rose-400">Ministro: </a>{escala.ministro.nome}<br />
-              <a className="text-rose-400">Violão: </a>{escala.violao ? escala.violao.nome : <a className="text-zinc-50/50">Não inserido.</a>}<br />
-              <a className="text-rose-400">Teclado: </a>{escala.teclado ? escala.teclado.nome : <a className="text-zinc-50/50">Não inserido.</a>}<br />
-              <a className="text-rose-400">Bateria: </a>{escala.bateria ? escala.bateria.nome : <a className="text-zinc-50/50">Não inserido.</a>}<br />
-              <a className="text-rose-400">Baixo: </a>{escala.baixo ? escala.baixo.nome : <a className="text-zinc-50/50">Não inserido.</a>}<br />
-              <a className="text-rose-400">Guitarra: </a>{escala.guitarra ? escala.guitarra.nome : <a className="text-zinc-50/50">Não inserido.</a>}<br />
+              <a className="text-teal-400">Ministro: </a>{escala.ministro.nome}<br />
+              <a className="text-teal-400">Violão: </a>{escala.violao ? escala.violao.nome : <a className="text-zinc-50/50">Não inserido.</a>}<br />
+              <a className="text-teal-400">Teclado: </a>{escala.teclado ? escala.teclado.nome : <a className="text-zinc-50/50">Não inserido.</a>}<br />
+              <a className="text-teal-400">Bateria: </a>{escala.bateria ? escala.bateria.nome : <a className="text-zinc-50/50">Não inserido.</a>}<br />
+              <a className="text-teal-400">Baixo: </a>{escala.baixo ? escala.baixo.nome : <a className="text-zinc-50/50">Não inserido.</a>}<br />
+              <a className="text-teal-400">Guitarra: </a>{escala.guitarra ? escala.guitarra.nome : <a className="text-zinc-50/50">Não inserido.</a>}<br />
             </CardContent>
             <CardFooter className="flex mt-auto inset-x-0 bottom-0">
               {/* <DialogLevita escala={levita} key={levita.id} /> */}
               {escala.domingo ?
-                <Badge className="bg-rose-400 hover:bg-rose-400/80">Domingo</Badge>
+                <Badge className="bg-teal-400/80 hover:bg-teal-400/20">Domingo</Badge>
                 : escala.quarta ?
-                  <Badge className="bg-amber-400 transition-colors hover:bg-amber-400/80">Quarta</Badge>
+                  <Badge className="bg-emerald-400/80 hover:bg-emerald-400/20">Quarta</Badge>
                   :
-                  <Badge className="bg-sky-400 hover:bg-sky-400/80">Especial</Badge>
+                  <Badge className="bg-sky-400/80 hover:bg-sky-400/20">Especial</Badge>
               }
             </CardFooter>
           </Card>

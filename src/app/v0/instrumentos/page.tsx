@@ -26,7 +26,7 @@ export default async function Home() {
         {instrumentos.map(instrumento => (
           <Card key={instrumento.nome}>
             <CardHeader>
-              <CardTitle className="flex items-center justify-center">{instrumento.nome}
+              <CardTitle className="flex items-center justify-center text-teal-400">{instrumento.nome}
               </CardTitle>
               <CardDescription>
               </CardDescription>
