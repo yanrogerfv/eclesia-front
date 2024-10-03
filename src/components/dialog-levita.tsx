@@ -36,6 +36,7 @@ interface Levita {
 }
 
 export function DialogLevita(levita: Levita) {
+    const tam = levita.instrumentos.length;
     return (
         <Dialog>
             <DialogTrigger asChild key={levita.nome} className="p-5">

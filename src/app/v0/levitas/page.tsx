@@ -31,12 +31,14 @@ import ModalLevita from "@/components/modal";
 import PageHeader from "@/components/pgtitle";
 import { Input } from "@/components/ui/input";
 import { UUID } from "crypto";
-import { Levita } from "@/components/apiObjects";
+import { Levita, Instrumento } from "@/components/apiObjects";
 import { SearchBar } from "@/components/searchBar";
+import { SheetDemo } from "@/components/sidebar";
 
 export default function Home() {
 
   const [levitasData, setLevitasData] = useState<Levita[]>([])
+  const [instrumentosBase, setInstrumentosBase] = useState<Instrumento[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [searchItem, setSearchItem] = useState("");
 
@@ -51,6 +53,21 @@ export default function Home() {
       .catch((error) => {
         console.error("Erro na comunicação com a api: ", error)
         setLevitasData([]);
+      })
+  }, [])
+
+
+  useEffect(() => {
+    setIsLoading(true)
+    fetch("http://localhost:1004/v1/instrumento")
+      .then((res) => res.json())
+      .then((data) => {
+        setIsLoading(false)
+        setInstrumentosBase(data)
+      })
+      .catch((error) => {
+        console.error("Erro na comunicação com a api: ", error)
+        setInstrumentosBase([]);
       })
   }, [])
 
@@ -81,9 +98,7 @@ export default function Home() {
         {isLoading ? "Carregando dados..." : "Visualizando Levitas"}</h2>
       <br />
       <div className="flex w-full items-center space-x-2 col-span-4">
-        <ListFilter
-          className="w-auto text-4xl justify-center size-9 p-1 cursor-pointer outline outline-1 outline-teal-500/45 hover:bg-teal-500 hover:text-black rounded-md
-                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" />
+        <SheetDemo instrumentos={instrumentosBase}/>
         {/* <Input className="flex" type="search"  value={searchItem} onChange={handleInputChange}  placeholder="Procure por um Levita" /> */}
         <Input disabled={isLoading} className="flex" type="text"
           value={searchItem} onChange={(e) => setSearchItem(e.target.value)} placeholder="Procure por um Levita" />
