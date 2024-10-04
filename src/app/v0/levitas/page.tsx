@@ -33,7 +33,7 @@ import { Input } from "@/components/ui/input";
 import { UUID } from "crypto";
 import { Levita, Instrumento } from "@/components/apiObjects";
 import { SearchBar } from "@/components/searchBar";
-import { SheetDemo } from "@/components/sidebar";
+import { SidebarFiltroLevita } from "@/components/sidebar";
 
 export default function Home() {
 
@@ -43,7 +43,7 @@ export default function Home() {
   const [searchItem, setSearchItem] = useState("");
 
   useEffect(() => {
-    setIsLoading(true)
+    // setIsLoading(true)
     fetch("http://localhost:1004/v1/levita")
       .then((res) => res.json())
       .then((data) => {
@@ -58,11 +58,9 @@ export default function Home() {
 
 
   useEffect(() => {
-    setIsLoading(true)
     fetch("http://localhost:1004/v1/instrumento")
       .then((res) => res.json())
       .then((data) => {
-        setIsLoading(false)
         setInstrumentosBase(data)
       })
       .catch((error) => {
@@ -98,7 +96,7 @@ export default function Home() {
         {isLoading ? "Carregando dados..." : "Visualizando Levitas"}</h2>
       <br />
       <div className="flex w-full items-center space-x-2 col-span-4">
-        <SheetDemo instrumentos={instrumentosBase}/>
+        <SidebarFiltroLevita disabled={isLoading} instrumentos={instrumentosBase} />
         {/* <Input className="flex" type="search"  value={searchItem} onChange={handleInputChange}  placeholder="Procure por um Levita" /> */}
         <Input disabled={isLoading} className="flex" type="text"
           value={searchItem} onChange={(e) => setSearchItem(e.target.value)} placeholder="Procure por um Levita" />

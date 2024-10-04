@@ -17,15 +17,20 @@ import { Instrumento } from "./apiObjects"
 
 interface props {
     instrumentos : Instrumento[]
+    disabled : boolean
 }
 
-export function SheetDemo(props: props) {
+export function SidebarFiltroLevita(props: props) {
     return (
+      <>
+      {props.disabled ?
+      <ListFilter
+      className="w-auto text-4xl justify-center size-9 p-1 outline outline-1 outline-teal-500/45 bg-teal-500/30 hover:bg-teal-500/20 text-black rounded-md"/>
+      :
       <Sheet>
         <SheetTrigger asChild>
         <ListFilter
-          className="w-auto text-4xl justify-center size-9 p-1 cursor-pointer outline outline-1 outline-teal-500/45 hover:bg-teal-500 hover:text-black rounded-md
-                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" />
+          className="w-auto text-4xl justify-center size-9 p-1 cursor-pointer outline outline-1 outline-teal-500/45 hover:bg-teal-500 hover:text-black rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"/>
         </SheetTrigger>
         <SheetContent>
           <SheetHeader>
@@ -34,25 +39,11 @@ export function SheetDemo(props: props) {
               Filtre os Levitas por instrumento.
             </SheetDescription>
           </SheetHeader>
-          <div className="flex">
-            {/* <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="name" className="text-right">
-                Name
-              </Label>
-              <Input id="name" value="Pedro Duarte" className="col-span-3" />
-            </div> */}
-            <div className="flex">
-              {/* <Label htmlFor="username" className="text-right">
-                Username
-              </Label> */}
+          <div className="grid grid-cols-1">
+              <br/>
               {props.instrumentos.map((instrumento) => (
-                <>
-                    <CheckboxDemo nametag={instrumento.nome}/>
-                    <br/>
-                </>
+                  <CheckboxDemo nametag={instrumento.nome}/>
               ))}
-              
-            </div>
           </div>
           <SheetFooter>
             <SheetClose asChild>
@@ -61,5 +52,7 @@ export function SheetDemo(props: props) {
           </SheetFooter>
         </SheetContent>
       </Sheet>
+      }
+      </>
     )
   }
