@@ -16,24 +16,10 @@ import { Church, PencilLine, UserMinus, UserPlus } from "lucide-react"
 import { Tooltip, TooltipProvider, TooltipTrigger } from "./ui/tooltip"
 import { TooltipContent } from "@radix-ui/react-tooltip"
 import { Card } from "./ui/card"
-import ModalLevita from "./modal"
 // import { fetchLevitas } from "./apiObjects"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table"
 import { useState } from "react"
-
-
-interface Instrumento {
-    numero: number,
-    nome: string,
-}
-
-interface Levita {
-    nome: string,
-    instrumentos: Instrumento[],
-    contato: string,
-    email: string,
-    disponivel: boolean
-}
+import { Levita, Instrumento } from "./apiObjects"
 
 export function DialogLevita(levita: Levita) {
     const tam = levita.instrumentos.length;
@@ -57,7 +43,7 @@ export function DialogLevita(levita: Levita) {
                         <Tooltip>
                             <TooltipTrigger asChild>
                                 <PencilLine className="outline rounded-lg size-7 p-1 outline-1 outline-rose-400/25 hover:bg-rose-400 cursor-pointer"
-                                    onClick={() => ModalLevita(levita)} />
+                                    onClick={() => ("")} />
                             </TooltipTrigger>
                             <TooltipContent className="z-50 overflow-hidden rounded-lg mb-2 outline-rose-400/25 border p-1.5 text-sm text-popover-foreground -translate-x-10 shadow-md animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2">
                                 <p>Editar Levita</p>
@@ -72,6 +58,9 @@ export function DialogLevita(levita: Levita) {
 
 export function DialogAddLevita() {
     var levita : Levita;
+
+    const [data, setData] = useState([])
+
     const [nomeLevita, setNomeLevita] = useState("");
     const handleNome = (event: React.ChangeEvent<HTMLInputElement>) => {
         setNomeLevita(event.target.value);
@@ -84,6 +73,30 @@ export function DialogAddLevita() {
     const handleTel = (event: React.ChangeEvent<HTMLInputElement>) => {
         setTelLevita(event.target.value);
     };
+
+    const saveLevita = (levitaToPost : Levita) => {
+        fetch('http://localhost:3000/game', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: levitaToPost.nome, // Use your own property name / key
+            instrumentos: levitaToPost.instrumentos,
+            contato: levitaToPost.contato,
+            email: levitaToPost.email,
+            disponivel: levitaToPost.disponivel
+          }),
+        })
+          .then((res) => res.json())
+          .then((result) => setData(result.rows))
+          .catch((err) => console.log('error'))
+      }
+    
+      const handleSubmitLevita = (levitaToPost:Levita) => {
+        saveLevita(levitaToPost);  
+      }
+
     return (
         <Dialog>
             <DialogTrigger asChild className="p-5">

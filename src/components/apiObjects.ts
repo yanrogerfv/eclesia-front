@@ -34,19 +34,22 @@ export interface Escala {
     guitarra: Levita,
     teclado: Levita,
     violao: Levita,
-    back: Array<Levita>,
-    musicas: Array<Musica>,
+    back: Levita[],
+    musicas: Musica[],
     observacoes: string
 }
 
-export async function fetchLevitas() {
+export function convertDateFormat(dateString: Date) {
+    const date = new Date(dateString);
+    return String((date.getDate() + 1) + '/' + (date.getMonth() + 1) + '/' + date.getFullYear())
+}
+
+
+/* export async function fetchLevitas() {
     var levita = await (fetch('http://localhost:1004/v1/levita'));
     if (!levita.ok)
         throw new Error(`HTTP error! status: ${levita.status}`);
     var data: Levita[] = await levita.json() as Levita[];
     return data as Levita[];
-}
-
-export var levitas = await fetchLevitas();
-
+} */
 

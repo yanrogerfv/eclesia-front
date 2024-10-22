@@ -27,7 +27,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import ModalLevita from "@/components/modal";
 import PageHeader from "@/components/pgtitle";
 import { Input } from "@/components/ui/input";
 import { UUID } from "crypto";
@@ -37,6 +36,7 @@ import { SidebarFiltroLevita } from "@/components/sidebar";
 
 export default function Home() {
 
+  const [data, setData] = useState([])
   const [levitasData, setLevitasData] = useState<Levita[]>([])
   const [instrumentosBase, setInstrumentosBase] = useState<Instrumento[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -76,9 +76,8 @@ export default function Home() {
 
   return (
     <main className="max-w-6xl mx-auto my-12">
-      {/*
-          Cabeçalho, botões para inserir e remover um levita.
-      */}
+      {//Cabeçalho, botões para inserir e remover um levita.
+      <>
       <div className="flex items-center gap-3">
         {
           <Link href="/v0" className="w-auto text-4xl justify-center p-2 cursor-pointer outline outline-1 outline-teal-400/50 hover:bg-teal-500 hover:text-black rounded-lg">
@@ -93,8 +92,10 @@ export default function Home() {
       </div>
       <br />
       <h2 className="scroll-m-20 border-b text-base text-neutral-700 tracking-tight transition-colors first:mt-0">
-        {isLoading ? "Carregando dados..." : "Visualizando Levitas"}</h2>
+        {isLoading ? "Carregando Levitas..." : "Visualizando Levitas"}</h2>
       <br />
+      </>
+      }
       <div className="flex w-full items-center space-x-2 col-span-4">
         <SidebarFiltroLevita disabled={isLoading} instrumentos={instrumentosBase} />
         {/* <Input className="flex" type="search"  value={searchItem} onChange={handleInputChange}  placeholder="Procure por um Levita" /> */}
@@ -129,6 +130,7 @@ export default function Home() {
                 </CardContent>
                 <CardFooter className="flex justify-stretch">
                   <DialogLevita key={levita.id}
+                    id={levita.id}
                     nome={levita.nome}
                     email={levita.email}
                     contato={levita.contato}

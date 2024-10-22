@@ -18,6 +18,8 @@ import { Badge } from "@/components/ui/badge";
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { ChevronLeft, CircleMinus, CirclePlus, IterationCw, Loader2 } from "lucide-react";
 import { Escala } from "@/components/apiObjects";
+import { DialogEscala } from "@/components/dialog-escala";
+import ModalEscala from "@/components/modal";
 
 /* export async function fetchEscalas() {
   var escalas = await (fetch('http://localhost:1005/v1/escala'));
@@ -30,6 +32,7 @@ import { Escala } from "@/components/apiObjects";
 export default function Home() {
   const [escalasData, setEscalasData] = useState<Escala[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [isEscalaModalOpen, setIsEscalaModalOpen] = useState(false);
 
   useEffect(() => {
     // setIsLoading(true)
@@ -44,6 +47,8 @@ export default function Home() {
         setEscalasData([]);
       })
   }, [])
+
+  
   return (
     <main className="max-w-6xl mx-auto my-12">
 
@@ -62,7 +67,7 @@ export default function Home() {
         </div>
         <br />
         <h2 className="scroll-m-20 border-b text-base text-neutral-700 tracking-tight transition-colors first:mt-0">
-          Visualizando das Escalas</h2>
+          {isLoading ? "Carregando Escalas..." : "Visualizando Escalas"}</h2>
       </nav>
       <br />
 
@@ -77,7 +82,7 @@ export default function Home() {
             </div>
           ) : (
             escalasData.map(escala => (
-              <Card key={escala.id} >
+              <Card className="hover:text-current/50" key={escala.id} onClick={() => setIsEscalaModalOpen(true)}>
                 <CardHeader>
                   <CardTitle className={
                     escala.domingo ? "text-teal-400" : escala.quarta ? "text-emerald-400" : "text-sky-400"
@@ -97,19 +102,38 @@ export default function Home() {
                   <a className="text-teal-400">Baixo: </a>{escala.baixo ? escala.baixo.nome : <a className="text-zinc-50/50">Não inserido.</a>}<br />
                   <a className="text-teal-400">Guitarra: </a>{escala.guitarra ? escala.guitarra.nome : <a className="text-zinc-50/50">Não inserido.</a>}<br />
                 </CardContent>
-                <CardFooter className="flex mt-auto inset-x-0 bottom-0">
-                  {/* <DialogLevita escala={levita} key={levita.id} /> */}
+                <CardFooter className="mt-auto inset-x-0 bottom-0 flow-root">
                   {escala.domingo ?
                     <Badge className="bg-teal-400/80 hover:bg-teal-400/20">Domingo</Badge>
                     : escala.quarta ?
-                      <Badge className="bg-emerald-400/80 hover:bg-emerald-400/20">Quarta</Badge>
-                      :
-                      <Badge className="bg-sky-400/80 hover:bg-sky-400/20">Especial</Badge>
+                    <Badge className="bg-emerald-400/80 hover:bg-emerald-400/20">Quarta</Badge>
+                    :
+                    <Badge className="bg-sky-400/80 hover:bg-sky-400/20">Especial</Badge>
                   }
+                 {/* <Button className="float-right" onClick={() => <ModalEscala escala={escala}/>}>Ver Escala</Button>
+                  {isEscalaModalOpen && <ModalEscala escala={escala}/>} */}
+                  <DialogEscala  key={escala.id}
+                      id={escala.id}
+                      titulo={escala.titulo}
+                      ministro={escala.ministro}
+                      violao={escala.violao}
+                      teclado={escala.teclado}
+                      bateria={escala.bateria}
+                      guitarra={escala.guitarra}
+                      baixo={escala.baixo}
+                      data={escala.data}
+                      quarta={escala.quarta}
+                      musicas={escala.musicas}
+                      observacoes={escala.observacoes}
+                      domingo={escala.domingo}
+                      especial={escala.especial}
+                      back={escala.back}
+                      />
+                  {/* <DialogEscala escala={escala}/> */}
                 </CardFooter>
               </Card>
             )))
-      }
+        }
       </div>
     </main>
   )
