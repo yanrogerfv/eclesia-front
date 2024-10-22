@@ -102,7 +102,7 @@ export default function Home() {
                   <a className="text-teal-400">Baixo: </a>{escala.baixo ? escala.baixo.nome : <a className="text-zinc-50/50">Não inserido.</a>}<br />
                   <a className="text-teal-400">Guitarra: </a>{escala.guitarra ? escala.guitarra.nome : <a className="text-zinc-50/50">Não inserido.</a>}<br />
                 </CardContent>
-                <CardFooter className="mt-auto inset-x-0 bottom-0 flow-root">
+                <CardFooter className="mt-auto inset-x-0 bottom-0 align-bottom self-end flow-root">
                   {escala.domingo ?
                     <Badge className="bg-teal-400/80 hover:bg-teal-400/20">Domingo</Badge>
                     : escala.quarta ?

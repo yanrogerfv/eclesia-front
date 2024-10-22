@@ -134,7 +134,6 @@ export default function Home() {
                     nome={levita.nome}
                     email={levita.email}
                     contato={levita.contato}
-                    disponivel={levita.disponivel}
                     instrumentos={levita.instrumentos} />
                   {/* <BadgeDisponivel disp={levita.disponivel} chav={levita.id.toString()} /> */}
                 </CardFooter>

@@ -3,10 +3,10 @@ import { UUID } from "crypto";
 export interface Levita {
     id: UUID,
     nome: string,
-    instrumentos: Instrumento[],
-    contato: string,
     email: string,
-    disponivel: boolean
+    contato: string,
+    
+    instrumentos: Instrumento[]
 }
 
 export interface Instrumento {

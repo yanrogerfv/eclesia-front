@@ -42,26 +42,43 @@ import { ButtonLink } from "@/components/buttonlink";
 import PageHeader from "@/components/pgtitle";
 import { Calendar } from "@/components/ui/calendar";
 import { Locale } from "date-fns";
-import { Escala } from "@/components/apiObjects";
-import { EscalaCard } from "@/components/customCards";
+import { Escala, Levita } from "@/components/apiObjects";
+import { EscalaCard, EscalaSimpleCard, LevitaSimpleCard } from "@/components/customCards";
 import { SkeletonDemo } from "@/components/bones";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import ModalEscala from "@/components/modal";
 
 export default function Home() {
   const [date, setDate] = React.useState<Date | undefined>(new Date())
   const [nextEscalas, setNextEscalas] = useState<Escala[]>([]);
-  const [isLoading, setIsLoading] = useState(true)
+  const [levitasData, setLevitasData] = useState<Levita[]>([]);
+  const [isEscalasLoading, setEscalaLoader] = useState(true)
+  const [isLevitasLoading, setLevitaLoader] = useState(true)
 
   useEffect(() => {
-    // setIsLoading(true)
     fetch("http://localhost:1004/v1/escala")
       .then((res) => res.json())
       .then((data) => {
-        setIsLoading(false)
+        setEscalaLoader(false)
         setNextEscalas(data)
       })
       .catch((error) => {
         console.error("Erro na comunicação com a api: ", error)
         setNextEscalas([]);
+      })
+  }, [])
+
+  useEffect(() => {
+    // setIsLoading(true)
+    fetch("http://localhost:1004/v1/levita")
+      .then((res) => res.json())
+      .then((data) => {
+        setLevitaLoader(false)
+        setLevitasData(data)
+      })
+      .catch((error) => {
+        console.error("Erro na comunicação com a api: ", error)
+        setLevitasData([]);
       })
   }, [])
 
@@ -81,29 +98,72 @@ export default function Home() {
             <CardTitle className="text-teal-400 p-4">
               Próximas escalas:
             </CardTitle>
-            <div className="grid grid-cols-4">
-              {isLoading ?
-                  <SkeletonDemo/>
-                :
-                nextEscalas.map(escala => (
-                    <EscalaCard key={escala.id}
-                      id={escala.id}
-                      titulo={escala.titulo}
-                      ministro={escala.ministro}
-                      violao={escala.violao}
-                      teclado={escala.teclado}
-                      bateria={escala.bateria}
-                      guitarra={escala.guitarra}
-                      baixo={escala.baixo}
-                      data={escala.data}
-                      quarta={escala.quarta}
-                      musicas={escala.musicas}
-                      observacoes={escala.observacoes}
-                      domingo={escala.domingo}
-                      especial={escala.especial}
-                      back={escala.back} />
-                ))}
-            </div>
+            {isEscalasLoading ?
+              <SkeletonDemo />
+              :
+              nextEscalas.length > 0 ?
+                <Carousel className="w-full">
+                  <CarouselContent className="-ml-1">
+                    {nextEscalas.map(escala => (
+                      <CarouselItem key={escala.id} className="pl-1 md:basis-1/2 lg:basis-1/3">
+                        <EscalaSimpleCard key={escala.id}
+                          id={escala.id}
+                          titulo={escala.titulo}
+                          ministro={escala.ministro}
+                          violao={escala.violao}
+                          teclado={escala.teclado}
+                          bateria={escala.bateria}
+                          guitarra={escala.guitarra}
+                          baixo={escala.baixo}
+                          data={escala.data}
+                          quarta={escala.quarta}
+                          musicas={escala.musicas}
+                          observacoes={escala.observacoes}
+                          domingo={escala.domingo}
+                          especial={escala.especial}
+                          back={escala.back} />
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  <CarouselPrevious />
+                  <CarouselNext />
+                </Carousel> :
+                <h1 className="text-zinc-200 justify-center self-center align-middle">Nenhuma escala cadastrada para os próximos dias.</h1>
+            }
+            <br />
+          </Card>
+          <br />
+
+
+
+          {/*LEVITA SECTION BELOW*/}
+          <Card className="p-2">
+            <CardTitle className="text-teal-400 p-4">
+              Levitas Disponíveis:
+            </CardTitle>
+            {isLevitasLoading ?
+              <SkeletonDemo />
+              :
+              levitasData.length > 0 ?
+                <Carousel className="w-full">
+                  <CarouselContent className="-ml-1">
+                    {levitasData.map(levita => (
+                      <CarouselItem key={levita.id} className="pl-1 md:basis-1/2 lg:basis-1/3">
+                        <LevitaSimpleCard key={levita.id}
+                          id={levita.id}
+                          nome={levita.nome}
+                          email={levita.email}
+                          contato={levita.contato}
+                          instrumentos={levita.instrumentos}/>
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  <CarouselPrevious />
+                  <CarouselNext />
+                </Carousel> :
+                <h1 className="text-zinc-200 justify-center self-center align-middle">Todos os levitas disponíveis!</h1>
+            }
+            <br />
           </Card>
         </Card>
 

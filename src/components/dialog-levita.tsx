@@ -84,8 +84,7 @@ export function DialogAddLevita() {
             name: levitaToPost.nome, // Use your own property name / key
             instrumentos: levitaToPost.instrumentos,
             contato: levitaToPost.contato,
-            email: levitaToPost.email,
-            disponivel: levitaToPost.disponivel
+            email: levitaToPost.email
           }),
         })
           .then((res) => res.json())
