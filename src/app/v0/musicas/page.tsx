@@ -1,4 +1,4 @@
-
+"use client"
 import { Card } from "@/components/ui/card";
 import {
     Table,
@@ -16,23 +16,36 @@ import Link from "next/link";
 import PageHeader from "@/components/pgtitle";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { Musica } from "@/components/apiObjects";
 
-async function fetchMusicas() {
-    const musicas = await (fetch('http://localhost:1004/v1/musicas'));
-    if (!musicas.ok)
-        throw new Error(`HTTP error! status: ${musicas.status}`);
-    const data: Musica[] = await musicas.json() as Musica[];
-    return data as Musica[];
-}
+// async function fetchMusicas() {
+//     const musicas = await (fetch('http://localhost:1004/v1/musicas'));
+//     if (!musicas.ok)
+//         throw new Error(`HTTP error! status: ${musicas.status}`);
+//     const data: Musica[] = await musicas.json() as Musica[];
+//     return data as Musica[];
+// }
 
-export default async function Home() {
+export default function Home() {
 
-    var musicas = (await fetchMusicas()).sort();
-    var searchHandler = (filter:string) => {
-        musicas = musicas.filter((music) => music.nome.includes(filter))
-    }
+    const [musicas, setMusicas] = useState<Musica[]>([])
+
+    useEffect(() => {
+        fetch("http://localhost:1004/v1/musica")
+            .then((res) => res.json())
+            .then((data) => {
+                setMusicas(data)
+            })
+            .catch((error) => {
+                console.error("Erro na comunicação com a api: ", error)
+                setMusicas([]);
+            })
+    }, [])
+
+    // var searchHandler = (filter: string) => {
+    //     setMusicas(musicas.filter((music) => music.nome.includes(filter)))
+    // }
 
     return (
         <main className="max-w-6xl mx-auto my-12">
