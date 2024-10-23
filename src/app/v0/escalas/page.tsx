@@ -139,7 +139,7 @@ export default function Home() {
   )
 }
 
-export function convertDateFormat(dateString: Date) {
+function convertDateFormat(dateString: Date) {
   const date = new Date(dateString);
 
   return String((date.getDate() + 1) + '/' + (date.getMonth() + 1) + '/' + date.getFullYear())
