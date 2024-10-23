@@ -12,44 +12,14 @@ import { //Card
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import React, { useEffect, useState, useTransition } from "react";
-import { UUID } from "crypto";
-import Link from "next/link";
-import { //Navigation Menu
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-  navigationMenuTriggerStyle
-} from "@/components/ui/navigation-menu";
-import { //Menu Bar
-  Menubar,
-  MenubarCheckboxItem,
-  MenubarContent,
-  MenubarItem,
-  MenubarMenu,
-  MenubarRadioGroup,
-  MenubarRadioItem,
-  MenubarSeparator,
-  MenubarShortcut,
-  MenubarSub,
-  MenubarSubContent,
-  MenubarSubTrigger,
-  MenubarTrigger
-} from "@/components/ui/menubar";
 import { ButtonLink } from "@/components/buttonlink";
 import PageHeader from "@/components/pgtitle";
-import { Calendar } from "@/components/ui/calendar";
-import { Locale } from "date-fns";
 import { Escala, Levita } from "@/components/apiObjects";
 import { EscalaCard, EscalaSimpleCard, LevitaSimpleCard } from "@/components/customCards";
-import { SkeletonDemo } from "@/components/bones";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import ModalEscala from "@/components/modal";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Home() {
-  const [date, setDate] = React.useState<Date | undefined>(new Date())
   const [nextEscalas, setNextEscalas] = useState<Escala[]>([]);
   const [levitasData, setLevitasData] = useState<Levita[]>([]);
   const [isEscalasLoading, setEscalaLoader] = useState(true)
@@ -99,7 +69,11 @@ export default function Home() {
               Próximas escalas:
             </CardTitle>
             {isEscalasLoading ?
-              <SkeletonDemo />
+              <div className="flex flex-row">
+                <Skeleton className="h-48 w-80 rounded-lg mx-5 border border-cyan-700" />
+                <Skeleton className="h-48 w-80 rounded-lg mx-5 border border-cyan-700" />
+                <Skeleton className="h-48 w-80 rounded-lg mx-5 border border-cyan-700" />
+              </div>
               :
               nextEscalas.length > 0 ?
                 <Carousel className="w-full">
@@ -142,7 +116,11 @@ export default function Home() {
               Levitas Disponíveis:
             </CardTitle>
             {isLevitasLoading ?
-              <SkeletonDemo />
+              <div className="flex flex-row">
+                <Skeleton className="h-48 w-80 rounded-lg mx-5 border border-cyan-700" />
+                <Skeleton className="h-48 w-80 rounded-lg mx-5 border border-cyan-700" />
+                <Skeleton className="h-48 w-80 rounded-lg mx-5 border border-cyan-700" />
+              </div>
               :
               levitasData.length > 0 ?
                 <Carousel className="w-full">
@@ -154,7 +132,7 @@ export default function Home() {
                           nome={levita.nome}
                           email={levita.email}
                           contato={levita.contato}
-                          instrumentos={levita.instrumentos}/>
+                          instrumentos={levita.instrumentos} />
                       </CarouselItem>
                     ))}
                   </CarouselContent>
