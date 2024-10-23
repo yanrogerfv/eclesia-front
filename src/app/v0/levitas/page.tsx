@@ -143,20 +143,4 @@ export default function Home() {
       </div>
     </main>
   );
-
-}
-
-interface bdprops {
-  disp: boolean,
-  chav: string
-}
-export function BadgeDisponivel(bdprops: bdprops) {
-  return (
-    <div className="flex items-center inset-y-0 right-0 self-end space-x-2 mx-2">
-      <Badge key={bdprops.chav} className={bdprops.disp ? "bg-rose-400 space-x-2" : "space-x-2"} variant={bdprops.disp ? "default" : "outline"}>
-        {bdprops.disp ? <p>Disponível</p> : <p>Ocupado</p>}
-      </Badge>
-    </div>
-  )
-
 }
