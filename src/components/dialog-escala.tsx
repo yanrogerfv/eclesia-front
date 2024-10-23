@@ -46,7 +46,7 @@ export function  DialogEscala(escala: Escala) {
                     {
                         escala.back.length > 0 ?
                             escala.back.map(backLevita => (
-                                <a>{backLevita.nome} </a>
+                                <a key={backLevita.id}>{backLevita.nome} </a>
                             )) : <a className="text-zinc-50/50">Não inserido.</a>
                     }
                     <br />
