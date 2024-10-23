@@ -125,7 +125,7 @@ export default function Home() {
                 </CardHeader>
                 <CardContent key={levita.id} className="h-28">
                   {levita.instrumentos.map(instrumento => (
-                    <div className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold 
+                    <div key={instrumento.numero} className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold 
                 transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 m-1">{instrumento.nome.toUpperCase()}</div>))}
                 </CardContent>
                 <CardFooter className="flex justify-stretch">
