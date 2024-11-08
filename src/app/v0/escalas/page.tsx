@@ -17,8 +17,8 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { ChevronLeft, CircleMinus, CirclePlus, IterationCw, Loader2 } from "lucide-react";
-import { Escala } from "@/components/apiObjects";
-import { DialogEscala } from "@/components/dialog-escala";
+import { Escala, EscalaResumida } from "@/components/apiObjects";
+import { DialogEscala } from "@/components/dialogs/dialog-escala";
 import ModalEscala from "@/components/modal";
 
 /* export async function fetchEscalas() {
@@ -30,13 +30,13 @@ import ModalEscala from "@/components/modal";
 } */
 
 export default function Home() {
-  const [escalasData, setEscalasData] = useState<Escala[]>([])
+  const [escalasData, setEscalasData] = useState<EscalaResumida[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isEscalaModalOpen, setIsEscalaModalOpen] = useState(false);
 
   useEffect(() => {
     // setIsLoading(true)
-    fetch("http://localhost:1004/v1/escala")
+    fetch("http://localhost:1004/v1/escala/resumed")
       .then((res) => res.json())
       .then((data) => {
         setIsLoading(false)
@@ -95,12 +95,12 @@ export default function Home() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent key={escala.id}>
-                  <a className="text-teal-400">Ministro: </a><a className="text-emerald-400">{escala.ministro.nome}</a><br />
-                  <a className="text-teal-400">Violão: </a>{escala.violao ? escala.violao.nome : <a className="text-zinc-50/50">Não inserido.</a>}<br />
-                  <a className="text-teal-400">Teclado: </a>{escala.teclado ? escala.teclado.nome : <a className="text-zinc-50/50">Não inserido.</a>}<br />
-                  <a className="text-teal-400">Bateria: </a>{escala.bateria ? escala.bateria.nome : <a className="text-zinc-50/50">Não inserido.</a>}<br />
-                  <a className="text-teal-400">Baixo: </a>{escala.baixo ? escala.baixo.nome : <a className="text-zinc-50/50">Não inserido.</a>}<br />
-                  <a className="text-teal-400">Guitarra: </a>{escala.guitarra ? escala.guitarra.nome : <a className="text-zinc-50/50">Não inserido.</a>}<br />
+                  <a className="text-teal-400">Ministro: </a><a className="text-emerald-400">{escala.ministro}</a><br />
+                  <a className="text-teal-400">Violão: </a>{escala.violao ? escala.violao : <a className="text-zinc-50/50">Não inserido.</a>}<br />
+                  <a className="text-teal-400">Teclado: </a>{escala.teclado ? escala.teclado : <a className="text-zinc-50/50">Não inserido.</a>}<br />
+                  <a className="text-teal-400">Bateria: </a>{escala.bateria ? escala.bateria : <a className="text-zinc-50/50">Não inserido.</a>}<br />
+                  <a className="text-teal-400">Baixo: </a>{escala.baixo ? escala.baixo : <a className="text-zinc-50/50">Não inserido.</a>}<br />
+                  <a className="text-teal-400">Guitarra: </a>{escala.guitarra ? escala.guitarra : <a className="text-zinc-50/50">Não inserido.</a>}<br />
                 </CardContent>
                 <CardFooter className="mt-auto inset-x-0 bottom-0 align-bottom self-end flow-root">
                   {escala.domingo ?
@@ -112,7 +112,7 @@ export default function Home() {
                   }
                  {/* <Button className="float-right" onClick={() => <ModalEscala escala={escala}/>}>Ver Escala</Button>
                   {isEscalaModalOpen && <ModalEscala escala={escala}/>} */}
-                  <DialogEscala  key={escala.id}
+                  {/* <DialogEscala  key={escala.id}
                       id={escala.id}
                       titulo={escala.titulo}
                       ministro={escala.ministro}
@@ -128,8 +128,8 @@ export default function Home() {
                       domingo={escala.domingo}
                       especial={escala.especial}
                       back={escala.back}
-                      />
-                  {/* <DialogEscala escala={escala}/> */}
+                      /> */}
+                  <DialogEscala escalaId={escala.id}/>
                 </CardFooter>
               </Card>
             )))

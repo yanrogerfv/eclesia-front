@@ -6,11 +6,13 @@ import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/ca
 import { UUID } from "crypto";
 import { useEffect, useState } from "react";
 
+const apiUrl = process.env.API_URL;
+
 export default function Home() {
   const [instrumentosData, setInstrumentosData] = useState<Instrumento[]>([])
 
   useEffect(() => {
-    fetch("http://localhost:1004/v1/instrumento")
+    fetch(apiUrl+"instrumento")
       .then((res) => res.json())
       .then((data) => {
         setInstrumentosData(data)

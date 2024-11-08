@@ -18,34 +18,57 @@ import {
     CardTitle
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Escala, convertDateFormat } from "./apiObjects";
-import { Button } from "./ui/button";
+import { Escala, convertDateFormat } from "../apiObjects";
+import { Button } from "../ui/button";
 import { PencilLine } from "lucide-react";
+import { useEffect, useState } from "react";
+import { UUID } from "crypto";
 
+interface props {
+    escalaId: UUID
+}
 
-export function  DialogEscala(escala: Escala) {
+export function  DialogEscala(props:props) {
+    const [escalaData, setEscalaData] = useState<Escala>()
+    const [isLoading, setIsLoading] = useState(true)
+    const fetchString = "http://localhost:1004/v1/escala/".concat(props.escalaId.toString())
+    useEffect(() => {
+        // setIsLoading(true)
+        fetch(fetchString)
+          .then((res) => res.json())
+          .then((data) => {
+            setIsLoading(false)
+            setEscalaData(data)
+          })
+          .catch((error) => {
+            console.error("Erro na comunicação com a api: ", error)
+            setEscalaData(undefined);
+          })
+      }, [])
+    
     return (
+        !isLoading && escalaData ? 
         <Dialog>
-            <DialogTrigger asChild key={escala.id} className="p-5">
+            <DialogTrigger asChild key={escalaData.id} className="p-5">
                 <Button variant={"outline"} className="flex items-center justify-center">Ver Escala</Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>{escala.titulo}</DialogTitle>
+                    <DialogTitle>{escalaData.titulo}</DialogTitle>
                     <DialogDescription>
-                        {convertDateFormat(escala.data)}
+                        {convertDateFormat(escalaData.data)}
                     </DialogDescription>
                     <br />
-                    <p className="text-teal-400">Ministro: </p><p className="text-emerald-400">{escala.ministro.nome}</p>
-                    <p className="text-teal-400">Violão: </p>{escala.violao ? escala.violao.nome : <p className="text-zinc-50/50">Não inserido.</p>}
-                    <p className="text-teal-400">Teclado: </p>{escala.teclado ? escala.teclado.nome : <p className="text-zinc-50/50">Não inserido.</p>}
-                    <p className="text-teal-400">Bateria: </p>{escala.bateria ? escala.bateria.nome : <p className="text-zinc-50/50">Não inserido.</p>}
-                    <p className="text-teal-400">Baixo: </p>{escala.baixo ? escala.baixo.nome : <p className="text-zinc-50/50">Não inserido.</p>}
-                    <p className="text-teal-400">Guitarra: </p>{escala.guitarra ? escala.guitarra.nome : <p className="text-zinc-50/50">Não inserido.</p>}
+                    <p className="text-teal-400">Ministro: </p><p className="text-emerald-400">{escalaData.ministro.nome}</p>
+                    <p className="text-teal-400">Violão: </p>{escalaData.violao ? escalaData.violao.nome : <p className="text-zinc-50/50">Não inserido.</p>}
+                    <p className="text-teal-400">Teclado: </p>{escalaData.teclado ? escalaData.teclado.nome : <p className="text-zinc-50/50">Não inserido.</p>}
+                    <p className="text-teal-400">Bateria: </p>{escalaData.bateria ? escalaData.bateria.nome : <p className="text-zinc-50/50">Não inserido.</p>}
+                    <p className="text-teal-400">Baixo: </p>{escalaData.baixo ? escalaData.baixo.nome : <p className="text-zinc-50/50">Não inserido.</p>}
+                    <p className="text-teal-400">Guitarra: </p>{escalaData.guitarra ? escalaData.guitarra.nome : <p className="text-zinc-50/50">Não inserido.</p>}
                     <p className="text-teal-400">Backs: </p><br />
                     {
-                        escala.back.length > 0 ?
-                            escala.back.map(backLevita => (
+                        escalaData.back.length > 0 ?
+                            escalaData.back.map(backLevita => (
                                 <a key={backLevita.id}>{backLevita.nome} </a>
                             )) : <a className="text-zinc-50/50">Não inserido.</a>
                     }
@@ -57,7 +80,7 @@ export function  DialogEscala(escala: Escala) {
                     <Button><PencilLine />Editar Escala</Button>
                 </DialogFooter>
             </DialogContent>
-        </Dialog>
+        </Dialog> :<></>
     )
 }
 

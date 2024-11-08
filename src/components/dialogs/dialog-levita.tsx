@@ -13,13 +13,13 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Church, PencilLine, UserMinus, UserPlus } from "lucide-react"
-import { Tooltip, TooltipProvider, TooltipTrigger } from "./ui/tooltip"
+import { Tooltip, TooltipProvider, TooltipTrigger } from "../ui/tooltip"
 import { TooltipContent } from "@radix-ui/react-tooltip"
-import { Card } from "./ui/card"
+import { Card } from "../ui/card"
 // import { fetchLevitas } from "./apiObjects"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table"
 import { useState } from "react"
-import { Levita, Instrumento } from "./apiObjects"
+import { Levita, Instrumento } from "../apiObjects"
 
 export function DialogLevita(levita: Levita) {
     const tam = levita.instrumentos.length;
@@ -64,14 +64,17 @@ export function DialogAddLevita() {
     const [nomeLevita, setNomeLevita] = useState("");
     const handleNome = (event: React.ChangeEvent<HTMLInputElement>) => {
         setNomeLevita(event.target.value);
+        levita.nome = event.target.value;
     };
     const [emailLevita, setEmailLevita] = useState("");
     const handleEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
         setEmailLevita(event.target.value);
+        levita.email = event.target.value;
     };
     const [telLevita, setTelLevita] = useState("");
     const handleTel = (event: React.ChangeEvent<HTMLInputElement>) => {
         setTelLevita(event.target.value);
+        levita.contato = event.target.value;
     };
 
     const saveLevita = (levitaToPost : Levita) => {
@@ -120,16 +123,12 @@ export function DialogAddLevita() {
 
                 </DialogHeader>
                 <DialogFooter className="">
-                    <Button type="submit">Salvar</Button>
+                    <Button type="submit" onClick={() => handleSubmitLevita(levita)}>Salvar</Button>
                     <Button>Cancelar</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
     )
-}
-
-function postLevita(levita: Levita){
-    
 }
 
 

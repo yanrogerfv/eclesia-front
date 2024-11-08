@@ -1,7 +1,7 @@
 
-import { Escala, Levita } from "./apiObjects";
-import { DialogEscala } from "./dialog-escala";
-import { DialogLevita } from "./dialog-levita";
+import { Escala, EscalaResumida, Levita } from "./apiObjects";
+import { DialogEscala } from "./dialogs/dialog-escala";
+import { DialogLevita } from "./dialogs/dialog-levita";
 import { Badge } from "./ui/badge";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card";
 
@@ -42,21 +42,7 @@ export function EscalaCard(escala: Escala) {
                             <Badge className="bg-sky-400/80 hover:bg-sky-400/20">Especial</Badge>
                     }
                     <DialogEscala key={escala.id}
-                        id={escala.id}
-                        titulo={escala.titulo}
-                        ministro={escala.ministro}
-                        violao={escala.violao}
-                        teclado={escala.teclado}
-                        bateria={escala.bateria}
-                        guitarra={escala.guitarra}
-                        baixo={escala.baixo}
-                        data={escala.data}
-                        quarta={escala.quarta}
-                        musicas={escala.musicas}
-                        observacoes={escala.observacoes}
-                        domingo={escala.domingo}
-                        especial={escala.especial}
-                        back={escala.back}
+                        escalaId={escala.id}
                     />
                 </CardFooter>
             </Card>
@@ -64,7 +50,7 @@ export function EscalaCard(escala: Escala) {
     )
 }
 
-export function EscalaSimpleCard(escala: Escala) {
+export function EscalaSimpleCard(escala: EscalaResumida) {
     const day = escala.domingo ? "Domingo" : escala.quarta ? "Quarta" : "Especial"
     return (
         <Card className="mx-4" key={escala.id}>
@@ -76,9 +62,9 @@ export function EscalaSimpleCard(escala: Escala) {
                 </CardDescription>
             </CardHeader>
             <CardContent key={escala.id} className="flow-root text-teal-400">
-                Ministro: <a className="text-emerald-400">{escala.ministro.nome}</a><br />
+                Ministro: <a className="text-emerald-400">{escala.ministro?escala.ministro:"bo dia :D"}</a><br />
                 <div className="float-right">
-                    <DialogEscala key={escala.id}
+                    {/* <DialogEscala key={escala.id}
                         id={escala.id}
                         titulo={escala.titulo}
                         ministro={escala.ministro}
@@ -94,7 +80,7 @@ export function EscalaSimpleCard(escala: Escala) {
                         domingo={escala.domingo}
                         especial={escala.especial}
                         back={escala.back}
-                    />
+                    /> */}
                 </div>
             </CardContent>
         </Card>

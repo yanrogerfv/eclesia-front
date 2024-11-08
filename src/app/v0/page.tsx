@@ -14,19 +14,20 @@ import { cn } from "@/lib/utils";
 import React, { useEffect, useState, useTransition } from "react";
 import { ButtonLink } from "@/components/buttonlink";
 import PageHeader from "@/components/pgtitle";
-import { Escala, Levita } from "@/components/apiObjects";
+import { Escala, EscalaResumida, Levita } from "@/components/apiObjects";
 import { EscalaCard, EscalaSimpleCard, LevitaSimpleCard } from "@/components/customCards";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Skeleton } from "@/components/ui/skeleton";
+import Link from "next/link";
 
 export default function Home() {
-  const [nextEscalas, setNextEscalas] = useState<Escala[]>([]);
+  const [nextEscalas, setNextEscalas] = useState<EscalaResumida[]>([]);
   const [levitasData, setLevitasData] = useState<Levita[]>([]);
   const [isEscalasLoading, setEscalaLoader] = useState(true)
   const [isLevitasLoading, setLevitaLoader] = useState(true)
 
   useEffect(() => {
-    fetch("http://localhost:1004/v1/escala")
+    fetch("http://localhost:1004/v1/escala/resumed")
       .then((res) => res.json())
       .then((data) => {
         setEscalaLoader(false)
@@ -91,11 +92,9 @@ export default function Home() {
                           baixo={escala.baixo}
                           data={escala.data}
                           quarta={escala.quarta}
-                          musicas={escala.musicas}
-                          observacoes={escala.observacoes}
+                          observacoes={escala.observacoes?escala.observacoes:""}
                           domingo={escala.domingo}
-                          especial={escala.especial}
-                          back={escala.back} />
+                          especial={escala.especial}/>
                       </CarouselItem>
                     ))}
                   </CarouselContent>

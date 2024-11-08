@@ -17,7 +17,7 @@ import Router, { useRouter } from 'next/router';
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { ChevronLeft, CircleMinus, CirclePlus, IterationCw, ListFilter, Loader, Loader2, UserMinus, UserPlus } from "lucide-react";
-import { DialogAddLevita, DialogLevita, DialogRemoveLevita } from "@/components/dialog-levita";
+import { DialogAddLevita, DialogLevita, DialogRemoveLevita } from "@/components/dialogs/dialog-levita";
 import {
   Dialog,
   DialogContent,
