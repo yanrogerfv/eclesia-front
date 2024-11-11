@@ -20,7 +20,6 @@ import { Button } from "@/components/ui/button";
 import { ChangeEvent, useEffect, useMemo, useState } from "react";
 import { Musica } from "@/components/apiObjects";
 import { DialogAddMusica } from "@/components/dialogs/dialog-musica";
-import { Toast } from "@/components/ui/toast";
 import { useToast } from "@/components/ui/use-toast";
 
 // async function fetchMusicas() {
@@ -37,6 +36,7 @@ export default function Home() {
     const [isLoading, setLoading] = useState(true)
     const [searchItem, setSearchItem] = useState("");
     const [update, setUpdate] = useState(false)
+    const { toast } = useToast();
 
     useEffect(() => {
         fetch("http://localhost:1004/v1/musicas")
@@ -50,7 +50,7 @@ export default function Home() {
                 console.error("Erro na comunicação com a api: ", error)
                 setMusicas([]);
             })
-    }, [update])
+    }, [update, musicas])
 
     const filtrarMusica = useMemo(() => {
         const lowerCase = searchItem.toLowerCase();
@@ -65,13 +65,14 @@ export default function Home() {
         <main className="max-w-6xl mx-auto my-12">
             <nav>
                 <div className="flex items-center gap-4">
-                    {
+                    <>
                         <Link href="/v0" className="w-auto text-4xl justify-center p-2 cursor-pointer outline outline-1 outline-cyan-400/50 hover:bg-teal-400 hover:text-black rounded-lg">
                             <ChevronLeft className="size-10" />
-                        </Link>}
-                    <h1 className="font-extrabold tracking-tight text-5xl">Músicas</h1>
+                        </Link>
+                        <h1 className="font-extrabold tracking-tight text-5xl">Músicas</h1>
+                    </>
                     <div className="">
-                        <DialogAddMusica bool={update} />
+                        <DialogAddMusica />
                     </div>
                 </div>
                 <br />
@@ -94,7 +95,7 @@ export default function Home() {
                             <TableHead></TableHead>
                             <TableHead>Título</TableHead>
                             <TableHead>Link</TableHead>
-                            <TableHead/>
+                            <TableHead />
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -103,23 +104,23 @@ export default function Home() {
                                 <TableRow key={musica.id}>
                                     <TableCell>{musicas.indexOf(musica) + 1}</TableCell>
                                     <TableCell>{musica.nome}</TableCell>
-                                    <TableCell><Link href={musica.link}>{musica.link}</Link></TableCell>
+                                    <TableCell><Link href={musica.link} target="_blank">{musica.link}</Link></TableCell>
                                     <TableCell><TbMusicX className="justify-end size-5 hover:cursor-pointer hover:text-rose-600/70"
                                         onClick={() => {
                                             // const {toast} = useToast();
-                                            fetch("http://localhost:1004/v1/musicas/".concat(musica.id.toString()), {
-                                            method: "DELETE"
-                                        })
-                                        // .then((data) => setCreatedMusic(data))
-                                        // .then(() => {
-                                        //     toast({
-                                        //     description: "Your message has been sent.",
-                                        //   })})
-                                        .catch((error) => {
-                                            console.error("Erro na comunicação com a api: ", error);
-                                        })
-                                        setSearchItem("");
-                                        }}/></TableCell>
+                                            fetch(`http://localhost:1004/v1/musicas/${musica.id}`, {
+                                                method: "DELETE"
+                                            })
+                                                .then(() => {
+                                                    toast({
+                                                        description: "Your message has been sent.",
+                                                    })
+                                                })
+                                                .catch((error) => {
+                                                    console.error("Erro na comunicação com a api: ", error);
+                                                })
+                                            toast({ title: "Música deletada com sucesso!" })
+                                        }} /></TableCell>
                                 </TableRow>
                             ))}
                     </TableBody>
