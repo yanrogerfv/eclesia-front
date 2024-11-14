@@ -1,7 +1,5 @@
 "use client"
 
-import Image from "next/image";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -10,28 +8,13 @@ import {
   CardHeader,
   CardTitle
 } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
 import { useEffect, useMemo, useState, useTransition } from "react";
 import Link from "next/link";
-import Router, { useRouter } from 'next/router';
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
-import { ChevronLeft, CircleMinus, CirclePlus, IterationCw, ListFilter, Loader, Loader2, UserMinus, UserPlus } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import { DialogAddLevita, DialogLevita, DialogRemoveLevita } from "@/components/dialogs/dialog-levita";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import PageHeader from "@/components/pgtitle";
 import { Input } from "@/components/ui/input";
 import { UUID } from "crypto";
 import { Levita, Instrumento } from "@/components/apiObjects";
-import { SearchBar } from "@/components/searchBar";
 import { SidebarFiltroLevita } from "@/components/sidebar";
 
 export default function Home() {
@@ -77,24 +60,24 @@ export default function Home() {
   return (
     <main className="max-w-6xl mx-auto my-12">
       {//Cabeçalho, botões para inserir e remover um levita.
-      <>
-      <div className="flex items-center gap-3">
-        {
-          <Link href="/v0" className="w-auto text-4xl justify-center p-2 cursor-pointer outline outline-1 outline-teal-400/50 hover:bg-teal-500 hover:text-black rounded-lg">
-            <ChevronLeft className="size-10" />
-          </Link>}
-        <h1 className="font-extrabold tracking-tight text-5xl">Levitas</h1>
-        {
-          <div className="translate-x-full">
-            <DialogAddLevita />
-            <DialogRemoveLevita />
-          </div>}
-      </div>
-      <br />
-      <h2 className="scroll-m-20 border-b text-base text-neutral-700 tracking-tight transition-colors first:mt-0">
-        {isLoading ? "Carregando Levitas..." : "Visualizando Levitas"}</h2>
-      <br />
-      </>
+        <>
+          <div className="flex items-center gap-3 justify-between">
+            <div className="flex">
+              <Link href="/v0" className="text-4xl p-2 cursor-pointer outline outline-1 outline-teal-400/50 hover:bg-teal-500 hover:text-black rounded-lg">
+                <ChevronLeft className="size-10" />
+              </Link>
+              <h1 className="mx-5 font-extrabold tracking-tight text-5xl">Levitas</h1>
+            </div>
+            <div>
+              <DialogAddLevita />
+              <DialogRemoveLevita />
+            </div>
+          </div>
+          <br />
+          <h2 className="scroll-m-20 border-b text-base text-neutral-700 tracking-tight transition-colors first:mt-0">
+            {isLoading ? "Carregando Levitas..." : "Visualizando Levitas"}</h2>
+          <br />
+        </>
       }
       <div className="flex w-full items-center space-x-2 col-span-4">
         <SidebarFiltroLevita disabled={isLoading} instrumentos={instrumentosBase} />

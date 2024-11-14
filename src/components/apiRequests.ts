@@ -2,7 +2,7 @@
 
 import { UUID } from "crypto";
 import { useEffect, useState } from "react";
-import { Musica } from "./apiObjects";
+import { Instrumento, Musica } from "./apiObjects";
 
 const apiUrl = process.env.API_URL;
 
@@ -55,4 +55,21 @@ export function DeleteMusica(musicaId: UUID) {
             console.error("Erro na comunicação com a api: ", error);
         })
     }, [])
+}
+
+export function getInstrumentos(){
+    const [instrumentosBase, setInstrumentosBase] = useState<Instrumento[]>([])
+
+    useEffect(() => {
+        fetch("http://localhost:1004/v1/instrumento")
+          .then((res) => res.json())
+          .then((data) => {
+            setInstrumentosBase(data)
+          })
+          .catch((error) => {
+            console.error("Erro na comunicação com a api: ", error)
+            setInstrumentosBase([]);
+          })
+      }, [])
+    return instrumentosBase;
 }

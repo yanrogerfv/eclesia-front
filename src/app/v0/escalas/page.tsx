@@ -18,7 +18,7 @@ import { Badge } from "@/components/ui/badge";
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { ChevronLeft, CircleMinus, CirclePlus, IterationCw, Loader2 } from "lucide-react";
 import { Escala, EscalaResumida } from "@/components/apiObjects";
-import { DialogEscala } from "@/components/dialogs/dialog-escala";
+import { DialogAddEscala, DialogVerEscala } from "@/components/dialogs/dialog-escala";
 import ModalEscala from "@/components/modal";
 
 /* export async function fetchEscalas() {
@@ -48,22 +48,22 @@ export default function Home() {
       })
   }, [])
 
-  
+
   return (
     <main className="max-w-6xl mx-auto my-12">
 
       <nav>
-        <div className="flex items-center gap-3">
-          {
+        <div className="flex justify-between">
+          <div className="flex">
             <Link href="/v0" className="w-auto text-4xl justify-center p-2 cursor-pointer outline outline-1 outline-cyan-400/50 hover:bg-teal-400 hover:text-black rounded-lg">
               <ChevronLeft className="size-10" />
-            </Link>}
-          <h1 className="font-extrabold tracking-tight text-5xl">Escalas</h1>
-          {
-            <div className="flex items-end translate-x-full px-4">
-              <Button variant={"outline"} className="px-4"><CirclePlus className="mx-2" />Adicionar Escala</Button>
-              <Button variant={"outline"} className="px-4"><CircleMinus className="mx-2" />Remover Escala</Button>
-            </div>}
+            </Link>
+            <h1 className="mx-5 font-extrabold tracking-tight text-5xl">Escalas</h1>
+          </div>
+          <div className="flex items-center">
+            <DialogAddEscala />
+            <Button variant={"outline"} className="mx-2 hover:text-rose-500"><CircleMinus className="mx-1 text-rose-500" />Excluir Escala</Button>
+          </div>
         </div>
         <br />
         <h2 className="scroll-m-20 border-b text-base text-neutral-700 tracking-tight transition-colors first:mt-0">
@@ -102,34 +102,19 @@ export default function Home() {
                   <a className="text-teal-400">Baixo: </a>{escala.baixo ? escala.baixo : <a className="text-zinc-50/50">Não inserido.</a>}<br />
                   <a className="text-teal-400">Guitarra: </a>{escala.guitarra ? escala.guitarra : <a className="text-zinc-50/50">Não inserido.</a>}<br />
                 </CardContent>
-                <CardFooter className="mt-auto inset-x-0 bottom-0 align-bottom self-end flow-root">
-                  {escala.domingo ?
-                    <Badge className="bg-teal-400/80 hover:bg-teal-400/20">Domingo</Badge>
-                    : escala.quarta ?
-                    <Badge className="bg-emerald-400/80 hover:bg-emerald-400/20">Quarta</Badge>
-                    :
-                    <Badge className="bg-sky-400/80 hover:bg-sky-400/20">Especial</Badge>
-                  }
-                 {/* <Button className="float-right" onClick={() => <ModalEscala escala={escala}/>}>Ver Escala</Button>
-                  {isEscalaModalOpen && <ModalEscala escala={escala}/>} */}
-                  {/* <DialogEscala  key={escala.id}
-                      id={escala.id}
-                      titulo={escala.titulo}
-                      ministro={escala.ministro}
-                      violao={escala.violao}
-                      teclado={escala.teclado}
-                      bateria={escala.bateria}
-                      guitarra={escala.guitarra}
-                      baixo={escala.baixo}
-                      data={escala.data}
-                      quarta={escala.quarta}
-                      musicas={escala.musicas}
-                      observacoes={escala.observacoes}
-                      domingo={escala.domingo}
-                      especial={escala.especial}
-                      back={escala.back}
-                      /> */}
-                  <DialogEscala escalaId={escala.id}/>
+                <CardFooter className="flex items-center justify-between">
+                  <div>
+                    {escala.domingo ?
+                      <Badge className="bg-teal-400/80 hover:bg-teal-400/20">Domingo</Badge>
+                      : escala.quarta ?
+                        <Badge className="bg-emerald-400/80 hover:bg-emerald-400/20">Quarta</Badge>
+                        :
+                        <Badge className="bg-sky-400/80 hover:bg-sky-400/20">Especial</Badge>
+                    }
+                  </div>
+                  <div>
+                    <DialogVerEscala escalaId={escala.id} />
+                  </div>
                 </CardFooter>
               </Card>
             )))

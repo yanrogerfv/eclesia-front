@@ -9,123 +9,120 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Escala, convertDateFormat } from "../apiObjects";
+import { Escala, Levita, convertDateFormat } from "../apiObjects";
 import { Button } from "../ui/button";
-import { PencilLine } from "lucide-react";
+import { CirclePlus, PencilLine } from "lucide-react";
 import { useEffect, useState } from "react";
 import { UUID } from "crypto";
+import { Label } from "../ui/label";
+import { Input } from "../ui/input";
 
 interface props {
     escalaId: UUID
 }
 
-export function  DialogEscala(props:props) {
+export function DialogVerEscala(props: props) {
     const [escalaData, setEscalaData] = useState<Escala>()
     const [isLoading, setIsLoading] = useState(true)
-    const fetchString = "http://localhost:1004/v1/escala/".concat(props.escalaId.toString())
+    const [backs, setBacks] = useState<string>("")
     useEffect(() => {
         // setIsLoading(true)
-        fetch(fetchString)
-          .then((res) => res.json())
-          .then((data) => {
-            setIsLoading(false)
-            setEscalaData(data)
-          })
-          .catch((error) => {
-            console.error("Erro na comunicação com a api: ", error)
-            setEscalaData(undefined);
-          })
-      }, [])
-    
-    return (
-        !isLoading && escalaData ? 
-        <Dialog>
-            <DialogTrigger asChild key={escalaData.id} className="p-5">
-                <Button variant={"outline"} className="flex items-center justify-center">Ver Escala</Button>
-            </DialogTrigger>
-            <DialogContent>
-                <DialogHeader>
-                    <DialogTitle>{escalaData.titulo}</DialogTitle>
-                    <DialogDescription>
-                        {convertDateFormat(escalaData.data)}
-                    </DialogDescription>
-                    <br />
-                    <p className="text-teal-400">Ministro: </p><p className="text-emerald-400">{escalaData.ministro.nome}</p>
-                    <p className="text-teal-400">Violão: </p>{escalaData.violao ? escalaData.violao.nome : <p className="text-zinc-50/50">Não inserido.</p>}
-                    <p className="text-teal-400">Teclado: </p>{escalaData.teclado ? escalaData.teclado.nome : <p className="text-zinc-50/50">Não inserido.</p>}
-                    <p className="text-teal-400">Bateria: </p>{escalaData.bateria ? escalaData.bateria.nome : <p className="text-zinc-50/50">Não inserido.</p>}
-                    <p className="text-teal-400">Baixo: </p>{escalaData.baixo ? escalaData.baixo.nome : <p className="text-zinc-50/50">Não inserido.</p>}
-                    <p className="text-teal-400">Guitarra: </p>{escalaData.guitarra ? escalaData.guitarra.nome : <p className="text-zinc-50/50">Não inserido.</p>}
-                    <p className="text-teal-400">Backs: </p><br />
-                    {
-                        escalaData.back.length > 0 ?
-                            escalaData.back.map(backLevita => (
-                                <a key={backLevita.id}>{backLevita.nome} </a>
-                            )) : <a className="text-zinc-50/50">Não inserido.</a>
-                    }
-                    <br />
+        fetch(`http://localhost:1004/v1/escala/${props.escalaId}`)
+            .then((res) => res.json())
+            .then((data) => {
+                setIsLoading(false)
+                setEscalaData(data)
+            })
+            .catch((error) => {
+                console.error("Erro na comunicação com a api: ", error)
+                setEscalaData(undefined);
+            })
+    }, [])
 
-                </DialogHeader>
-                <p className="text-foreground/25">Descrição</p>
-                <DialogFooter>
-                    <Button><PencilLine />Editar Escala</Button>
-                </DialogFooter>
-            </DialogContent>
-        </Dialog> :<></>
+    // const backs = escalaData?.back.map((back) => (back.nome)).join(", ")
+
+    return (
+        !isLoading && escalaData ?
+
+            <Dialog>
+                <DialogTrigger asChild key={escalaData.id} className="p-5">
+                    <Button variant={"outline"} className="flex items-center justify-center">Ver Escala</Button>
+                </DialogTrigger>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>{escalaData.titulo}</DialogTitle>
+                        <DialogDescription>
+                            {convertDateFormat(escalaData.data)}
+                        </DialogDescription>
+                        <br />
+                        <p className="text-teal-400">Ministro: <a className="text-emerald-400">{escalaData.ministro.nome}</a></p>
+                        <p className="text-teal-400">Violão: {escalaData.violao ? <a className="text-white"> {escalaData.violao.nome}</a> : <a className="text-zinc-50/50">Não inserido.</a>}</p>
+                        <p className="text-teal-400">Teclado: {escalaData.teclado ? <a className="text-white"> {escalaData.teclado.nome}</a> : <a className="text-zinc-50/50">Não inserido.</a>}</p>
+                        <p className="text-teal-400">Bateria: {escalaData.bateria ? <a className="text-white"> {escalaData.bateria.nome}</a> : <a className="text-zinc-50/50">Não inserido.</a>}</p>
+                        <p className="text-teal-400">Baixo: {escalaData.baixo ? <a className="text-white"> {escalaData.baixo.nome}</a> : <a className="text-zinc-50/50">Não inserido.</a>}</p>
+                        <p className="text-teal-400">Guitarra: {escalaData.guitarra ? <a className="text-white"> {escalaData.guitarra.nome}</a> : <a className="text-zinc-50/50">Não inserido.</a>}</p>
+                        <p className="text-teal-400">Backs: {escalaData.back ?<a className="text-white"> {
+                            escalaData.back.map((back) => (back.nome)).join(", ")}</a>:<a className="text-zinc-50/50">Não inseridos.</a>}</p>
+
+                        <br />
+
+                    </DialogHeader>
+                    <p className="text-foreground/25">Descrição</p>
+                    <DialogFooter>
+                        <Button><PencilLine />Editar Escala</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog> : <Button variant={"outline"} disabled={true} className="flex items-center justify-center">Ver Escala</Button>
     )
 }
 
-/*export function DialogAddLevita() {
-    var levita : Levita;
-    const [nomeLevita, setNomeLevita] = useState("");
-    const handleNome = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setNomeLevita(event.target.value);
-    };
-    const [emailLevita, setEmailLevita] = useState("");
-    const handleEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setEmailLevita(event.target.value);
-    };
-    const [telLevita, setTelLevita] = useState("");
-    const handleTel = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setTelLevita(event.target.value);
-    };
+export function listBacks(backs: Levita[]) {
+    const backNames = new Array<string>();
+    backs.forEach((back) => {
+        backNames.push(back.nome)
+    })
+
+    return String(backNames.join(", "))
+}
+
+
+export function DialogAddEscala() {
+    const [open, setOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const [levitasDisponiveis, setLevitasDisponiveis] = useState<Levita[]>([])
+    const [titulo, setTitulo] = useState("");
+    const [data, setData] = useState("");
+
+    useEffect(() => {
+        fetch("http://localhost:1004/v1/levita")
+    })
     return (
-        <Dialog>
-            <DialogTrigger asChild className="p-5">
-                <Button variant={"outline"} className="mx-2 font-bold">
-                    <UserPlus className="mr-2" />Adicionar Levita</Button>
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                <Button variant={"outline"} className="mx-2 hover:text-emerald-500">
+                    <CirclePlus className="mx-1 text-emerald-500" />Criar Escala</Button>
             </DialogTrigger>
             <DialogContent>
-                <DialogHeader>
-                    <DialogTitle>Adicionar Levita</DialogTitle>
-                    <br />
-                    <Label>Nome:</Label>
-                    <Input type="text" placeholder="Insira o nome do Levita."
-                        value ={nomeLevita} onChange={handleNome}/>
-                    <br />
-                    <Label>Email:</Label>
-                    <Input type="email" placeholder="Insira um email do Levita."
-                        value ={emailLevita} onChange={handleEmail}/>
-                    <br />
-                    <Label>Telefone:</Label>
-                    <Input type="tel" placeholder="Insira um contato do Levita." 
-                        value ={telLevita} onChange={handleTel}/>
 
+                <DialogHeader>
+                    <DialogTitle>Criando uma Escala</DialogTitle>
+                    <DialogDescription>
+                        Adicione uma nova escala ao planejador.
+                    </DialogDescription>
                 </DialogHeader>
-                <DialogFooter className="">
-                    <Button type="submit">Salvar</Button>
-                    <Button>Cancelar</Button>
+
+                <Label>Título:</Label>
+                <Input type="text" placeholder="Insira o nome da música."
+                    value={titulo} onChange={(e) => setTitulo(e.target.value)} />
+                <Label>Data:</Label>
+                <Input type="date" placeholder="Insira o link da música."
+                    value={data} onChange={(e) => setData(e.target.value)} />
+
+                <DialogFooter>
+                    <Button className="hover:bg-emerald-500">Adicionar</Button>
+                    <Button className="hover:bg-rose-500" onClick={() => setOpen(false)}>Cancelar</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
     )
-}*/
+}

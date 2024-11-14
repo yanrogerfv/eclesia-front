@@ -1,6 +1,6 @@
 
 import { Escala, EscalaResumida, Levita } from "./apiObjects";
-import { DialogEscala } from "./dialogs/dialog-escala";
+import { DialogVerEscala } from "./dialogs/dialog-escala";
 import { DialogLevita } from "./dialogs/dialog-levita";
 import { Badge } from "./ui/badge";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card";
@@ -41,7 +41,7 @@ export function EscalaCard(escala: Escala) {
                             :
                             <Badge className="bg-sky-400/80 hover:bg-sky-400/20">Especial</Badge>
                     }
-                    <DialogEscala key={escala.id}
+                    <DialogVerEscala key={escala.id}
                         escalaId={escala.id}
                     />
                 </CardFooter>

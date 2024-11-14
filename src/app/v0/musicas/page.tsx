@@ -14,7 +14,6 @@ import { UUID } from "crypto";
 import { ChevronLeft, CircleMinus, ListFilter, ListFilterIcon } from "lucide-react";
 import { TbMusicX } from "react-icons/tb";
 import Link from "next/link";
-import PageHeader from "@/components/pgtitle";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ChangeEvent, useEffect, useMemo, useState } from "react";
@@ -64,13 +63,13 @@ export default function Home() {
     return (
         <main className="max-w-6xl mx-auto my-12">
             <nav>
-                <div className="flex items-center gap-4">
-                    <>
-                        <Link href="/v0" className="w-auto text-4xl justify-center p-2 cursor-pointer outline outline-1 outline-cyan-400/50 hover:bg-teal-400 hover:text-black rounded-lg">
+                <div className="flex items-center gap-4 justify-between">
+                    <div className="flex">
+                        <Link href="/v0" className="text-4xl p-2 cursor-pointer outline outline-1 outline-cyan-400/50 hover:bg-teal-400 hover:text-black rounded-lg">
                             <ChevronLeft className="size-10" />
                         </Link>
-                        <h1 className="font-extrabold tracking-tight text-5xl">Músicas</h1>
-                    </>
+                        <h1 className="mx-5 font-extrabold tracking-tight text-5xl">Músicas</h1>
+                    </div>
                     <div className="">
                         <DialogAddMusica />
                     </div>
