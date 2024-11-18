@@ -112,10 +112,10 @@ export function DialogAddEscala() {
                 </DialogHeader>
 
                 <Label>Título:</Label>
-                <Input type="text" placeholder="Insira o nome da música."
+                <Input type="text" placeholder="Insira um título para a Escala."
                     value={titulo} onChange={(e) => setTitulo(e.target.value)} />
                 <Label>Data:</Label>
-                <Input type="date" placeholder="Insira o link da música."
+                <Input type="date" placeholder="Data."
                     value={data} onChange={(e) => setData(e.target.value)} />
 
                 <DialogFooter>
