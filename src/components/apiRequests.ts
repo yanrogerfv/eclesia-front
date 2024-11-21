@@ -70,6 +70,6 @@ export function getInstrumentos(){
             console.error("Erro na comunicação com a api: ", error)
             setInstrumentosBase([]);
           })
-      }, [])
+      }, [instrumentosBase])
     return instrumentosBase;
 }

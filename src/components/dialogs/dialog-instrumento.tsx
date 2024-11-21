@@ -11,6 +11,7 @@ import { UUID } from "crypto"
 import { getInstrumentos } from "../apiRequests"
 import { Select, SelectTrigger, SelectItem, SelectContent, SelectGroup, SelectLabel, SelectValue } from "../ui/select"
 import { Instrumento } from "../apiObjects"
+import { get } from "http"
 
 export function DialogAddInstrumento() {
     const [nomeInstrumento, setNomeInstrumento] = useState("")
@@ -57,7 +58,7 @@ export function DialogAddInstrumento() {
                                 })
                             toast(<p>"Instrumento inserido com sucesso!" </p>)
                         }}>Salvar</Button>
-                    <Button className="hover:bg-rose-600/80" onClick={() => setOpen(false)}>Cancelar</Button>
+                    <Button className="hover:bg-rose-600/80" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
@@ -68,7 +69,7 @@ export function DialogRemoveInstrumento() {
     const [isLoading, setLoading] = useState(false);
     const [open, setOpen] = useState(false);
     const allInstrumentos = getInstrumentos();
-    const [selectedInstrumento, setSelectedInstrumento] = useState<Instrumento>();
+    const [selectedInstrumento, setSelectedInstrumento] = useState<any>(null);
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -80,11 +81,11 @@ export function DialogRemoveInstrumento() {
                 <DialogHeader>
                     <DialogTitle>Remover Instrumento</DialogTitle>
                 </DialogHeader>
-                <Select onValueChange={() => setSelectedInstrumento(undefined)}>
+                {/* <Select>
                     <SelectTrigger className="">
                         <SelectValue placeholder="Escolha o instrumento a ser removido." />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent onChange={(e) => {setSelectedInstrumento(e.target)}}>
                         <SelectGroup>
                             <SelectLabel>Instrumentos</SelectLabel>
                             {allInstrumentos.map((instrumento) => (
@@ -93,12 +94,21 @@ export function DialogRemoveInstrumento() {
                             ))}
                         </SelectGroup>
                     </SelectContent>
-                </Select>
+                </Select> */}
+                <select disabled={isLoading} className="w-full p-2 border rounded-md border-cyan-600 bg-black text-zinc-400 text-sm" 
+                    onChange={(e) => setSelectedInstrumento(e.target.value)}>
+                    <option disabled selected>Escolha o instrumento a ser removido.</option>
+                    {allInstrumentos.map((instrumento) => (
+                        <option value={instrumento.id} className="hover:bg-cyan-600">
+                            {instrumento.nome}</option>
+                    ))}
+                </select>
                 <DialogFooter className="">
                     <Button className="hover:bg-rose-500"
                         type="submit" disabled={isLoading} onClick={() => {
                             setLoading(true)
-                            fetch(`http://localhost:1004/v1/instrumento/${selectedInstrumento?.numero}`, {
+                            console.log(selectedInstrumento)
+                            fetch(`http://localhost:1004/v1/instrumento/${selectedInstrumento}`, {
                                 method: "DELETE",
                             })
                                 .then(() => {
@@ -110,7 +120,7 @@ export function DialogRemoveInstrumento() {
                                 })
                             toast(<p>"Instrumento removido com sucesso!" </p>)
                         }}>Remover</Button>
-                    <Button className="hover:bg-emerald-500" onClick={() => setOpen(false)}>Cancelar</Button>
+                    <Button className="hover:bg-emerald-500" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

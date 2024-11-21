@@ -10,7 +10,7 @@ export interface Levita {
 }
 
 export interface Instrumento {
-    numero: number,
+    id: number,
     nome: string
 }
 
