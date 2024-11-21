@@ -24,18 +24,23 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrig
 import { Checkbox } from "../ui/checkbox"
 import { getInstrumentos } from "../apiRequests"
 
-export function DialogLevita(levita: Levita) {
-    const tam = levita.instrumentos.length;
+interface propsView {
+    levita: Levita,
+    disabled: boolean
+}
+
+export function DialogLevita(att : propsView) {
+    const tam = att.levita.instrumentos.length;
     return (
         <Dialog>
-            <DialogTrigger asChild key={levita.nome} className="p-5">
-                <Button variant={"outline"} className="flex items-center justify-center">Ver Levita</Button>
+            <DialogTrigger asChild key={att.levita.nome} className="p-5">
+                <Button variant={"outline"} disabled={att.disabled} className="flex items-center justify-center">Ver Levita</Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>{levita.nome}</DialogTitle>
+                    <DialogTitle>{att.levita.nome}</DialogTitle>
                     <DialogDescription>
-                        {levita.instrumentos.map(instrumento => (
+                        {att.levita.instrumentos.map(instrumento => (
                             instrumento.nome.concat(" - ")))}
                     </DialogDescription>
                     <br />
@@ -107,7 +112,7 @@ export function DialogAddLevita() {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild className="p-5">
-                <Button variant={"outline"} className="mx-2 font-bold" onClick={() => setLoading(false)}>
+                <Button variant={"outline"} className="mx-2 font-bold hover:text-emerald-500" onClick={() => setLoading(false)}>
                     <UserPlus className="mr-2" />Adicionar Levita</Button>
             </DialogTrigger>
             <DialogContent>

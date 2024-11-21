@@ -10,12 +10,13 @@ import {
 } from "@/components/ui/card";
 import { useEffect, useMemo, useState, useTransition } from "react";
 import Link from "next/link";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, UserMinus, X } from "lucide-react";
 import { DialogAddLevita, DialogLevita, DialogRemoveLevita } from "@/components/dialogs/dialog-levita";
 import { Input } from "@/components/ui/input";
 import { UUID } from "crypto";
 import { Levita, Instrumento } from "@/components/apiObjects";
 import { SidebarFiltroLevita } from "@/components/sidebar";
+import { Button } from "@/components/ui/button";
 
 export default function Home() {
 
@@ -23,7 +24,10 @@ export default function Home() {
   const [levitasData, setLevitasData] = useState<Levita[]>([])
   const [instrumentosBase, setInstrumentosBase] = useState<Instrumento[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [loadingRemove, setLoadingRemove] = useState(false)
+  const [removeOverlay, setRemoveOverlay] = useState(false)
   const [searchItem, setSearchItem] = useState("");
+  const [reload, setReload] = useState(false)
 
   useEffect(() => {
     // setIsLoading(true)
@@ -37,7 +41,7 @@ export default function Home() {
         console.error("Erro na comunicação com a api: ", error)
         setLevitasData([]);
       })
-  }, [])
+  }, [searchItem, levitasData, reload])
 
 
   useEffect(() => {
@@ -70,7 +74,10 @@ export default function Home() {
             </div>
             <div>
               <DialogAddLevita />
-              <DialogRemoveLevita />
+              <Button variant="outline" className={removeOverlay ? "mx-2 font-bold bg-rose-500/80 border-rose-600/90 hover:bg-rose-600/40"
+                : "mx-2 font-bold hover:bg-rose-500/40"}
+                onClick={() => setRemoveOverlay(!removeOverlay)}>
+                <UserMinus className="mr-2" />Remover Levita</Button>
             </div>
           </div>
           <br />
@@ -98,8 +105,22 @@ export default function Home() {
             </div>
           ) : (
             buscarLevita.map(levita => (
-              <Card key={levita.id}>
-                <CardHeader>
+              <Card key={levita.id} className={removeOverlay ? "animate-pulse" : ""}>
+                <X className={removeOverlay ? "absolute hover:cursor-pointer bg-rose-500/80 rounded-br-xl animate-none" : "absolute invisible"} onClick={() => {
+                  setLoadingRemove(true)
+                  fetch(`http://localhost:1004/v1/levita/${levita.id}`, {
+                    method: "DELETE"
+                  })
+                    .then(() => {
+                      setLoadingRemove(false)
+                      alert("Levita removido com sucesso!")
+                    })
+                    .catch((error) => {
+                      alert("Erro ao remover o Levita!")
+                      console.error("Erro na comunicação com a api: ", error);
+                    })
+                }} />
+                <CardHeader >
                   <CardTitle className="flex text-teal-500">{levita.nome}
                   </CardTitle>
                   <CardDescription>
@@ -108,16 +129,13 @@ export default function Home() {
                 </CardHeader>
                 <CardContent key={levita.id} className="h-28">
                   {levita.instrumentos.map(instrumento => (
-                    <div key={instrumento.numero} className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold 
+                    <div key={instrumento.id} className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold 
                 transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 m-1">{instrumento.nome.toUpperCase()}</div>))}
                 </CardContent>
                 <CardFooter className="flex justify-stretch">
                   <DialogLevita key={levita.id}
-                    id={levita.id}
-                    nome={levita.nome}
-                    email={levita.email}
-                    contato={levita.contato}
-                    instrumentos={levita.instrumentos} />
+                    levita={levita}
+                    disabled={removeOverlay} />
                   {/* <BadgeDisponivel disp={levita.disponivel} chav={levita.id.toString()} /> */}
                 </CardFooter>
               </Card>
