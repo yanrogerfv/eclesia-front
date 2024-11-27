@@ -57,7 +57,7 @@ export function DeleteMusica(musicaId: UUID) {
     }, [])
 }
 
-export function getInstrumentos(){
+export function GetInstrumentos(){
     const [instrumentosBase, setInstrumentosBase] = useState<Instrumento[]>([])
 
     useEffect(() => {

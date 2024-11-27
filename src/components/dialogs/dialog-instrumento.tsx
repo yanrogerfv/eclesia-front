@@ -8,7 +8,7 @@ import { Label } from "../ui/label"
 import { Input } from "../ui/input"
 import { toast } from "sonner"
 import { UUID } from "crypto"
-import { getInstrumentos } from "../apiRequests"
+import { GetInstrumentos } from "../apiRequests"
 import { Select, SelectTrigger, SelectItem, SelectContent, SelectGroup, SelectLabel, SelectValue } from "../ui/select"
 import { Instrumento } from "../apiObjects"
 import { get } from "http"
@@ -56,7 +56,6 @@ export function DialogAddInstrumento() {
                                 .catch((error) => {
                                     console.error("Erro na comunicação com a api: ", error);
                                 })
-                            toast(<p>"Instrumento inserido com sucesso!" </p>)
                         }}>Salvar</Button>
                     <Button className="hover:bg-rose-600/80" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
                 </DialogFooter>
@@ -68,7 +67,7 @@ export function DialogAddInstrumento() {
 export function DialogRemoveInstrumento() {
     const [isLoading, setLoading] = useState(false);
     const [open, setOpen] = useState(false);
-    const allInstrumentos = getInstrumentos();
+    const allInstrumentos = GetInstrumentos();
     const [selectedInstrumento, setSelectedInstrumento] = useState<any>(null);
 
     return (
@@ -118,7 +117,6 @@ export function DialogRemoveInstrumento() {
                                 .catch((error) => {
                                     console.error("Erro na comunicação com a api: ", error);
                                 })
-                            toast(<p>"Instrumento removido com sucesso!" </p>)
                         }}>Remover</Button>
                     <Button className="hover:bg-emerald-500" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
                 </DialogFooter>

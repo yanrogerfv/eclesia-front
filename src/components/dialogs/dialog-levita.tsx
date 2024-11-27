@@ -22,7 +22,7 @@ import { useEffect, useState } from "react"
 import { Levita, Instrumento } from "../apiObjects"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select"
 import { Checkbox } from "../ui/checkbox"
-import { getInstrumentos } from "../apiRequests"
+import { GetInstrumentos } from "../apiRequests"
 import { set } from "date-fns"
 import { Textarea } from "../ui/textarea"
 
@@ -64,7 +64,7 @@ export function DialogLevita(att: propsView) {
 export function DialogAddLevita() {
     const [open, setOpen] = useState(false);
     const [isLoading, setLoading] = useState(false);
-    const allInstrumentos = getInstrumentos();
+    const allInstrumentos = GetInstrumentos();
 
     const [nomeLevita, setNomeLevita] = useState("");
     const [emailLevita, setEmailLevita] = useState("");
@@ -111,17 +111,21 @@ export function DialogAddLevita() {
                 <DialogHeader>
                     <DialogTitle>Adicionar Levita</DialogTitle>
                     <br />
+                    <br />
                     <Label>Nome:</Label>
                     <Input type="text" placeholder="Insira o nome do Levita."
                         value={nomeLevita} onChange={(e) => setNomeLevita(e.target.value)} />
+                    <br />
                     <br />
                     <Label>Email:</Label>
                     <Input type="email" placeholder="Insira um email do Levita."
                         value={emailLevita} onChange={(e) => setEmailLevita(e.target.value)} />
                     <br />
+                    <br />
                     <Label>Telefone:</Label>
                     <Input type="tel" placeholder="Insira um contato do Levita."
                         value={telLevita} onChange={(e) => setTelLevita(e.target.value)} />
+                    <br />
                     <br />
                     <Label>Instrumentos:</Label>
                     {allInstrumentos.map((instrumento) => (
@@ -139,6 +143,7 @@ export function DialogAddLevita() {
                             >{instrumento.nome}</Label><br />
                         </div>
                     ))}
+                    <br />
                     <br />
                     <Label>Descrição:</Label>
                     <Textarea placeholder="Insira uma descrição do Levita." onChange={(e) => setDescLevita(e.target.value)} />
@@ -160,7 +165,7 @@ export function DialogAddLevita() {
 export function DialogEditLevita(levita: Levita) {
     const [open, setOpen] = useState(false);
     const [isLoading, setLoading] = useState(false);
-    const allInstrumentos = getInstrumentos();
+    const allInstrumentos = GetInstrumentos();
 
     const [nomeLevita, setNomeLevita] = useState("");
     const [emailLevita, setEmailLevita] = useState("");
