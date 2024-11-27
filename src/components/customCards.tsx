@@ -1,7 +1,6 @@
 
 import { Escala, EscalaResumida, Levita } from "./apiObjects";
 import { DialogVerEscala } from "./dialogs/dialog-escala";
-import { DialogLevita } from "./dialogs/dialog-levita";
 import { Badge } from "./ui/badge";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card";
 
@@ -99,7 +98,7 @@ export function LevitaSimpleCard(levita: Levita) {
             </CardHeader>
             <CardContent className="flow-root text-teal-400 h-24">
                 {levita.instrumentos.map(instrumento => (
-                    <div key={instrumento.numero} className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold 
+                    <div key={instrumento.id} className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold 
                         transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 m-1">
                             {instrumento.nome.toUpperCase()}</div>))}
                 <br />

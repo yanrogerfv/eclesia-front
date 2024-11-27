@@ -10,17 +10,29 @@ import {
 } from "@/components/ui/card";
 import { useEffect, useMemo, useState, useTransition } from "react";
 import Link from "next/link";
-import { ChevronLeft, UserMinus, X } from "lucide-react";
-import { DialogAddLevita, DialogLevita, DialogRemoveLevita } from "@/components/dialogs/dialog-levita";
+import { ChevronLeft, Filter, FilterX, ListFilter, UserMinus, X } from "lucide-react";
+import { DialogAddLevita, DialogLevita } from "@/components/dialogs/dialog-levita";
 import { Input } from "@/components/ui/input";
 import { UUID } from "crypto";
 import { Levita, Instrumento } from "@/components/apiObjects";
 import { SidebarFiltroLevita } from "@/components/sidebar";
 import { Button } from "@/components/ui/button";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
+import { CheckboxDemo } from "@/components/checkboxObj";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 
 export default function Home() {
 
-  const [data, setData] = useState([])
   const [levitasData, setLevitasData] = useState<Levita[]>([])
   const [instrumentosBase, setInstrumentosBase] = useState<Instrumento[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -28,6 +40,7 @@ export default function Home() {
   const [removeOverlay, setRemoveOverlay] = useState(false)
   const [searchItem, setSearchItem] = useState("");
   const [reload, setReload] = useState(false)
+  const [filteredInstruments, setFilteredInstruments] = useState<Instrumento[]>([])
 
   useEffect(() => {
     // setIsLoading(true)
@@ -41,7 +54,7 @@ export default function Home() {
         console.error("Erro na comunicação com a api: ", error)
         setLevitasData([]);
       })
-  }, [searchItem, levitasData, reload])
+  }, [searchItem, levitasData, reload, loadingRemove])
 
 
   useEffect(() => {
@@ -58,8 +71,16 @@ export default function Home() {
 
   const buscarLevita = useMemo(() => {
     const lowerCase = searchItem.toLowerCase();
-    return levitasData.filter((levita) => levita.nome.toLowerCase().includes(lowerCase));
+    return filteredInstruments.length === 0 ? levitasData.filter((levita) => levita.nome.toLowerCase().includes(lowerCase))
+    : levitasData.filter((levita) => levita.nome.toLowerCase().includes(lowerCase)).filter((levita) => levita.instrumentos.some((instrumento) => filteredInstruments.some((filteredInstrument) => filteredInstrument.id === instrumento.id)));
   }, [searchItem, levitasData])
+
+  function addInstrumentoInFilter(instrumento: Instrumento) {
+    setFilteredInstruments([...filteredInstruments, instrumento])
+  }
+  function removeInstrumentoInFilter(instrumento: Instrumento) {
+    setFilteredInstruments(filteredInstruments.filter((filteredInstrument) => filteredInstrument.id !== instrumento.id))
+  }
 
   return (
     <main className="max-w-6xl mx-auto my-12">
@@ -87,7 +108,51 @@ export default function Home() {
         </>
       }
       <div className="flex w-full items-center space-x-2 col-span-4">
-        <SidebarFiltroLevita disabled={isLoading} instrumentos={instrumentosBase} />
+        {isLoading ?
+          <Filter
+            className="w-auto text-4xl justify-center size-9 p-1 outline outline-1 outline-teal-500/45 bg-teal-500/30 hover:bg-teal-500/20 text-black rounded-md" />
+          :
+          <Sheet>
+            <SheetTrigger asChild>
+              {filteredInstruments.length == 0 ? 
+                <Filter className="w-auto text-4xl justify-center size-9 p-1 cursor-pointer outline outline-1 outline-teal-500/45 hover:bg-teal-500 hover:text-black rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"/> :
+                <FilterX onClick={() => setFilteredInstruments([])}
+                  className="w-auto text-4xl justify-center size-9 p-1 cursor-pointer outline outline-1 outline-rose-500/45 hover:bg-rose-500 hover:text-black rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"/>
+              }
+              </SheetTrigger>
+            <SheetContent>
+              <SheetHeader>
+                <SheetTitle>Filtrar Levitas</SheetTitle>
+                <SheetDescription>
+                  Filtre os Levitas por instrumento.
+                </SheetDescription>
+              </SheetHeader>
+              <div className="grid grid-cols-1 space-y-1">
+                <br />
+                {instrumentosBase.map((instrumento) => (
+                  <div key={instrumento.id} className="flex items-center space-x-2">
+                    <Checkbox id="terms" onClick={() => {
+                      if (filteredInstruments.some((filteredInstrument) => filteredInstrument.id === instrumento.id)) {
+                        removeInstrumentoInFilter(instrumento)
+                      } else {
+                        addInstrumentoInFilter(instrumento)
+                      }}}/>
+                    <Label
+                      htmlFor="terms"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                      {instrumento.nome}
+                    </Label>
+                    <br />
+                  </div>
+                ))}
+              </div>
+              <SheetFooter>
+                <SheetClose asChild>
+                  <Button type="submit">Save changes</Button>
+                </SheetClose>
+              </SheetFooter>
+            </SheetContent>
+          </Sheet>}
         {/* <Input className="flex" type="search"  value={searchItem} onChange={handleInputChange}  placeholder="Procure por um Levita" /> */}
         <Input disabled={isLoading} className="flex" type="text"
           value={searchItem} onChange={(e) => setSearchItem(e.target.value)} placeholder="Procure por um Levita" />
@@ -111,9 +176,10 @@ export default function Home() {
                   fetch(`http://localhost:1004/v1/levita/${levita.id}`, {
                     method: "DELETE"
                   })
-                    .then(() => {
+                    .then((response) => {
                       setLoadingRemove(false)
-                      alert("Levita removido com sucesso!")
+                      alert(response.status === 200 ? "Levita removido com sucesso!" : "Erro ao remover o Levita: " + response.headers.get("error"))
+                      setReload(!reload)
                     })
                     .catch((error) => {
                       alert("Erro ao remover o Levita!")

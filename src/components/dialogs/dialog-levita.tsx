@@ -23,14 +23,15 @@ import { Levita, Instrumento } from "../apiObjects"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select"
 import { Checkbox } from "../ui/checkbox"
 import { getInstrumentos } from "../apiRequests"
+import { set } from "date-fns"
+import { Textarea } from "../ui/textarea"
 
 interface propsView {
     levita: Levita,
     disabled: boolean
 }
 
-export function DialogLevita(att : propsView) {
-    const tam = att.levita.instrumentos.length;
+export function DialogLevita(att: propsView) {
     return (
         <Dialog>
             <DialogTrigger asChild key={att.levita.nome} className="p-5">
@@ -45,19 +46,15 @@ export function DialogLevita(att : propsView) {
                     </DialogDescription>
                     <br />
                 </DialogHeader>
-                <p className="text-foreground/25">Descrição</p>
+                <p className="text-foreground/25">{att.levita.descricao}</p>
                 <DialogFooter>
-                    <TooltipProvider>
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <PencilLine className="outline rounded-lg size-7 p-1 outline-1 outline-rose-400/25 hover:bg-rose-400 cursor-pointer"
-                                    onClick={() => ("")} />
-                            </TooltipTrigger>
-                            <TooltipContent className="z-50 overflow-hidden rounded-lg mb-2 outline-rose-400/25 border p-1.5 text-sm text-popover-foreground -translate-x-10 shadow-md animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2">
-                                <p>Editar Levita</p>
-                            </TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
+                    <DialogEditLevita id={att.levita.id}
+                        nome={att.levita.nome}
+                        email={att.levita.email}
+                        contato={att.levita.contato}
+                        descricao={att.levita.descricao}
+                        instrumentos={att.levita.instrumentos}
+                    />
                 </DialogFooter>
             </DialogContent>
         </Dialog>
@@ -69,43 +66,38 @@ export function DialogAddLevita() {
     const [isLoading, setLoading] = useState(false);
     const allInstrumentos = getInstrumentos();
 
-
-    var levita: Levita;
-
-    const [data, setData] = useState([])
-
     const [nomeLevita, setNomeLevita] = useState("");
-    const handleNome = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setNomeLevita(event.target.value);
-        levita.nome = event.target.value;
-    };
     const [emailLevita, setEmailLevita] = useState("");
-    const handleEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setEmailLevita(event.target.value);
-        levita.email = event.target.value;
-    };
     const [telLevita, setTelLevita] = useState("");
-    const handleTel = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setTelLevita(event.target.value);
-        levita.contato = event.target.value;
-    };
-    const [instrumentosLevita, setInstrumentosLevita] = useState<Instrumento[]>([]);
+    const [descLevita, setDescLevita] = useState("");
+    const [instrumentosLevita, setInstrumentos] = useState<Instrumento[]>([]);
+    function addInstrumentoInFilter(instrumento: Instrumento) {
+        setInstrumentos([...instrumentosLevita, instrumento])
+    }
+    function removeInstrumentoInFilter(instrumento: Instrumento) {
+        setInstrumentos(instrumentosLevita.filter((currentInstrument) => currentInstrument.id !== instrumento.id))
+    }
 
-    const handleSubmitLevita = (levitaToPost: Levita) => {
+    const handleSubmitLevita = (nome: string | undefined, contato: string | undefined, email: string | undefined, instrumentos: Instrumento[] | []) => {
         fetch('http://localhost:1004/v1/levita', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                name: levitaToPost.nome, // Use your own property name / key
-                contato: levitaToPost.contato,
-                email: levitaToPost.email,
-                instrumentos: levitaToPost.instrumentos
+                nome: nome, // Use your own property name / key
+                contato: contato ? contato : "",
+                email: email ? email : "",
+                instrumentos: instrumentos.map((instrumento) => instrumento.id)
             }),
         })
-            .then((res) => res.json())
-            .then((result) => setData(result.rows))
+            .then((res) => {
+                res.json()
+                res.status === 200 ?
+                    setOpen(false)
+                    : alert("Erro ao adicionar levita:" + res.status)
+            })
+            // .then((result) => setData(result.rows))
             .catch((err) => console.log("Erro ao adicionar levita: ", err))
     }
 
@@ -121,68 +113,157 @@ export function DialogAddLevita() {
                     <br />
                     <Label>Nome:</Label>
                     <Input type="text" placeholder="Insira o nome do Levita."
-                        value={nomeLevita} onChange={handleNome} />
+                        value={nomeLevita} onChange={(e) => setNomeLevita(e.target.value)} />
                     <br />
                     <Label>Email:</Label>
                     <Input type="email" placeholder="Insira um email do Levita."
-                        value={emailLevita} onChange={handleEmail} />
+                        value={emailLevita} onChange={(e) => setEmailLevita(e.target.value)} />
                     <br />
                     <Label>Telefone:</Label>
                     <Input type="tel" placeholder="Insira um contato do Levita."
-                        value={telLevita} onChange={handleTel} />
+                        value={telLevita} onChange={(e) => setTelLevita(e.target.value)} />
                     <br />
                     <Label>Instrumentos:</Label>
                     {allInstrumentos.map((instrumento) => (
-                        <div className="flex items-center space-x-2">
-                            <Checkbox id={instrumento.nome} onClick={() => setInstrumentosLevita(Array.of(instrumento))} />
+                        <div key={instrumento.id} className="flex items-center space-x-2">
+                            <Checkbox id={instrumento.nome} onClick={() => {
+                                if (instrumentosLevita.some((currentInstrument) => currentInstrument.id === instrumento.id)) {
+                                    removeInstrumentoInFilter(instrumento)
+                                } else {
+                                    addInstrumentoInFilter(instrumento)
+                                    console.log(instrumentosLevita)
+                                }
+                            }} />
                             <Label htmlFor={instrumento.nome}
                                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                             >{instrumento.nome}</Label><br />
                         </div>
                     ))}
+                    <br />
+                    <Label>Descrição:</Label>
+                    <Textarea placeholder="Insira uma descrição do Levita." onChange={(e) => setDescLevita(e.target.value)} />
 
 
                 </DialogHeader>
                 <DialogFooter className="">
-                    <Button className="hover:bg-emerald-500" type="submit" onClick={() => handleSubmitLevita(levita)}>Salvar</Button>
-                    <Button className="hover:bg-rose-600/80" onClick={() => setOpen(false)}>Cancelar</Button>
+                    <Button className="hover:bg-emerald-500" disabled={isLoading} type="submit" onClick={() => {
+                        setLoading(true)
+                        handleSubmitLevita(nomeLevita, telLevita, emailLevita, instrumentosLevita)
+                    }}>Salvar</Button>
+                    <Button className="hover:bg-rose-600/80" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
     )
 }
 
+export function DialogEditLevita(levita: Levita) {
+    const [open, setOpen] = useState(false);
+    const [isLoading, setLoading] = useState(false);
+    const allInstrumentos = getInstrumentos();
 
-export function DialogRemoveLevita() {
+    const [nomeLevita, setNomeLevita] = useState("");
+    const [emailLevita, setEmailLevita] = useState("");
+    const [contatoLevita, setContatoLevita] = useState("");
+    const [descricaoLevita, setDescricaoLevita] = useState("");
+    const [instrumentosLevita, setInstrumentos] = useState<Instrumento[]>([]);
+    function addInstrumentoInFilter(instrumento: Instrumento) {
+        setInstrumentos([...instrumentosLevita, instrumento])
+    }
+    function removeInstrumentoInFilter(instrumento: Instrumento) {
+        setInstrumentos(instrumentosLevita.filter((currentInstrument) => currentInstrument.id !== instrumento.id))
+    }
 
-    // const levitas = await fetchLevitas();
-    // var filtereds = levitas.slice(15);
+    const handleSubmitLevita = () => {
+        fetch('http://localhost:1004/v1/levita', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                id: levita.id, 
+                nome: nomeLevita, 
+                email: emailLevita, 
+                contato: contatoLevita, 
+                descricao: descricaoLevita, 
+                instrumentos: instrumentosLevita.map((instrumento) => instrumento.id)
+            }),
+        })
+            .then((res) => {
+                res.json()
+                res.status === 200 ?
+                    setOpen(false)
+                    : alert("Erro ao adicionar levita:" + res.status)
+            })
+            // .then((result) => setData(result.rows))
+            .catch((err) => console.log("Erro ao adicionar levita: ", err))
+    }
 
     return (
-        <Dialog>
-            <DialogTrigger asChild className="p-5">
-                <Button variant={"outline"} className="mx-2 font-bold">
-                    <UserMinus className="mr-2" />Remover Levita</Button>
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                <PencilLine className="outline rounded-lg p-1 size-auto outline-1 outline-sky-400/25 hover:bg-sky-400 cursor-pointer"
+                    onClick={() => {
+                        setNomeLevita(levita.nome)
+                        setEmailLevita(levita.email)
+                        setContatoLevita(levita.contato)
+                        setDescricaoLevita(levita.descricao)
+                        setInstrumentos(levita.instrumentos)
+                        }} />
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Remover Levita</DialogTitle>
+                    <DialogTitle>Editar Levita</DialogTitle>
+                    <DialogDescription>
+                        Alterando os dados de {levita.nome}.
+                    </DialogDescription>
+                    <br />
+                    <br />
+                    <Label>Nome:</Label>
+                    <Input type="text" placeholder="Insira o nome do Levita."
+                    value={nomeLevita ? nomeLevita : undefined} onChange={(e) => setNomeLevita(e.target.value)} />
+                    <br />
+                    <br />
+                    <Label>Email:</Label>
+                    <Input type="email" placeholder="Insira um email do Levita."
+                    value={emailLevita ? emailLevita : undefined} onChange={(e) => setEmailLevita(e.target.value)} />
+                    <br />
+                    <br />
+                    <Label>Telefone:</Label>
+                    <Input type="tel" placeholder="Insira um contato do Levita."
+                    value={contatoLevita ? contatoLevita : undefined} onChange={(e) => setContatoLevita(e.target.value)} />
+                    <br />
+                    <br />
+                    <Label>Instrumentos:</Label>
+                    {allInstrumentos.map((instrumento) => (
+                        <div key={instrumento.id} className="flex items-center space-x-2">
+                            <Checkbox id={instrumento.nome} checked={instrumentosLevita.some((current) => current.id == instrumento.id) ? true : false}
+                                onClick={() => {
+                                    if (instrumentosLevita.some((currentInstrument) => currentInstrument.id === instrumento.id)) {
+                                        removeInstrumentoInFilter(instrumento)
+                                    } else {
+                                        addInstrumentoInFilter(instrumento)
+                                    }
+                                }} />
+                            <Label htmlFor={instrumento.nome}
+                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >{instrumento.nome}</Label><br />
+                        </div>
+                    ))}
+                    <br />
+                    <br />
+                    <Label>Descrição:</Label>
+                    <Textarea placeholder="Insira uma descrição do Levita." onChange={(e) => setDescricaoLevita(e.target.value)}
+                        value={levita.descricao ? levita.descricao : undefined} />
+
+
                 </DialogHeader>
-                <Input className="rounded-lg" placeholder="Nome do Levita" />
-                {/*<Table className="bg-black/70 rounded-xl">
-                    <TableCaption>Listagem das músicas cadastradas.</TableCaption> 
-                    <TableBody>
-                        {filtereds.map((levita) => (
-                            <TableRow key={levita.id}>
-                                <TableCell>{filtereds.indexOf(levita)}</TableCell>
-                                <TableCell>{levita.nome}</TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>*/}
                 <DialogFooter className="">
-                    <Button type="submit">Remover</Button>
-                    <Button type="submit">Cancelar</Button>
+                    <Button className="hover:bg-emerald-500" disabled={isLoading} type="submit" onClick={() => {
+                        setLoading(true)
+                        handleSubmitLevita()
+                    }}>Salvar</Button>
+                    <Button className="hover:bg-rose-600/80" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

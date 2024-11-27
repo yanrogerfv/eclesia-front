@@ -5,7 +5,7 @@ export interface Levita {
     nome: string,
     email: string,
     contato: string,
-    
+    descricao: string,
     instrumentos: Instrumento[]
 }
 
