@@ -131,6 +131,7 @@ export default function Home() {
                           nome={levita.nome}
                           email={levita.email}
                           contato={levita.contato}
+                          descricao={levita.descricao}
                           instrumentos={levita.instrumentos} />
                       </CarouselItem>
                     ))}
