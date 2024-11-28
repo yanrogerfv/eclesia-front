@@ -68,8 +68,8 @@ export function DialogAddLevita() {
 
     const [nomeLevita, setNomeLevita] = useState("");
     const [emailLevita, setEmailLevita] = useState("");
-    const [telLevita, setTelLevita] = useState("");
-    const [descLevita, setDescLevita] = useState("");
+    const [contatoLevita, setTelLevita] = useState("");
+    const [descricaoLevita, setDescLevita] = useState("");
     const [instrumentosLevita, setInstrumentos] = useState<Instrumento[]>([]);
     function addInstrumentoInFilter(instrumento: Instrumento) {
         setInstrumentos([...instrumentosLevita, instrumento])
@@ -78,27 +78,27 @@ export function DialogAddLevita() {
         setInstrumentos(instrumentosLevita.filter((currentInstrument) => currentInstrument.id !== instrumento.id))
     }
 
-    const handleSubmitLevita = (nome: string | undefined, contato: string | undefined, email: string | undefined, instrumentos: Instrumento[] | []) => {
+    const handleSubmitLevita = () => {
         fetch('http://localhost:1004/v1/levita', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                nome: nome, // Use your own property name / key
-                contato: contato ? contato : "",
-                email: email ? email : "",
-                instrumentos: instrumentos.map((instrumento) => instrumento.id)
+                nome: nomeLevita,
+                email: emailLevita,
+                contato: contatoLevita,
+                descricao: descricaoLevita,
+                instrumentos: instrumentosLevita.map((instrumento) => instrumento.id)
             }),
         })
             .then((res) => {
                 res.json()
-                res.status === 200 ?
-                    setOpen(false)
-                    : alert("Erro ao adicionar levita:" + res.status)
+                setLoading(false)
+                setOpen(false)
             })
             // .then((result) => setData(result.rows))
-            .catch((err) => console.log("Erro ao adicionar levita: ", err))
+            .catch((err) => alert("Erro ao adicionar levita: " + err.message))
     }
 
     return (
@@ -124,7 +124,7 @@ export function DialogAddLevita() {
                     <br />
                     <Label>Telefone:</Label>
                     <Input type="tel" placeholder="Insira um contato do Levita."
-                        value={telLevita} onChange={(e) => setTelLevita(e.target.value)} />
+                        value={contatoLevita} onChange={(e) => setTelLevita(e.target.value)} />
                     <br />
                     <br />
                     <Label>Instrumentos:</Label>
@@ -153,7 +153,7 @@ export function DialogAddLevita() {
                 <DialogFooter className="">
                     <Button className="hover:bg-emerald-500" disabled={isLoading} type="submit" onClick={() => {
                         setLoading(true)
-                        handleSubmitLevita(nomeLevita, telLevita, emailLevita, instrumentosLevita)
+                        handleSubmitLevita()
                     }}>Salvar</Button>
                     <Button className="hover:bg-rose-600/80" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
                 </DialogFooter>
@@ -186,11 +186,11 @@ export function DialogEditLevita(levita: Levita) {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                id: levita.id, 
-                nome: nomeLevita, 
-                email: emailLevita, 
-                contato: contatoLevita, 
-                descricao: descricaoLevita, 
+                id: levita.id,
+                nome: nomeLevita,
+                email: emailLevita,
+                contato: contatoLevita,
+                descricao: descricaoLevita,
                 instrumentos: instrumentosLevita.map((instrumento) => instrumento.id)
             }),
         })
@@ -214,7 +214,7 @@ export function DialogEditLevita(levita: Levita) {
                         setContatoLevita(levita.contato)
                         setDescricaoLevita(levita.descricao)
                         setInstrumentos(levita.instrumentos)
-                        }} />
+                    }} />
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
@@ -226,17 +226,17 @@ export function DialogEditLevita(levita: Levita) {
                     <br />
                     <Label>Nome:</Label>
                     <Input type="text" placeholder="Insira o nome do Levita."
-                    value={nomeLevita ? nomeLevita : undefined} onChange={(e) => setNomeLevita(e.target.value)} />
+                        value={nomeLevita ? nomeLevita : undefined} onChange={(e) => setNomeLevita(e.target.value)} />
                     <br />
                     <br />
                     <Label>Email:</Label>
                     <Input type="email" placeholder="Insira um email do Levita."
-                    value={emailLevita ? emailLevita : undefined} onChange={(e) => setEmailLevita(e.target.value)} />
+                        value={emailLevita ? emailLevita : undefined} onChange={(e) => setEmailLevita(e.target.value)} />
                     <br />
                     <br />
                     <Label>Telefone:</Label>
                     <Input type="tel" placeholder="Insira um contato do Levita."
-                    value={contatoLevita ? contatoLevita : undefined} onChange={(e) => setContatoLevita(e.target.value)} />
+                        value={contatoLevita ? contatoLevita : undefined} onChange={(e) => setContatoLevita(e.target.value)} />
                     <br />
                     <br />
                     <Label>Instrumentos:</Label>
