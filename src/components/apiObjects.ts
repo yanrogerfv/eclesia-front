@@ -57,7 +57,8 @@ export interface EscalaResumida {
 
 export function convertDateFormat(dateString: Date) {
     const date = new Date(dateString);
-    return String((date.getDate() + 1) + '/' + (date.getMonth() + 1) + '/' + date.getFullYear())
+    const days = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
+    return String(days[date.getDay()] + " - " + (date.getDate() + 1) + '/' + (date.getMonth() + 1) + '/' + date.getFullYear())
 }
 
 

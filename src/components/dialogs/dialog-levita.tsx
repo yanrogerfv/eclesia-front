@@ -13,17 +13,10 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Church, PencilLine, UserMinus, UserPlus } from "lucide-react"
-import { Tooltip, TooltipProvider, TooltipTrigger } from "../ui/tooltip"
-import { TooltipContent } from "@radix-ui/react-tooltip"
-import { Card } from "../ui/card"
-// import { fetchLevitas } from "./apiObjects"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table"
 import { useEffect, useState } from "react"
 import { Levita, Instrumento } from "../apiObjects"
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select"
 import { Checkbox } from "../ui/checkbox"
 import { GetInstrumentos } from "../apiRequests"
-import { set } from "date-fns"
 import { Textarea } from "../ui/textarea"
 
 interface propsView {

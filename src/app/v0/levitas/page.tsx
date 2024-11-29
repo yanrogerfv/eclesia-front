@@ -70,9 +70,8 @@ export default function Home() {
   }, [])
 
   const buscarLevita = useMemo(() => {
-    const lowerCase = searchItem.toLowerCase();
-    return filteredInstruments.length === 0 ? levitasData.filter((levita) => levita.nome.toLowerCase().includes(lowerCase))
-    : levitasData.filter((levita) => levita.nome.toLowerCase().includes(lowerCase)).filter((levita) => levita.instrumentos.some((instrumento) => filteredInstruments.some((filteredInstrument) => filteredInstrument.id === instrumento.id)));
+    return filteredInstruments.length === 0 ? levitasData.filter((levita) => levita.nome.toLowerCase().includes(searchItem.toLowerCase()))
+    : levitasData.filter((levita) => levita.nome.toLowerCase().includes(searchItem.toLowerCase())).filter((levita) => levita.instrumentos.some((instrumento) => filteredInstruments.some((filteredInstrument) => filteredInstrument.id === instrumento.id)));
   }, [searchItem, levitasData])
 
   function addInstrumentoInFilter(instrumento: Instrumento) {

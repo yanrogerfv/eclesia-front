@@ -98,7 +98,7 @@ export function DialogRemoveInstrumento() {
                     onChange={(e) => setSelectedInstrumento(e.target.value)}>
                     <option disabled selected>Escolha o instrumento a ser removido.</option>
                     {allInstrumentos.map((instrumento) => (
-                        <option key={instrumento.id} value={instrumento.id} className="hover:bg-cyan-600">
+                        <option key={instrumento.id} value={instrumento.id} className="hover:bg-cyan-600 font-normal">
                             {instrumento.nome}</option>
                     ))}
                 </select>
