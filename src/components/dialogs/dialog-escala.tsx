@@ -80,7 +80,7 @@ export function DialogVerEscala(props: props) {
                     <Card className="bg-transparent grid-flow-row p-2">
                         {escalaData.musicas?
                             escalaData.musicas.map((musica) => (
-                            <Button variant={"outline"} className="p-2 rounded-lg m-2">{musica.nome}</Button>
+                            <Button key={musica.id} variant={"outline"} className="p-2 rounded-lg m-2">{musica.nome}</Button>
                         ) ) : <p className="text-foreground/25">Nenhuma música inserida.</p>}
                     </Card>
                     <DialogFooter>
@@ -237,7 +237,7 @@ export function DialogAddEscala() {
                     <Label>Backs:</Label>
                     <Card className="bg-transparent grid grid-cols-4">
                         {filterByInstrumento(0).map((levita) => (
-                            <Button variant={"outline"} type="submit" className="p-2 rounded-lg m-2" onClick={() => setBacks([...backs, levita.nome])}>{levita.nome}</Button>
+                            <Button key={levita.id} variant={"outline"} type="submit" className="p-2 rounded-lg m-2" onClick={() => setBacks([...backs, levita.nome])}>{levita.nome}</Button>
                         ))}
                     </Card>
                     <br />
