@@ -41,7 +41,7 @@ export default function Home() {
 
   useEffect(() => {
     // setIsLoading(true)
-    fetch("http://localhost:1004/v1/levita")
+    fetch("http://localhost:1004/v1/levita/resumed")
       .then((res) => res.json())
       .then((data) => {
         setLevitaLoader(false)
