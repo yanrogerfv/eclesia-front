@@ -17,7 +17,7 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { ChevronLeft, CircleMinus, CirclePlus, IterationCw, Loader2 } from "lucide-react";
-import { Escala, EscalaResumida } from "@/components/apiObjects";
+import { Escala, EscalaResumida, Levita } from "@/components/apiObjects";
 import { DialogAddEditEscala, DialogVerEscala } from "@/components/dialogs/dialog-escala";
 import ModalEscala from "@/components/modal";
 
@@ -31,6 +31,7 @@ import ModalEscala from "@/components/modal";
 
 export default function Home() {
   const [escalasData, setEscalasData] = useState<EscalaResumida[]>([])
+  const [levitasDisponiveis, setLevitasDisponiveis] = useState<Levita[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isEscalaModalOpen, setIsEscalaModalOpen] = useState(false);
 
@@ -48,6 +49,17 @@ export default function Home() {
       })
   }, [])
 
+  useEffect(() => {
+    fetch("http://localhost:1004/v1/levita/resumed")
+      .then((res) => res.json())
+      .then((data) => {
+        setLevitasDisponiveis(data)
+      })
+      .catch((error) => {
+        console.error("Erro na comunicação com a api: ", error)
+        setLevitasDisponiveis([]);
+      })
+  }, [])
 
   return (
     <main className="max-w-6xl mx-auto my-12">
@@ -61,7 +73,7 @@ export default function Home() {
             <h1 className="mx-5 font-extrabold tracking-tight text-5xl">Escalas</h1>
           </div>
           <div className="flex items-center">
-            <DialogAddEditEscala isEdit={false} escala={null} />
+            <DialogAddEditEscala isEdit={false} escala={undefined} levitasDisponiveis={levitasDisponiveis} />
             <Button variant={"outline"} className="mx-2 hover:text-rose-500"><CircleMinus className="mx-1 text-rose-500" />Excluir Escala</Button>
           </div>
         </div>
@@ -113,7 +125,7 @@ export default function Home() {
                     }
                   </div>
                   <div>
-                    <DialogVerEscala escalaId={escala.id} />
+                    <DialogVerEscala escalaId={escala.id} levitasDisponiveis={levitasDisponiveis}/>
                   </div>
                 </CardFooter>
               </Card>
