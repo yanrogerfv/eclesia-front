@@ -78,13 +78,13 @@ export function DialogVerEscala(props: props) {
 
                     <Label>Músicas:</Label>
                     <Card className="bg-transparent grid-flow-row p-2">
-                        {escalaData.musicas?
+                        {escalaData.musicas ?
                             escalaData.musicas.map((musica) => (
-                            <Button key={musica.id} variant={"outline"} className="p-2 rounded-lg m-2">{musica.nome}</Button>
-                        ) ) : <p className="text-foreground/25">Nenhuma música inserida.</p>}
+                                <Button key={musica.id} variant={"outline"} className="p-2 rounded-lg m-2">{musica.nome}</Button>
+                            )) : <p className="text-foreground/25">Nenhuma música inserida.</p>}
                     </Card>
                     <DialogFooter>
-                        <Button><PencilLine />Editar Escala</Button>
+                        <DialogAddEditEscala isEdit={true} escala={escalaData} />
                     </DialogFooter>
                 </DialogContent>
             </Dialog> : <Button variant={"outline"} disabled={true} className="flex items-center justify-center">Ver Escala</Button>
@@ -100,9 +100,15 @@ export function listBacks(backs: Levita[]) {
     return String(backNames.join(", "))
 }
 
+interface addEditDialogProps {
+    isEdit: boolean,
+    escala: Escala | null
+}
 
-export function DialogAddEscala() {
+export function DialogAddEditEscala(pp: addEditDialogProps) {
+    const [escala, setEscala] = useState<Escala>()
     const [open, setOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(false)
     const [isLoadingLevitas, setIsLoadingLevitas] = useState(true);
     const [levitasDisponiveis, setLevitasDisponiveis] = useState<Levita[]>([])
     const [data, setData] = useState("");
@@ -121,7 +127,7 @@ export function DialogAddEscala() {
     }
 
     useEffect(() => {
-        fetch("http://localhost:1004/v1/levita")
+        fetch("http://localhost:1004/v1/levita/resumed")
             .then((res) => res.json()).then((data) => {
                 setIsLoadingLevitas(false)
                 setLevitasDisponiveis(data)
@@ -133,118 +139,169 @@ export function DialogAddEscala() {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant={"outline"} className="mx-2 hover:text-emerald-500">
-                    <CirclePlus className="mx-1 text-emerald-500" />Criar Escala</Button>
+                {pp.isEdit ? <Button><PencilLine />Editar Escala</Button>
+                    : <Button variant={"outline"} className="mx-2 hover:text-emerald-500">
+                        <CirclePlus className="mx-1 text-emerald-500" />Criar Escala</Button>
+                }
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent >
                 <DialogHeader>
-                    <DialogTitle>Criando uma Escala</DialogTitle>
+                    <DialogTitle>{pp.isEdit ? "Editando uma Escala" : "Criando uma Escala"}</DialogTitle>
                     <DialogDescription>
-                        Adicione uma nova escala ao planejador.
+                        {pp.isEdit ? `Editando a escala ${pp.escala?.titulo}` : "Adicione uma nova escala ao planejador."}
                     </DialogDescription>
                 </DialogHeader>
-                <ScrollArea className="h-[720px]">
+                <ScrollArea className="max-h-[47dvh]">
                     <Label>Título:</Label>
                     <Input type="text" placeholder="Insira um título para a Escala."
-                        value={titulo} onChange={(e) => setTitulo(e.target.value)} />
+                        value={pp.escala?.titulo} onChange={(e) => setTitulo(e.target.value)} />
                     <Label>Data:</Label>
                     <Input type="date" placeholder="Data."
-                        value={data} onChange={(e) => setData(e.target.value)} />
+                        value={pp.escala?.data.toString()} onChange={(e) => setData(e.target.value)} />
                     <br />
 
                     <Label>Ministro</Label>
-                    <Select onValueChange={(value) => setMinistro(value)} disabled={isLoadingLevitas || data.length == 0}>
+                    <Select onValueChange={(value) => setMinistro(value)} disabled={isLoadingLevitas || pp.escala?.data.toString().length == 0}>
                         <SelectTrigger>
                             <SelectValue placeholder="Selecione um ministro." />
                         </SelectTrigger>
                         <SelectContent>
                             {levitasDisponiveis.map((levita) => (
-                                <SelectItem value={levita.id} key={levita.id} onSelect={() => setMinistro(levita.nome)}>{levita.nome}</SelectItem>
+                                <SelectItem value={levita.id} key={levita.id} onSelect={() => setMinistro(levita.nome)}>{pp.escala?.ministro.nome}</SelectItem>
                             ))}
                         </SelectContent>
                     </Select>
                     <br />
 
                     <Label>Violão</Label>
-                    <Select onValueChange={(value) => setViolao(value)} disabled={isLoadingLevitas || data.length == 0}>
+                    <Select onValueChange={(value) => setViolao(value)} disabled={isLoadingLevitas || pp.escala?.data.toString().length == 0}>
                         <SelectTrigger>
                             <SelectValue placeholder="Escolha um levita para tocar violão." />
                         </SelectTrigger>
                         <SelectContent>
                             {filterByInstrumento(1).map((levita) => (
-                                <SelectItem value={levita.id} key={levita.id} onSelect={() => setViolao(levita.id)}>{levita.nome}</SelectItem>
+                                <SelectItem value={levita.id} key={levita.id} onSelect={() => setViolao(levita.id)}>{pp.escala?.violao.nome}</SelectItem>
                             ))}
                         </SelectContent>
                     </Select>
                     <br />
 
                     <Label>Teclado</Label>
-                    <Select onValueChange={(value) => setTeclado(value)} disabled={isLoadingLevitas || data.length == 0}>
+                    <Select onValueChange={(value) => setTeclado(value)} disabled={isLoadingLevitas || pp.escala?.data.toString().length == 0}>
                         <SelectTrigger>
                             <SelectValue placeholder="Escolha um levita para tocar teclado." />
                         </SelectTrigger>
                         <SelectContent>
                             {filterByInstrumento(2).map((levita) => (
-                                <SelectItem value={levita.id} key={levita.id} onSelect={() => setTeclado(levita.id)}>{levita.nome}</SelectItem>
+                                <SelectItem value={levita.id} key={levita.id} onSelect={() => setTeclado(levita.id)}>{pp.escala?.teclado.nome}</SelectItem>
                             ))}
                         </SelectContent>
                     </Select>
                     <br />
 
                     <Label>Bateria</Label>
-                    <Select onValueChange={(value) => setBateria(value)} disabled={isLoadingLevitas || data.length == 0}>
+                    <Select onValueChange={(value) => setBateria(value)} disabled={isLoadingLevitas || pp.escala?.data.toString().length == 0}>
                         <SelectTrigger>
                             <SelectValue placeholder="Escolha um levita para tocar bateria." />
                         </SelectTrigger>
                         <SelectContent>
                             {filterByInstrumento(3).map((levita) => (
-                                <SelectItem value={levita.id} key={levita.id} onSelect={() => setBateria(levita.id)}>{levita.nome}</SelectItem>
+                                <SelectItem value={levita.id} key={levita.id} onSelect={() => setBateria(levita.id)}>{pp.escala?.bateria.nome}</SelectItem>
                             ))}
                         </SelectContent>
                     </Select>
                     <br />
 
                     <Label>Baixo</Label>
-                    <Select onValueChange={(value) => setBaixo(value)} disabled={isLoadingLevitas || data.length == 0}>
+                    <Select onValueChange={(value) => setBaixo(value)} disabled={isLoadingLevitas || pp.escala?.data.toString().length == 0}>
                         <SelectTrigger>
                             <SelectValue placeholder="Escolha um levita para tocar baixo." />
                         </SelectTrigger>
                         <SelectContent>
                             {filterByInstrumento(4).map((levita) => (
-                                <SelectItem value={levita.id} key={levita.id} onSelect={() => setBaixo(levita.id)}>{levita.nome}</SelectItem>
+                                <SelectItem value={levita.id} key={levita.id} onSelect={() => setBaixo(levita.id)}>{pp.escala?.baixo.nome}</SelectItem>
                             ))}
                         </SelectContent>
                     </Select>
                     <br />
 
                     <Label>Guitarra</Label>
-                    <Select onValueChange={(value) => setGuitarra(value)} disabled={isLoadingLevitas || data.length == 0}>
+                    <Select onValueChange={(value) => setGuitarra(value)} disabled={isLoadingLevitas || pp.escala?.data.toString().length == 0}>
                         <SelectTrigger>
                             <SelectValue placeholder="Escolha um levita para tocar guitarra." />
                         </SelectTrigger>
                         <SelectContent>
                             {filterByInstrumento(5).map((levita) => (
-                                <SelectItem value={levita.id} key={levita.id} onSelect={() => setGuitarra(levita.id)}>{levita.nome}</SelectItem>
+                                <SelectItem value={levita.id} key={levita.id} onSelect={() => setGuitarra(levita.id)}>{pp.escala?.guitarra.nome}</SelectItem>
                             ))}
                         </SelectContent>
                     </Select>
                     <br />
 
                     <Label>Observação:</Label>
-                    <Textarea placeholder="Insira uma observação. (Ex: Dia e hora de ensaio, local de apresentação, etc.)" onChange={(e) => setObservacao(e.target.value)} />
+                    <Textarea placeholder="Insira uma observação. (Ex: Dia e hora de ensaio, local de apresentação, etc.)"
+                        value={pp.escala?.observacoes} onChange={(e) => setObservacao(e.target.value)} />
                     <br />
 
                     <Label>Backs:</Label>
                     <Card className="bg-transparent grid grid-cols-4">
                         {filterByInstrumento(0).map((levita) => (
-                            <Button key={levita.id} variant={"outline"} type="submit" className="p-2 rounded-lg m-2" onClick={() => setBacks([...backs, levita.nome])}>{levita.nome}</Button>
+                            <Button key={levita.id} variant={"outline"} type="submit" className="p-2 rounded-lg m-2"
+                                onClick={() => setBacks([...backs, levita.nome])}>{levita.nome}</Button>
                         ))}
                     </Card>
                     <br />
 
                 </ScrollArea>
                 <DialogFooter>
-                    <Button className="hover:bg-emerald-500">Adicionar</Button>
+                    <Button className="hover:bg-emerald-500" onClick={() => {
+                        setIsLoading(true)
+                        pp.isEdit ?
+                            fetch("http://localhost:1004/v1/escala", {
+                                method: "PUT",
+                                body: JSON.stringify({
+                                    id: escala?.id,
+                                    titulo: escala?.titulo,
+                                    data: escala?.data,
+                                    ministro: escala?.ministro,
+                                    violao: escala?.violao,
+                                    teclado: escala?.teclado,
+                                    bateria: escala?.bateria,
+                                    baixo: escala?.baixo,
+                                    guitarra: escala?.guitarra,
+                                    back: escala?.back,
+                                    observacoes: escala?.observacoes
+                                })
+                            }).then((response) => {
+                                setIsLoading(false)
+                                alert(response.status === 200 ? "Levita removido com sucesso!" : "Erro ao remover o Levita: " + response.headers.get("error"))
+                            }).catch((error) => {
+                                alert("Erro ao remover o Levita!")
+                                console.error("Erro na comunicação com a api: ", error);
+                            }) :
+                            fetch("http://localhost:1004/v1/escala", {
+                                method: "POST",
+                                body: JSON.stringify({
+                                    id: escala?.id,
+                                    data: escala?.data,
+                                    titulo: escala?.titulo,
+                                    ministro: escala?.ministro,
+                                    violao: escala?.violao,
+                                    teclado: escala?.teclado,
+                                    bateria: escala?.bateria,
+                                    baixo: escala?.baixo,
+                                    guitarra: escala?.guitarra,
+                                    back: escala?.back,
+                                    observacoes: escala?.observacoes
+                                })
+                            }).then((response) => {
+                                setIsLoading(false)
+                                alert(response.status === 200 ? "Levita removido com sucesso!" : "Erro ao remover o Levita: " + response.headers.get("error"))
+                            }).catch((error) => {
+                                alert("Erro ao remover o Levita!")
+                                console.error("Erro na comunicação com a api: ", error);
+                            })
+                    }}>Adicionar</Button>
                     <Button className="hover:bg-rose-500" onClick={() => setOpen(false)}>Cancelar</Button>
                 </DialogFooter>
             </DialogContent>

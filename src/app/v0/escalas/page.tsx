@@ -18,7 +18,7 @@ import { Badge } from "@/components/ui/badge";
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { ChevronLeft, CircleMinus, CirclePlus, IterationCw, Loader2 } from "lucide-react";
 import { Escala, EscalaResumida } from "@/components/apiObjects";
-import { DialogAddEscala, DialogVerEscala } from "@/components/dialogs/dialog-escala";
+import { DialogAddEditEscala, DialogVerEscala } from "@/components/dialogs/dialog-escala";
 import ModalEscala from "@/components/modal";
 
 /* export async function fetchEscalas() {
@@ -61,7 +61,7 @@ export default function Home() {
             <h1 className="mx-5 font-extrabold tracking-tight text-5xl">Escalas</h1>
           </div>
           <div className="flex items-center">
-            <DialogAddEscala />
+            <DialogAddEditEscala isEdit={false} escala={null} />
             <Button variant={"outline"} className="mx-2 hover:text-rose-500"><CircleMinus className="mx-1 text-rose-500" />Excluir Escala</Button>
           </div>
         </div>
