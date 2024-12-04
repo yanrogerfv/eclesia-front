@@ -9,11 +9,11 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import { Escala, Levita, convertDateFormat } from "../apiObjects";
+import { Escala, Levita, Musica, convertDateFormat } from "../apiObjects";
 import { Button } from "../ui/button";
 import { CirclePlus, PencilLine } from "lucide-react";
 import { useEffect, useState } from "react";
-import { UUID } from "crypto";
+import { randomUUID, UUID } from "crypto";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select"
@@ -85,7 +85,8 @@ export function DialogVerEscala(props: props) {
                             )) : <p className="text-foreground/25">Nenhuma música inserida.</p>}
                     </Card>
                     <DialogFooter>
-                        <DialogAddEditEscala isEdit={true} escala={escalaData} levitasDisponiveis={props.levitasDisponiveis}/>
+                        <DialogAddMusicaInEscala escalaId={escalaData.id}/>
+                        <DialogAddEditEscala isEdit={true} escala={escalaData} levitasDisponiveis={props.levitasDisponiveis} />
                     </DialogFooter>
                 </DialogContent>
             </Dialog> : <Button variant={"outline"} disabled={true} className="flex items-center justify-center">Ver Escala</Button>
@@ -158,7 +159,7 @@ export function DialogAddEditEscala(pp: addEditDialogProps) {
                         value={pp.escala?.titulo} onChange={(e) => setTitulo(e.target.value)} />
                     <Label>Data:</Label>
                     <Input type="date" placeholder="Data."
-                        value={pp.escala? pp.escala.data.toString() : undefined} onChange={(e) => setData(e.target.value)} />
+                        value={pp.escala ? pp.escala.data.toString() : undefined} onChange={(e) => setData(e.target.value)} />
                     <br />
 
                     <Label>Ministro</Label>
@@ -178,7 +179,7 @@ export function DialogAddEditEscala(pp: addEditDialogProps) {
                     <Select onValueChange={(value) => setViolao(value)} disabled={pp.escala?.data.toString().length == 0}>
                         <SelectTrigger>
                             <SelectValue className={pp.escala?.violao ? "text-white" : "text-zinc-50/50"}
-                                placeholder={pp.escala?.violao? pp.escala.violao.nome:"Escolha um levita para tocar violão."}/>
+                                placeholder={pp.escala?.violao ? pp.escala.violao.nome : "Escolha um levita para tocar violão."} />
                         </SelectTrigger>
                         <SelectContent>
                             {filterByInstrumento(1).map((levita) => (
@@ -192,7 +193,7 @@ export function DialogAddEditEscala(pp: addEditDialogProps) {
                     <Select onValueChange={(value) => setTeclado(value)} disabled={pp.escala?.data.toString().length == 0}>
                         <SelectTrigger>
                             <SelectValue className={pp.escala?.teclado ? "text-white" : "text-zinc-50/50"}
-                                placeholder={pp.escala?.teclado? pp.escala.teclado.nome:"Escolha um levita para tocar teclado."} />
+                                placeholder={pp.escala?.teclado ? pp.escala.teclado.nome : "Escolha um levita para tocar teclado."} />
                         </SelectTrigger>
                         <SelectContent>
                             {filterByInstrumento(2).map((levita) => (
@@ -206,7 +207,7 @@ export function DialogAddEditEscala(pp: addEditDialogProps) {
                     <Select onValueChange={(value) => setBateria(value)} disabled={pp.escala?.data.toString().length == 0}>
                         <SelectTrigger>
                             <SelectValue className={pp.escala?.bateria ? "text-white" : "text-zinc-50/50"}
-                                placeholder={pp.escala?.bateria? pp.escala.bateria.nome:"Escolha um levita para tocar bateria."} />
+                                placeholder={pp.escala?.bateria ? pp.escala.bateria.nome : "Escolha um levita para tocar bateria."} />
                         </SelectTrigger>
                         <SelectContent>
                             {filterByInstrumento(3).map((levita) => (
@@ -220,7 +221,7 @@ export function DialogAddEditEscala(pp: addEditDialogProps) {
                     <Select onValueChange={(value) => setBaixo(value)} disabled={pp.escala?.data.toString().length == 0}>
                         <SelectTrigger>
                             <SelectValue className={pp.escala?.baixo ? "text-white" : "text-zinc-50/50"}
-                                placeholder={pp.escala?.baixo? pp.escala.baixo.nome:"Escolha um levita para tocar baixo."} />
+                                placeholder={pp.escala?.baixo ? pp.escala.baixo.nome : "Escolha um levita para tocar baixo."} />
                         </SelectTrigger>
                         <SelectContent>
                             {filterByInstrumento(4).map((levita) => (
@@ -234,7 +235,7 @@ export function DialogAddEditEscala(pp: addEditDialogProps) {
                     <Select onValueChange={(value) => setGuitarra(value)} disabled={pp.escala?.data.toString().length == 0}>
                         <SelectTrigger>
                             <SelectValue className={pp.escala?.guitarra ? "text-white" : "text-zinc-50/50"}
-                                placeholder={pp.escala?.guitarra? pp.escala.guitarra.nome:"Escolha um levita para tocar guitarra."} />
+                                placeholder={pp.escala?.guitarra ? pp.escala.guitarra.nome : "Escolha um levita para tocar guitarra."} />
                         </SelectTrigger>
                         <SelectContent>
                             {filterByInstrumento(5).map((levita) => (
@@ -262,7 +263,7 @@ export function DialogAddEditEscala(pp: addEditDialogProps) {
                 <DialogFooter>
                     <Button className="hover:bg-emerald-500" onClick={() => {
                         setIsLoading(true)
-                        pp.isEdit ? escala ? 
+                        pp.isEdit ? escala ?
                             fetch("http://localhost:1004/v1/escala", {
                                 method: "PUT",
                                 headers: {
@@ -312,10 +313,109 @@ export function DialogAddEditEscala(pp: addEditDialogProps) {
                                 alert("Erro ao adicionar escala!")
                                 console.error("Erro na comunicação com a api: ", error);
                             })
-                    }}>{pp.isEdit?"Confirmar":"Adicionar"}</Button>
+                    }}>{pp.isEdit ? "Confirmar" : "Adicionar"}</Button>
                     <Button className="hover:bg-rose-500" onClick={() => setOpen(false)}>Cancelar</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog >
+    )
+}
+
+interface DialogAddMusicaInEscalaProps {
+    escalaId: UUID
+}
+export function DialogAddMusicaInEscala(props: DialogAddMusicaInEscalaProps) {
+    const [musicas, setMusicas] = useState<Musica[]>();
+    const [selectedMusicas, setSelectedMusicas] = useState<String[]>([]);
+    const [filteredMusicas, setFilteredMusicas] = useState(musicas);
+    const [nomeMusica, setNomeMusica] = useState("");
+    const [linkMusica, setLinkMusica] = useState("");
+    const [cifraMusica, setCifraMusica] = useState("");
+    const [open, setOpen] = useState(false);
+    const [isLoading, setLoading] = useState(false);
+
+    function getSelectedMusicas() {
+        return musicas ? selectedMusicas.map((musicaId) => musicas.find((musica) => musica.id == musicaId)) : []
+    }
+    function addSelectedMusica(musicaId: String) {
+        setSelectedMusicas([...selectedMusicas, musicaId])
+        setFilteredMusicas(musicas?.filter((musica) => !selectedMusicas.includes(musica.id)))
+    }
+    function removeSelectedMusica(musicaId: String) {
+        setSelectedMusicas(selectedMusicas.filter((musica) => musica != musicaId))
+        setFilteredMusicas(musicas?.filter((musica) => !selectedMusicas.includes(musica.id)))
+    }
+
+    useEffect(() => {
+        fetch("http://localhost:1004/v1/musicas")
+            .then((res) => res.json())
+            .then((data) => {
+                setMusicas(data)
+                setFilteredMusicas(data)
+            })
+            .catch((error) => {
+                console.error("Erro na comunicação com a api: ", error)
+                setMusicas([]);
+                setFilteredMusicas([])
+            })
+    }, [musicas])
+
+    return (
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                <Button variant={"outline"} className="mx-2 hover:text-emerald-500">
+                    <CirclePlus className="mx-1 text-emerald-500" />Adicionar Música</Button>
+            </DialogTrigger>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Adicionar Música</DialogTitle>
+                    <br />
+                    <Label>Músicas para adicionar:</Label>
+                    <Select onValueChange={(value) => addSelectedMusica(value)} disabled={musicas == undefined || musicas.length==0}>
+                        <SelectTrigger>
+                            <SelectValue placeholder={"Selecione músicas."} />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {filteredMusicas?.map((musica) => (
+                                <SelectItem value={musica.id} key={musica.id} onSelect={() => addSelectedMusica(musica.id)}>{musica.nome}</SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                    <br />
+                    <Label>Músicas selecionadas:</Label>
+                    <Card className="bg-transparent grid grid-cols-4">
+                        {getSelectedMusicas().map((musica) => (
+                            <Button key={musica?.id} variant={"outline"} type="submit" className="p-2 rounded-lg m-2"
+                                onClick={() => removeSelectedMusica(musica ? musica.id : "")}>{musica?.nome}</Button>
+                        ))}
+                    </Card>
+                    <br />
+
+                </DialogHeader>
+                <DialogFooter className="">
+                    <Button className="hover:bg-emerald-500"
+                        type="submit" disabled={isLoading} onClick={() => {
+                            setLoading(true)
+                            fetch(`http://localhost:1004/v1/escala/musicas/${props.escalaId}`, {
+                                method: "POST",
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                    musicasIds: selectedMusicas
+                                })
+                            })
+                                .then((res) => res.json())
+                                .then(() => { setOpen(false) })
+                                // .then((data) => setCreatedMusic(data))
+                                .catch((error) => {
+                                    console.error("Erro na comunicação com a api: ", error);
+                                })
+                            alert("Música inserida com sucesso!")
+                        }}>Salvar</Button>
+                    <Button className="hover:bg-rose-600/80" onClick={() => setOpen(false)}>Cancelar</Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
     )
 }

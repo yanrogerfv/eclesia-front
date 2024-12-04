@@ -18,7 +18,7 @@ import { Badge } from "@/components/ui/badge";
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { ChevronLeft, CircleMinus, CirclePlus, IterationCw, Loader2 } from "lucide-react";
 import { Escala, EscalaResumida, Levita } from "@/components/apiObjects";
-import { DialogAddEditEscala, DialogVerEscala } from "@/components/dialogs/dialog-escala";
+import { DialogAddEditEscala, DialogAddMusicaInEscala, DialogVerEscala } from "@/components/dialogs/dialog-escala";
 import ModalEscala from "@/components/modal";
 
 /* export async function fetchEscalas() {
