@@ -16,7 +16,7 @@ import { UUID } from "crypto";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { useEffect, useMemo, useState, useTransition } from "react";
-import { ChevronLeft, CircleMinus, CirclePlus, IterationCw, Loader2 } from "lucide-react";
+import { ChevronLeft, CircleMinus, CirclePlus, IterationCw, Loader2, X } from "lucide-react";
 import { Escala, EscalaResumida, Levita } from "@/components/apiObjects";
 import { DialogAddEditEscala, DialogAddMusicaInEscala, DialogVerEscala } from "@/components/dialogs/dialog-escala";
 import ModalEscala from "@/components/modal";
@@ -33,7 +33,8 @@ export default function Home() {
   const [escalasData, setEscalasData] = useState<EscalaResumida[]>([])
   const [levitasDisponiveis, setLevitasDisponiveis] = useState<Levita[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [isEscalaModalOpen, setIsEscalaModalOpen] = useState(false);
+  const [loadingRemove, setLoadingRemove] = useState(false)
+  const [removeOverlay, setRemoveOverlay] = useState(false)
 
   useEffect(() => {
     // setIsLoading(true)
@@ -47,7 +48,7 @@ export default function Home() {
         console.error("Erro na comunicação com a api: ", error)
         setEscalasData([]);
       })
-  }, [])
+  }, [escalasData])
 
   useEffect(() => {
     fetch("http://localhost:1004/v1/levita/resumed")
@@ -59,7 +60,7 @@ export default function Home() {
         console.error("Erro na comunicação com a api: ", error)
         setLevitasDisponiveis([]);
       })
-  }, [])
+  }, [levitasDisponiveis])
 
   return (
     <main className="max-w-6xl mx-auto my-12">
@@ -74,7 +75,10 @@ export default function Home() {
           </div>
           <div className="flex items-center">
             <DialogAddEditEscala isEdit={false} escala={undefined} levitasDisponiveis={levitasDisponiveis} />
-            <Button variant={"outline"} className="mx-2 hover:text-rose-500"><CircleMinus className="mx-1 text-rose-500" />Excluir Escala</Button>
+            <Button variant="outline" className={removeOverlay ? "mx-2 font-bold bg-rose-500/80 border-rose-600/90 hover:bg-rose-600/40"
+                : "mx-2 font-bold hover:bg-rose-500/40"}
+                onClick={() => setRemoveOverlay(!removeOverlay)}>
+              <CircleMinus className="mx-1 text-rose-500" />Excluir Escala</Button>
           </div>
         </div>
         <br />
@@ -94,7 +98,21 @@ export default function Home() {
             </div>
           ) : (
             escalasData.map(escala => (
-              <Card className="hover:text-current/50" key={escala.id} onClick={() => setIsEscalaModalOpen(true)}>
+              <Card key={escala.id} className={removeOverlay ? "animate-pulse" : ""}>
+                <X className={removeOverlay ? "absolute hover:cursor-pointer bg-rose-500/80 rounded-br-xl animate-none" : "absolute invisible"} onClick={() => {
+                  setLoadingRemove(true)
+                  fetch(`http://localhost:1004/v1/escala/${escala.id}`, {
+                    method: "DELETE"
+                  })
+                    .then((response) => {
+                      setLoadingRemove(false)
+                      alert(response.status === 200 ? "Escala removida com sucesso!" : "Erro ao remover a Escala: " + response.headers.get("error"))
+                    })
+                    .catch((error) => {
+                      alert("Erro ao remover Escala!")
+                      console.error("Erro na comunicação com a api: ", error);
+                    })
+                }} />
                 <CardHeader>
                   <CardTitle className={
                     escala.domingo ? "text-teal-400" : escala.quarta ? "text-emerald-400" : "text-sky-400"
