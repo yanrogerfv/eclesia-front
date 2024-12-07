@@ -20,6 +20,7 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrig
 import { Textarea } from "../ui/textarea";
 import { ScrollArea } from "../ui/scroll-area";
 import { Card } from "../ui/card";
+import Link from "next/link";
 
 interface props {
     escalaId: UUID,
@@ -78,14 +79,15 @@ export function DialogVerEscala(props: props) {
                     <br />
 
                     <Label>Músicas:</Label>
-                    <Card className="bg-transparent grid-flow-row p-2">
+                    <Card className="bg-transparent grid grid-flow-row p-2">
                         {escalaData.musicas ?
                             escalaData.musicas.map((musica) => (
-                                <Button key={musica.id} variant={"outline"} className="p-2 rounded-lg m-2">{musica.nome}</Button>
+                                <Button key={musica.id} variant={"outline"} className="p-2 rounded-lg m-2">
+                                    <Link href={musica.link} target="_blank">{musica.nome}</Link></Button>
                             )) : <p className="text-foreground/25">Nenhuma música inserida.</p>}
                     </Card>
                     <DialogFooter>
-                        <DialogAddMusicaInEscala escalaId={escalaData.id}/>
+                        <DialogAddMusicaInEscala escalaId={escalaData.id} />
                         <DialogAddEditEscala isEdit={true} escala={escalaData} levitasDisponiveis={props.levitasDisponiveis} />
                     </DialogFooter>
                 </DialogContent>
@@ -109,24 +111,31 @@ interface addEditDialogProps {
 }
 
 export function DialogAddEditEscala(pp: addEditDialogProps) {
-    const [escala, setEscala] = useState<Escala>()
     const [open, setOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false)
     const levitasDisponiveis = pp.levitasDisponiveis;
-    const [data, setData] = useState("");
-    const [titulo, setTitulo] = useState("");
-    const [ministro, setMinistro] = useState("");
-    const [baixo, setBaixo] = useState("");
-    const [bateria, setBateria] = useState("");
-    const [guitarra, setGuitarra] = useState("");
-    const [teclado, setTeclado] = useState("");
-    const [violao, setViolao] = useState("");
-    const [backs, setBacks] = useState<String[]>([]);
-    const [observacao, setObservacao] = useState("");
+    const [data, setData] = useState(pp.escala?.data.toString() || "");
+    const [titulo, setTitulo] = useState(pp.escala?.titulo || "");
+    const [ministro, setMinistro] = useState(pp.escala?.ministro?.id || "");
+    const [baixo, setBaixo] = useState(pp.escala?.baixo?.id || "");
+    const [bateria, setBateria] = useState(pp.escala?.bateria?.id || "");
+    const [guitarra, setGuitarra] = useState(pp.escala?.guitarra?.id || "");
+    const [teclado, setTeclado] = useState(pp.escala?.teclado?.id || "");
+    const [violao, setViolao] = useState(pp.escala?.violao?.id || "");
+    const [backs, setBacks] = useState<String[]>(pp.escala?.back.map((back) => back.id) || []);
+    const [observacao, setObservacao] = useState(pp.escala?.observacoes || "");
 
     function filterByInstrumento(instrumentoId: number) {
         return levitasDisponiveis.filter((levita) => levita.instrumentos.some((instrumento) => instrumento.id == instrumentoId))
     }
+
+    function addBack(levitaId: String) {
+        setBacks([...backs, levitaId])
+    }
+    function removeBack(levitaId: String) {
+        setBacks(backs.filter((back) => back != levitaId))
+    }
+
 
     // useEffect(() => {
     //     fetch("http://localhost:1004/v1/levita/resumed")
@@ -185,6 +194,7 @@ export function DialogAddEditEscala(pp: addEditDialogProps) {
                             {filterByInstrumento(1).map((levita) => (
                                 <SelectItem value={levita.id} key={levita.id} onSelect={() => setViolao(levita.id)}>{levita.nome}</SelectItem>
                             ))}
+                            <SelectItem value={"null"} onSelect={() => setViolao("")} className="text-zinc-400">Sem violão</SelectItem>
                         </SelectContent>
                     </Select>
                     <br />
@@ -199,6 +209,7 @@ export function DialogAddEditEscala(pp: addEditDialogProps) {
                             {filterByInstrumento(2).map((levita) => (
                                 <SelectItem value={levita.id} key={levita.id} onSelect={() => setTeclado(levita.id)}>{levita.nome}</SelectItem>
                             ))}
+                            <SelectItem value={"null"} onSelect={() => setTeclado("")} className="text-zinc-400">Sem teclado</SelectItem>
                         </SelectContent>
                     </Select>
                     <br />
@@ -213,6 +224,7 @@ export function DialogAddEditEscala(pp: addEditDialogProps) {
                             {filterByInstrumento(3).map((levita) => (
                                 <SelectItem value={levita.id} key={levita.id} onSelect={() => setBateria(levita.id)}>{levita.nome}</SelectItem>
                             ))}
+                            <SelectItem value={"null"} onSelect={() => setBateria("")} className="text-zinc-400">Sem bateria</SelectItem>
                         </SelectContent>
                     </Select>
                     <br />
@@ -227,6 +239,7 @@ export function DialogAddEditEscala(pp: addEditDialogProps) {
                             {filterByInstrumento(4).map((levita) => (
                                 <SelectItem value={levita.id} key={levita.id} onSelect={() => setBaixo(levita.id)}>{levita.nome}</SelectItem>
                             ))}
+                            <SelectItem value={"null"} onSelect={() => setBaixo("")} className="text-zinc-400">Sem baixo</SelectItem>
                         </SelectContent>
                     </Select>
                     <br />
@@ -241,6 +254,7 @@ export function DialogAddEditEscala(pp: addEditDialogProps) {
                             {filterByInstrumento(5).map((levita) => (
                                 <SelectItem value={levita.id} key={levita.id} onSelect={() => setGuitarra(levita.id)}>{levita.nome}</SelectItem>
                             ))}
+                            <SelectItem value={"null"} onSelect={() => setGuitarra("")} className="text-zinc-400">Sem guitarra</SelectItem>
                         </SelectContent>
                     </Select>
                     <br />
@@ -253,8 +267,9 @@ export function DialogAddEditEscala(pp: addEditDialogProps) {
                     <Label>Backs:</Label>
                     <Card className="bg-transparent grid grid-cols-4">
                         {filterByInstrumento(0).map((levita) => (
-                            <Button key={levita.id} variant={"outline"} type="submit" className="p-2 rounded-lg m-2"
-                                onClick={() => setBacks([...backs, levita.id])}>{levita.nome}</Button>
+                            <Button key={levita.id} variant={backs.includes(levita.id) ? "default" : "outline"} type="submit"
+                                className={"p-2 rounded-lg m-2"}
+                                onClick={() => { backs.includes(levita.id) ? removeBack(levita.id) : addBack(levita.id) }}>{levita.nome}</Button>
                         ))}
                     </Card>
                     <br />
@@ -263,32 +278,35 @@ export function DialogAddEditEscala(pp: addEditDialogProps) {
                 <DialogFooter>
                     <Button className="hover:bg-emerald-500" onClick={() => {
                         setIsLoading(true)
-                        pp.isEdit ? escala ?
-                            fetch("http://localhost:1004/v1/escala", {
-                                method: "PUT",
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify({
-                                    id: escala.id,
-                                    titulo: titulo,
-                                    data: data,
-                                    ministro: ministro,
-                                    violao: violao,
-                                    teclado: teclado,
-                                    bateria: bateria,
-                                    baixo: baixo,
-                                    guitarra: guitarra,
-                                    backs: backs,
-                                    observacoes: observacao
+                        pp.isEdit ?
+                            pp.escala ?
+                                fetch("http://localhost:1004/v1/escala", {
+                                    method: "PUT",
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                    },
+                                    body: JSON.stringify({
+                                        id: pp.escala.id,
+                                        titulo: titulo,
+                                        data: data,
+                                        ministro: ministro == "null" ? null : ministro,
+                                        violao: violao == "null" ? null : violao,
+                                        teclado: teclado == "null" ? null : teclado,
+                                        bateria: bateria == "null" ? null : bateria,
+                                        baixo: baixo == "null" ? null : baixo,
+                                        guitarra: guitarra == "null" ? null : guitarra,
+                                        backs: backs,
+                                        observacoes: observacao
+                                    })
+                                }).then((response) => {
+                                    setIsLoading(false)
+                                    alert(response.status === 200 ? "Escala editada com sucesso!" : "Erro ao editar a escala: " + response.headers.get("error"))
+                                }).then(() => console.log(pp.escala)).catch((error) => {
+                                    alert("Erro ao editar escala!")
+                                    console.error("Erro na comunicação com a api: ", error);
                                 })
-                            }).then((response) => {
-                                setIsLoading(false)
-                                alert(response.status === 200 ? "Escala editada com sucesso!" : "Erro ao editar a escala: " + response.headers.get("error"))
-                            }).then(() => console.log(escala)).catch((error) => {
-                                alert("Erro ao editar escala!")
-                                console.error("Erro na comunicação com a api: ", error);
-                            }) : alert("Escala não encontrada.") :
+                                : alert("Escala não encontrada.")
+                            :
                             fetch("http://localhost:1004/v1/escala", {
                                 method: "POST",
                                 headers: {
@@ -327,10 +345,6 @@ interface DialogAddMusicaInEscalaProps {
 export function DialogAddMusicaInEscala(props: DialogAddMusicaInEscalaProps) {
     const [musicas, setMusicas] = useState<Musica[]>();
     const [selectedMusicas, setSelectedMusicas] = useState<String[]>([]);
-    const [filteredMusicas, setFilteredMusicas] = useState(musicas);
-    const [nomeMusica, setNomeMusica] = useState("");
-    const [linkMusica, setLinkMusica] = useState("");
-    const [cifraMusica, setCifraMusica] = useState("");
     const [open, setOpen] = useState(false);
     const [isLoading, setLoading] = useState(false);
 
@@ -339,11 +353,9 @@ export function DialogAddMusicaInEscala(props: DialogAddMusicaInEscalaProps) {
     }
     function addSelectedMusica(musicaId: String) {
         setSelectedMusicas([...selectedMusicas, musicaId])
-        setFilteredMusicas(musicas?.filter((musica) => !selectedMusicas.includes(musica.id)))
     }
     function removeSelectedMusica(musicaId: String) {
         setSelectedMusicas(selectedMusicas.filter((musica) => musica != musicaId))
-        setFilteredMusicas(musicas?.filter((musica) => !selectedMusicas.includes(musica.id)))
     }
 
     useEffect(() => {
@@ -351,12 +363,10 @@ export function DialogAddMusicaInEscala(props: DialogAddMusicaInEscalaProps) {
             .then((res) => res.json())
             .then((data) => {
                 setMusicas(data)
-                setFilteredMusicas(data)
             })
             .catch((error) => {
                 console.error("Erro na comunicação com a api: ", error)
                 setMusicas([]);
-                setFilteredMusicas([])
             })
     }, [musicas])
 
@@ -371,19 +381,19 @@ export function DialogAddMusicaInEscala(props: DialogAddMusicaInEscalaProps) {
                     <DialogTitle>Adicionar Música</DialogTitle>
                     <br />
                     <Label>Músicas para adicionar:</Label>
-                    <Select onValueChange={(value) => addSelectedMusica(value)} disabled={musicas == undefined || musicas.length==0}>
+                    <Select onValueChange={(value) => addSelectedMusica(value)} disabled={musicas == undefined || musicas.length == 0}>
                         <SelectTrigger>
                             <SelectValue placeholder={"Selecione músicas."} />
                         </SelectTrigger>
                         <SelectContent>
-                            {filteredMusicas?.map((musica) => (
+                            {musicas?.filter((musica) => !selectedMusicas.includes(musica.id)).map((musica) => (
                                 <SelectItem value={musica.id} key={musica.id} onSelect={() => addSelectedMusica(musica.id)}>{musica.nome}</SelectItem>
                             ))}
                         </SelectContent>
                     </Select>
                     <br />
                     <Label>Músicas selecionadas:</Label>
-                    <Card className="bg-transparent grid grid-cols-4">
+                    <Card className="bg-transparent grid grid-flow-row">
                         {getSelectedMusicas().map((musica) => (
                             <Button key={musica?.id} variant={"outline"} type="submit" className="p-2 rounded-lg m-2"
                                 onClick={() => removeSelectedMusica(musica ? musica.id : "")}>{musica?.nome}</Button>
@@ -395,6 +405,7 @@ export function DialogAddMusicaInEscala(props: DialogAddMusicaInEscalaProps) {
                 <DialogFooter className="">
                     <Button className="hover:bg-emerald-500"
                         type="submit" disabled={isLoading} onClick={() => {
+                            console.log(selectedMusicas)
                             setLoading(true)
                             fetch(`http://localhost:1004/v1/escala/musicas/${props.escalaId}`, {
                                 method: "POST",
@@ -406,12 +417,13 @@ export function DialogAddMusicaInEscala(props: DialogAddMusicaInEscalaProps) {
                                 })
                             })
                                 .then((res) => res.json())
+                                .then((res) => res.status === 200 ? alert("Músicas adicionadas com sucesso!") : alert("Erro ao adicionar músicas: " + res.headers.get("error")))
                                 .then(() => { setOpen(false) })
                                 // .then((data) => setCreatedMusic(data))
                                 .catch((error) => {
                                     console.error("Erro na comunicação com a api: ", error);
                                 })
-                            alert("Música inserida com sucesso!")
+                                setLoading(false)
                         }}>Salvar</Button>
                     <Button className="hover:bg-rose-600/80" onClick={() => setOpen(false)}>Cancelar</Button>
                 </DialogFooter>
