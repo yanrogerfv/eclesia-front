@@ -9,45 +9,46 @@ function convertDateFormat(dateString: Date) {
     return String((date.getDate() + 1) + '/' + (date.getMonth() + 1) + '/' + date.getFullYear())
 }
 
-export function EscalaCard(escala: Escala) {
-    return (
-        <>
-            <Card className="hover:text-current/50" key={escala.id}>
-                <CardHeader>
-                    <CardTitle className={
-                        escala.domingo ? "text-teal-400" : escala.quarta ? "text-emerald-400" : "text-sky-400"
-                    }>{escala.titulo}
+// export function EscalaCard(escala: Escala) {
+//     return (
+//         <>
+//             <Card className="hover:text-current/50" key={escala.id}>
+//                 <CardHeader>
+//                     <CardTitle className={
+//                         escala.domingo ? "text-teal-400" : escala.quarta ? "text-emerald-400" : "text-sky-400"
+//                     }>{escala.titulo}
 
-                    </CardTitle>
-                    {convertDateFormat(escala.data)}
-                    <CardDescription>
-                        {escala.observacoes}
-                    </CardDescription>
-                </CardHeader>
-                <CardContent key={escala.id}>
-                    <a className="text-teal-400">Ministro: </a><a className="text-emerald-400">{escala.ministro.nome}</a><br />
-                    <a className="text-teal-400">Violão: </a>{escala.violao ? escala.violao.nome : <a className="text-zinc-50/50">Não inserido.</a>}<br />
-                    <a className="text-teal-400">Teclado: </a>{escala.teclado ? escala.teclado.nome : <a className="text-zinc-50/50">Não inserido.</a>}<br />
-                    <a className="text-teal-400">Bateria: </a>{escala.bateria ? escala.bateria.nome : <a className="text-zinc-50/50">Não inserido.</a>}<br />
-                    <a className="text-teal-400">Baixo: </a>{escala.baixo ? escala.baixo.nome : <a className="text-zinc-50/50">Não inserido.</a>}<br />
-                    <a className="text-teal-400">Guitarra: </a>{escala.guitarra ? escala.guitarra.nome : <a className="text-zinc-50/50">Não inserido.</a>}<br />
-                </CardContent>
-                <CardFooter className="mt-auto inset-x-0 bottom-0 flow-root">
-                    {escala.domingo ?
-                        <Badge className="bg-teal-400/80 hover:bg-teal-400/20">Domingo</Badge>
-                        : escala.quarta ?
-                            <Badge className="bg-emerald-400/80 hover:bg-emerald-400/20">Quarta</Badge>
-                            :
-                            <Badge className="bg-sky-400/80 hover:bg-sky-400/20">Especial</Badge>
-                    }
-                    <DialogVerEscala key={escala.id}
-                        escalaId={escala.id}
-                    />
-                </CardFooter>
-            </Card>
-        </>
-    )
-}
+//                     </CardTitle>
+//                     {convertDateFormat(escala.data)}
+//                     <CardDescription>
+//                         {escala.observacoes}
+//                     </CardDescription>
+//                 </CardHeader>
+//                 <CardContent key={escala.id}>
+//                     <a className="text-teal-400">Ministro: </a><a className="text-emerald-400">{escala.ministro.nome}</a><br />
+//                     <a className="text-teal-400">Violão: </a>{escala.violao ? escala.violao.nome : <a className="text-zinc-50/50">Não inserido.</a>}<br />
+//                     <a className="text-teal-400">Teclado: </a>{escala.teclado ? escala.teclado.nome : <a className="text-zinc-50/50">Não inserido.</a>}<br />
+//                     <a className="text-teal-400">Bateria: </a>{escala.bateria ? escala.bateria.nome : <a className="text-zinc-50/50">Não inserido.</a>}<br />
+//                     <a className="text-teal-400">Baixo: </a>{escala.baixo ? escala.baixo.nome : <a className="text-zinc-50/50">Não inserido.</a>}<br />
+//                     <a className="text-teal-400">Guitarra: </a>{escala.guitarra ? escala.guitarra.nome : <a className="text-zinc-50/50">Não inserido.</a>}<br />
+//                 </CardContent>
+//                 <CardFooter className="mt-auto inset-x-0 bottom-0 flow-root">
+//                     {escala.domingo ?
+//                         <Badge className="bg-teal-400/80 hover:bg-teal-400/20">Domingo</Badge>
+//                         : escala.quarta ?
+//                             <Badge className="bg-emerald-400/80 hover:bg-emerald-400/20">Quarta</Badge>
+//                             :
+//                             <Badge className="bg-sky-400/80 hover:bg-sky-400/20">Especial</Badge>
+//                     }
+//                     <DialogVerEscala key={escala.id}
+//                         escalaId={escala.id}
+//                         levitasDisponiveis={}
+//                     />
+//                 </CardFooter>
+//             </Card>
+//         </>
+//     )
+// }
 
 export function EscalaSimpleCard(escala: EscalaResumida) {
     const day = escala.domingo ? "Domingo" : escala.quarta ? "Quarta" : "Especial"

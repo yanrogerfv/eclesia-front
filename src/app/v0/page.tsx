@@ -15,7 +15,7 @@ import React, { useEffect, useState, useTransition } from "react";
 import { ButtonLink } from "@/components/buttonlink";
 import PageHeader from "@/components/pgtitle";
 import { Escala, EscalaResumida, Levita } from "@/components/apiObjects";
-import { EscalaCard, EscalaSimpleCard, LevitaSimpleCard } from "@/components/customCards";
+import { EscalaSimpleCard, LevitaSimpleCard } from "@/components/customCards";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
