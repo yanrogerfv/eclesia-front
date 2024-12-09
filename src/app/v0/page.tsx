@@ -57,12 +57,17 @@ export default function Home() {
     <main className="max-w-6xl mx-auto my-12">
       <PageHeader urlBack="null" title="Planejador" subtitle="Planejador de Escalas" />
       <div>
-        <div key={"card-bg"} className="flex gap-4 w-full p-5 h-auto bg">
-          <ButtonLink title="Escalas" reff="v0/escalas" />
-          <ButtonLink title="Levitas" reff="v0/levitas" />
-          <ButtonLink title="Músicas" reff="v0/musicas" />
-          <ButtonLink title="Instrumentos" reff="v0/instrumentos" />
-        </div><br />
+        <div key={"card-bg"} className="flex items-center justify-between gap-4 w-full">
+          {/* <ButtonLink title="Escalas" reff="v0/escalas" /> */}
+          <Button variant={"outline"} className="flex h-12 w-full text-lg rounded-lg"><Link href="v0/escalas">Escala</Link></Button>
+          {/* <ButtonLink title="Levitas" reff="v0/levitas" /> */}
+          <Button variant={"outline"} className="flex h-12 w-full text-lg rounded-lg"><Link href="v0/levitas">Levitas</Link></Button>
+          {/* <ButtonLink title="Músicas" reff="v0/musicas" /> */}
+          <Button variant={"outline"} className="flex h-12 w-full text-lg rounded-lg"><Link href="v0/musicas">Músicas</Link></Button>
+          {/* <ButtonLink title="Instrumentos" reff="v0/instrumentos" /> */}
+          <Button variant={"outline"} className="flex h-12 w-full text-lg rounded-lg"><Link href="v0/instrumentos">Instrumentos</Link></Button>
+        </div>
+        <br />
         <Card className="p-10 bg-current/30">
           {/* <Calendar title="Próximas Escalas" locale={ptBR as unknown as Locale} selected={date} onSelect={setDate} className="flex border"/> */}
           <Card className="p-2">

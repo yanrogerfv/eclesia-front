@@ -55,6 +55,7 @@ export function EscalaSimpleCard(escala: EscalaResumida) {
     return (
         <Card className="mx-4" key={escala.id}>
             <CardHeader>
+                {/* <CardTitle> */}
                 <CardTitle className={escala.domingo ? "text-teal-400" : escala.quarta ? "text-emerald-400" : "text-sky-400"}>
                     {day + " - " + convertDateFormat(escala.data)}</CardTitle>
                 <CardDescription>
