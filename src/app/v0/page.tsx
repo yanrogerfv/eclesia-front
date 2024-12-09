@@ -59,26 +59,26 @@ export default function Home() {
       <div>
         <div key={"card-bg"} className="flex items-center justify-between gap-4 w-full">
           {/* <ButtonLink title="Escalas" reff="v0/escalas" /> */}
-          <Button variant={"outline"} className="flex h-12 w-full text-lg rounded-lg"><Link href="v0/escalas">Escala</Link></Button>
+          <Button variant={"outfill"} className="flex h-12 w-full text-lg rounded-lg"><Link href="v0/escalas">Escala</Link></Button>
           {/* <ButtonLink title="Levitas" reff="v0/levitas" /> */}
-          <Button variant={"outline"} className="flex h-12 w-full text-lg rounded-lg"><Link href="v0/levitas">Levitas</Link></Button>
+          <Button variant={"outfill"} className="flex h-12 w-full text-lg rounded-lg"><Link href="v0/levitas">Levitas</Link></Button>
           {/* <ButtonLink title="Músicas" reff="v0/musicas" /> */}
-          <Button variant={"outline"} className="flex h-12 w-full text-lg rounded-lg"><Link href="v0/musicas">Músicas</Link></Button>
+          <Button variant={"outfill"} className="flex h-12 w-full text-lg rounded-lg"><Link href="v0/musicas">Músicas</Link></Button>
           {/* <ButtonLink title="Instrumentos" reff="v0/instrumentos" /> */}
-          <Button variant={"outline"} className="flex h-12 w-full text-lg rounded-lg"><Link href="v0/instrumentos">Instrumentos</Link></Button>
+          <Button variant={"outfill"} className="flex h-12 w-full text-lg rounded-lg"><Link href="v0/instrumentos">Instrumentos</Link></Button>
         </div>
         <br />
         <Card className="p-10 bg-current/30">
           {/* <Calendar title="Próximas Escalas" locale={ptBR as unknown as Locale} selected={date} onSelect={setDate} className="flex border"/> */}
           <Card className="p-2">
-            <CardTitle className="text-teal-400 p-4">
+            <CardTitle className="text-primary p-4">
               Próximas escalas:
             </CardTitle>
             {isEscalasLoading ?
               <div className="flex flex-row">
-                <Skeleton className="h-48 w-80 rounded-lg mx-5 border border-cyan-700" />
-                <Skeleton className="h-48 w-80 rounded-lg mx-5 border border-cyan-700" />
-                <Skeleton className="h-48 w-80 rounded-lg mx-5 border border-cyan-700" />
+                <Skeleton className="h-48 w-80 rounded-lg mx-5" />
+                <Skeleton className="h-48 w-80 rounded-lg mx-5" />
+                <Skeleton className="h-48 w-80 rounded-lg mx-5" />
               </div>
               :
               nextEscalas.length > 0 ?
@@ -116,14 +116,14 @@ export default function Home() {
 
           {/*LEVITA SECTION BELOW*/}
           <Card className="p-2">
-            <CardTitle className="text-teal-400 p-4">
+            <CardTitle className="text-primary p-4">
               Levitas Disponíveis:
             </CardTitle>
             {isLevitasLoading ?
               <div className="flex flex-row">
-                <Skeleton className="h-48 w-80 rounded-lg mx-5 border border-cyan-700" />
-                <Skeleton className="h-48 w-80 rounded-lg mx-5 border border-cyan-700" />
-                <Skeleton className="h-48 w-80 rounded-lg mx-5 border border-cyan-700" />
+                <Skeleton className="h-48 w-80 rounded-lg mx-5" />
+                <Skeleton className="h-48 w-80 rounded-lg mx-5" />
+                <Skeleton className="h-48 w-80 rounded-lg mx-5" />
               </div>
               :
               levitasData.length > 0 ?

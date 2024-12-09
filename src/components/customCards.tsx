@@ -53,7 +53,7 @@ function convertDateFormat(dateString: Date) {
 export function EscalaSimpleCard(escala: EscalaResumida) {
     const day = escala.domingo ? "Domingo" : escala.quarta ? "Quarta" : "Especial"
     return (
-        <Card className="mx-4" key={escala.id}>
+        <Card className="mx-4 border border-primary/40" key={escala.id}>
             <CardHeader>
                 {/* <CardTitle> */}
                 <CardTitle className={escala.domingo ? "text-teal-400" : escala.quarta ? "text-emerald-400" : "text-sky-400"}>
@@ -62,8 +62,8 @@ export function EscalaSimpleCard(escala: EscalaResumida) {
                     {escala.titulo}
                 </CardDescription>
             </CardHeader>
-            <CardContent key={escala.id} className="flow-root text-teal-400">
-                Ministro: <a className="text-emerald-400">{escala.ministro?escala.ministro:"bo dia :D"}</a><br />
+            <CardContent key={escala.id} className="flow-root text-secondary">
+                Ministro: <a className="text-secondary-foreground">{escala.ministro?escala.ministro:"bo dia :D"}</a><br />
                 <div className="float-right">
                     {/* <DialogEscala key={escala.id}
                         id={escala.id}
@@ -90,15 +90,15 @@ export function EscalaSimpleCard(escala: EscalaResumida) {
 
 export function LevitaSimpleCard(levita: Levita) {
     return (
-        <Card className="mx-4" key={levita.id}>
+        <Card className="mx-4 border border-primary/40" key={levita.id}>
             <CardHeader>
-                <CardTitle className="text-teal-400">
+                <CardTitle className="">
                     {levita.nome}</CardTitle>
                 <CardDescription>
                     {levita.email ? levita.email : levita.contato}
                 </CardDescription>
             </CardHeader>
-            <CardContent className="flow-root text-teal-400 h-24">
+            <CardContent className="flow-root h-24">
                 {levita.instrumentos.map(instrumento => (
                     <div key={instrumento.id} className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold 
                         transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 m-1">
