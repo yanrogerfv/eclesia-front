@@ -21,24 +21,24 @@ import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import ThemeToggle from "@/components/themeToggle";
 
-window.addEventListener('load', Home, false);
+const document = typeof window !== "undefined" ? window.document : null;
 
 export default function Home() {
   const [nextEscalas, setNextEscalas] = useState<EscalaResumida[]>([]);
   const [levitasData, setLevitasData] = useState<Levita[]>([]);
   const [isEscalasLoading, setEscalaLoader] = useState(true)
   const [isLevitasLoading, setLevitaLoader] = useState(true)
-  const [sereneMode, setsereneMode] = useState(document.documentElement.classList.contains("serene"));
+  const [sereneMode, setsereneMode] = useState(document?.documentElement.classList.contains("serene"));
 
   function handleSereneMode() {
     setsereneMode(!sereneMode)
     if (sereneMode) {
-      document.documentElement.classList.remove("sunset");
-      document.documentElement.classList.add("serene");
+      document?.documentElement.classList.remove("sunset");
+      document?.documentElement.classList.add("serene");
       localStorage.setItem("theme", "serene");
     } else {
-      document.documentElement.classList.remove("serene");
-      document.documentElement.classList.add("sunset");
+      document?.documentElement.classList.remove("serene");
+      document?.documentElement.classList.add("sunset");
       localStorage.setItem("theme", "sunset");
     }
   }
