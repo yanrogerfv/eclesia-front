@@ -21,6 +21,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import ThemeToggle from "@/components/themeToggle";
 
+window.addEventListener('load', Home, false);
+
 export default function Home() {
   const [nextEscalas, setNextEscalas] = useState<EscalaResumida[]>([]);
   const [levitasData, setLevitasData] = useState<Levita[]>([]);
