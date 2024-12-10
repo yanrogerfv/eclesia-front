@@ -88,7 +88,7 @@ export function DialogRemoveInstrumento() {
                         <SelectGroup>
                             <SelectLabel>Instrumentos</SelectLabel>
                             {allInstrumentos.map((instrumento) => (
-                                <SelectItem value={instrumento.id.toString()} onSelect={() => setSelectedInstrumento(instrumento.id)}>{instrumento.nome}</SelectItem>
+                                <SelectItem key={instrumento.id} value={instrumento.id.toString()} onSelect={() => setSelectedInstrumento(instrumento.id)}>{instrumento.nome}</SelectItem>
                             ))}
                         </SelectGroup>
                     </SelectContent>
