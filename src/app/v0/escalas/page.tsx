@@ -68,7 +68,7 @@ export default function Home() {
       <nav>
         <div className="flex justify-between">
           <div className="flex">
-            <Link href="/v0" className="w-auto text-4xl justify-center p-2 cursor-pointer outline outline-1 outline-cyan-400/50 hover:bg-teal-400 hover:text-black rounded-lg">
+            <Link href="/v0" className="w-auto text-4xl justify-center items-center p-2 cursor-pointer outline outline-1 outline-primary/50 hover:bg-secondary hover:text-black rounded-lg">
               <ChevronLeft className="size-10" />
             </Link>
             <h1 className="mx-5 font-extrabold tracking-tight text-5xl">Escalas</h1>
@@ -92,8 +92,8 @@ export default function Home() {
         {
           isLoading ? (
             <div className="col-span-4 h-full flex items-center justify-center mt-20">
-              <div className="size-80 border-4 border-transparent text-cyan-400/40 text-4xl animate-spin flex items-center justify-center border-t-cyan-400 rounded-full">
-                <div className="size-64 border-4 border-transparent text-teal-400/40 text-2xl animate-spin flex items-center justify-center border-t-teal-400 rounded-full" />
+              <div className="size-80 border-4 border-transparent text-primary/40 text-4xl animate-spin flex items-center justify-center border-t-primary rounded-full">
+                <div className="size-64 border-4 border-transparent text-subprimary/40 text-2xl animate-spin flex items-center justify-center border-t-subprimary rounded-full" />
               </div>
             </div>
           ) : (
@@ -115,7 +115,7 @@ export default function Home() {
                 }} />
                 <CardHeader>
                   <CardTitle className={
-                    escala.domingo ? "text-teal-400" : escala.quarta ? "text-emerald-400" : "text-sky-400"
+                    escala.domingo ? "text-primary" : escala.quarta ? "text-secondary" : "text-special"
                   }>
                     {escala.titulo}
                   </CardTitle>
@@ -125,21 +125,21 @@ export default function Home() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent key={escala.id}>
-                  <a className="text-teal-400">Ministro: </a><a className="text-emerald-400">{escala.ministro}</a><br />
-                  <a className="text-teal-400">Violão: </a>{escala.violao ? escala.violao : <a className="text-zinc-50/50">Não inserido.</a>}<br />
-                  <a className="text-teal-400">Teclado: </a>{escala.teclado ? escala.teclado : <a className="text-zinc-50/50">Não inserido.</a>}<br />
-                  <a className="text-teal-400">Bateria: </a>{escala.bateria ? escala.bateria : <a className="text-zinc-50/50">Não inserido.</a>}<br />
-                  <a className="text-teal-400">Baixo: </a>{escala.baixo ? escala.baixo : <a className="text-zinc-50/50">Não inserido.</a>}<br />
-                  <a className="text-teal-400">Guitarra: </a>{escala.guitarra ? escala.guitarra : <a className="text-zinc-50/50">Não inserido.</a>}<br />
+                  <a className="text-subprimary">Ministro: </a><a className="text-secondary">{escala.ministro}</a><br />
+                  <a className="text-subprimary">Violão: </a>{escala.violao ? escala.violao : <a className="text-secondary/40">Não inserido.</a>}<br />
+                  <a className="text-subprimary">Teclado: </a>{escala.teclado ? escala.teclado : <a className="text-secondary/40">Não inserido.</a>}<br />
+                  <a className="text-subprimary">Bateria: </a>{escala.bateria ? escala.bateria : <a className="text-secondary/40">Não inserido.</a>}<br />
+                  <a className="text-subprimary">Baixo: </a>{escala.baixo ? escala.baixo : <a className="text-secondary/40">Não inserido.</a>}<br />
+                  <a className="text-subprimary">Guitarra: </a>{escala.guitarra ? escala.guitarra : <a className="text-secondary/40">Não inserido.</a>}<br />
                 </CardContent>
                 <CardFooter className="flex items-center justify-between">
                   <div>
                     {escala.domingo ?
-                      <Badge className="bg-teal-400/80 hover:bg-teal-400/20">Domingo</Badge>
+                      <Badge className="bg-primary/80 hover:bg-primary/20">Domingo</Badge>
                       : escala.quarta ?
-                        <Badge className="bg-emerald-400/80 hover:bg-emerald-400/20">Quarta</Badge>
+                        <Badge className="bg-subprimary/80 hover:bg-subprimary/20">Quarta</Badge>
                         :
-                        <Badge className="bg-sky-400/80 hover:bg-sky-400/20">Especial</Badge>
+                        <Badge className="bg-special/80 hover:bg-special/20">Especial</Badge>
                     }
                   </div>
                   <div>

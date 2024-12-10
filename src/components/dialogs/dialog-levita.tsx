@@ -28,7 +28,7 @@ export function DialogLevita(att: propsView) {
     return (
         <Dialog>
             <DialogTrigger asChild key={att.levita.nome} className="p-5">
-                <Button variant={"outline"} disabled={att.disabled} className="flex items-center justify-center">Ver Levita</Button>
+                <Button variant={"outline"} disabled={att.disabled} className="flex items-center border border-primary/35 justify-center">Ver Levita</Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
@@ -39,7 +39,7 @@ export function DialogLevita(att: propsView) {
                     </DialogDescription>
                     <br />
                 </DialogHeader>
-                <p className="text-foreground/25">{att.levita.descricao}</p>
+                <p className="text-zinc-200">{att.levita.descricao}</p>
                 <DialogFooter>
                     <DialogEditLevita id={att.levita.id}
                         nome={att.levita.nome}
@@ -200,7 +200,7 @@ export function DialogEditLevita(levita: Levita) {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <PencilLine className="outline rounded-lg p-1 size-auto outline-1 outline-sky-400/25 hover:bg-sky-400 cursor-pointer"
+                <PencilLine className="outline rounded-lg p-1 size-auto outline-1 outline-secondary/25 hover:bg-secondary cursor-pointer"
                     onClick={() => {
                         setNomeLevita(levita.nome)
                         setEmailLevita(levita.email)

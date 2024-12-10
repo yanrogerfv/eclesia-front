@@ -56,29 +56,29 @@ export function DialogVerEscala(props: props) {
                 </DialogTrigger>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle className={"text-2xl " + (escalaData.domingo ? "text-teal-400/80" :
-                            escalaData.quarta ? "text-emerald-400/80" : "text-sky-400/80"
+                        <DialogTitle className={"text-2xl " + (escalaData.domingo ? "text-primary/80" :
+                            escalaData.quarta ? "text-secondary/80" : "text-special"
                         )}>{escalaData.titulo}</DialogTitle>
                         <DialogDescription className="border-b border-zinc-600">
                             {convertDateFormat(escalaData.data)}
                         </DialogDescription>
                         <br />
-                        <p className="text-teal-400">Ministro: <a className="text-emerald-400">{escalaData.ministro.nome}</a></p>
-                        <p className="text-teal-400">Violão: {escalaData.violao ? <a className="text-white"> {escalaData.violao.nome}</a> : <a className="text-zinc-50/50">Não inserido.</a>}</p>
-                        <p className="text-teal-400">Teclado: {escalaData.teclado ? <a className="text-white"> {escalaData.teclado.nome}</a> : <a className="text-zinc-50/50">Não inserido.</a>}</p>
-                        <p className="text-teal-400">Bateria: {escalaData.bateria ? <a className="text-white"> {escalaData.bateria.nome}</a> : <a className="text-zinc-50/50">Não inserido.</a>}</p>
-                        <p className="text-teal-400">Baixo: {escalaData.baixo ? <a className="text-white"> {escalaData.baixo.nome}</a> : <a className="text-zinc-50/50">Não inserido.</a>}</p>
-                        <p className="text-teal-400">Guitarra: {escalaData.guitarra ? <a className="text-white"> {escalaData.guitarra.nome}</a> : <a className="text-zinc-50/50">Não inserido.</a>}</p>
-                        <p className="text-teal-400">Backs: {escalaData.back.length > 0 ? <a className="text-white"> {
+                        <p className="text-subprimary">Ministro: <a className="text-secondary">{escalaData.ministro.nome}</a></p>
+                        <p className="text-subprimary">Violão: {escalaData.violao ? <a className="text-white"> {escalaData.violao.nome}</a> : <a className="text-zinc-50/50">Não inserido.</a>}</p>
+                        <p className="text-subprimary">Teclado: {escalaData.teclado ? <a className="text-white"> {escalaData.teclado.nome}</a> : <a className="text-zinc-50/50">Não inserido.</a>}</p>
+                        <p className="text-subprimary">Bateria: {escalaData.bateria ? <a className="text-white"> {escalaData.bateria.nome}</a> : <a className="text-zinc-50/50">Não inserido.</a>}</p>
+                        <p className="text-subprimary">Baixo: {escalaData.baixo ? <a className="text-white"> {escalaData.baixo.nome}</a> : <a className="text-zinc-50/50">Não inserido.</a>}</p>
+                        <p className="text-subprimary">Guitarra: {escalaData.guitarra ? <a className="text-white"> {escalaData.guitarra.nome}</a> : <a className="text-zinc-50/50">Não inserido.</a>}</p>
+                        <p className="text-subprimary">Backs: {escalaData.back.length > 0 ? <a className="text-white"> {
                             escalaData.back.map((back) => (back.nome)).join(", ")}.</a> : <a className="text-zinc-50/50">Não inseridos.</a>}</p>
                         <br />
 
                     </DialogHeader>
-                    <Label>Observações:</Label>
+                    <Label className="text-secondary/85">Observações:</Label>
                     {escalaData.observacoes ? <p className="text-zinc-200">{escalaData.observacoes}</p> : <p className="text-foreground/25">Nenhuma observação.</p>}
                     <br />
 
-                    <Label>Músicas:</Label>
+                    <Label className="text-secondary/85">Músicas:</Label>
                     <Card className="bg-transparent grid grid-flow-row p-2">
                         {escalaData.musicas ?
                             escalaData.musicas.map((musica) => (

@@ -56,13 +56,13 @@ export function EscalaSimpleCard(escala: EscalaResumida) {
         <Card className="mx-4 border border-primary/40" key={escala.id}>
             <CardHeader>
                 {/* <CardTitle> */}
-                <CardTitle className={escala.domingo ? "text-teal-400" : escala.quarta ? "text-emerald-400" : "text-sky-400"}>
+                <CardTitle className={escala.domingo ? "text-secondary" : escala.quarta ? "text-subprimary" : "text-special"}>
                     {day + " - " + convertDateFormat(escala.data)}</CardTitle>
                 <CardDescription>
                     {escala.titulo}
                 </CardDescription>
             </CardHeader>
-            <CardContent key={escala.id} className="flow-root text-secondary">
+            <CardContent key={escala.id} className="flow-root text-subprimary">
                 Ministro: <a className="text-secondary-foreground">{escala.ministro?escala.ministro:"bo dia :D"}</a><br />
                 <div className="float-right">
                     {/* <DialogEscala key={escala.id}
@@ -92,7 +92,7 @@ export function LevitaSimpleCard(levita: Levita) {
     return (
         <Card className="mx-4 border border-primary/40" key={levita.id}>
             <CardHeader>
-                <CardTitle className="">
+                <CardTitle className="text-secondary">
                     {levita.nome}</CardTitle>
                 <CardDescription>
                     {levita.email ? levita.email : levita.contato}

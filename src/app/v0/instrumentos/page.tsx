@@ -29,7 +29,7 @@ export default function Home() {
       <nav>
         <div className="flex items-center gap-4 justify-between">
           <div className="flex">
-            <Link href="/v0" className="w-auto text-4xl justify-center p-2 cursor-pointer outline outline-1 outline-cyan-400/50 hover:bg-teal-400 hover:text-black rounded-lg">
+            <Link href="/v0" className="w-auto text-4xl justify-center items-center p-2 cursor-pointer outline outline-1 outline-primary/50 hover:bg-secondary hover:text-black rounded-lg">
               <ChevronLeft className="size-10" />
             </Link>
             <h1 className="mx-5 font-extrabold tracking-tight text-5xl">Instrumentos</h1>
@@ -51,7 +51,7 @@ export default function Home() {
         {instrumentosData.map(instrumento => (
           <Card key={instrumento.nome}>
             <CardHeader>
-              <CardTitle className="flex items-center justify-center text-teal-400">{instrumento.nome}
+              <CardTitle className="flex items-center justify-center text-secondary">{instrumento.nome}
               </CardTitle>
               <CardDescription>
               </CardDescription>

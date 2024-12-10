@@ -98,32 +98,38 @@
     /* CSS: .bg-gradient { background: var(--gradient) } */
     --gradient: #05a8a3;
 
-    --background: 189 61.099999999999994% 2.72%;
-    --foreground: 189 9.399999999999999% 96.7%;
+    --background: 189 61.1% 2.72%;
+    --foreground: 189 9.4% 96.7%;
 
-    --muted: 189 94% 20.740000000000002%;
-    --muted-foreground: 189 9.399999999999999% 53.4%;
+    --muted: 189 94% 20.74%;
+    --muted-foreground: 189 9.4% 53.4%;
 
-    --popover: 189 80.98% 6.460000000000001%;
-    --popover-foreground: 189 9.399999999999999% 96.7%;
+    --popover: 189 80.98% 6.46%;
+    --popover-foreground: 189 9.4% 96.7%;
 
-    --card: 189 80.98% 6.460000000000001%;
-    --card-foreground: 189 9.399999999999999% 96.7%;
+    --card: 189 80.98% 6.46%;
+    --card-foreground: 189 9.4% 96.7%;
 
-    --border: 189 94% 20.740000000000002%;
-    --input: 189 94% 20.740000000000002%;
+    --border: 189 94% 20.75%;
+    --input: 189 94% 20.75%;
 
-    --primary: 189 94% 34%;
-    --primary-foreground: 189 9.399999999999999% 96.7%;
+    --primary: 189 94% 39%;
+    --primary-foreground: 189 9.4% 96.7%;
 
-    --secondary: 189 94% 20.740000000000002%;
-    --secondary-foreground: 189 9.399999999999999% 96.7%;
+    --subprimary: 172.5 66% 50.4%;
+    --sub-primary-foreground: 25 10% 97.25%;
 
-    --accent: 189 94% 20.740000000000002%;
-    --accent-foreground: 189 9.399999999999999% 96.7%;
+    --secondary: 158.1 64.4% 51.6%;
+    --secondary-foreground: 189 9.4% 96.7%;
+
+    --special: 198.4 93.2% 59.6%;
+    --special-foreground: 189 9.4% 96.7%;
+
+    --accent: 189 94% 20.74%;
+    --accent-foreground: 189 9.4% 96.7%;
 
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 189 9.399999999999999% 96.7%;
+    --destructive-foreground: 189 9.4% 96.7%;
 
     --ring: 189 94% 34%;
   }
@@ -154,11 +160,14 @@
       --primary: 25 100% 45%;
       --primary-foreground: 25 10% 97.25%;
 
-      --secondary: 60 100% 78%;
-      --secondary-foreground: 25 10% 97.25%;
+      --subprimary: 60 100% 78%;
+      --sub-primary-foreground: 25 10% 97.25%;
   
-      /* --secondary: 25 50% 13.5%;
-      --secondary-foreground: 25 10% 97.25%; */
+      --secondary: 25 90% 56.5%;
+      --secondary-foreground: 25 10% 97.25%;
+
+      --special: 346.8 97.2% 49.8%;
+      --special-foreground: 25 10% 97.25%;
   
       --accent: 25 50% 13.5%;
       --accent-foreground: 25 10% 97.25%;

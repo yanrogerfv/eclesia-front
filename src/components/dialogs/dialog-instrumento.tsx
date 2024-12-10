@@ -73,37 +73,28 @@ export function DialogRemoveInstrumento() {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant={"outline"} className="mx-2 hover:text-rose-500" >
+                <Button variant={"outline"} className="mx-2 hover:bg-rose-500/40" >
                     <CircleMinus />Remover Instrumento</Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>Remover Instrumento</DialogTitle>
                 </DialogHeader>
-                {/* <Select>
-                    <SelectTrigger className="">
+                <Select onValueChange={(value) => setSelectedInstrumento(value)}>
+                    <SelectTrigger>
                         <SelectValue placeholder="Escolha o instrumento a ser removido." />
                     </SelectTrigger>
                     <SelectContent onChange={(e) => {setSelectedInstrumento(e.target)}}>
                         <SelectGroup>
                             <SelectLabel>Instrumentos</SelectLabel>
                             {allInstrumentos.map((instrumento) => (
-                                <SelectItem value={instrumento.nome}>
-                                    {instrumento.nome}</SelectItem>
+                                <SelectItem value={instrumento.id.toString()} onSelect={() => setSelectedInstrumento(instrumento.id)}>{instrumento.nome}</SelectItem>
                             ))}
                         </SelectGroup>
                     </SelectContent>
-                </Select> */}
-                <select disabled={isLoading} className="w-full p-2 border rounded-md border-cyan-600 bg-black text-zinc-400 text-sm" 
-                    onChange={(e) => setSelectedInstrumento(e.target.value)}>
-                    <option disabled selected>Escolha o instrumento a ser removido.</option>
-                    {allInstrumentos.map((instrumento) => (
-                        <option key={instrumento.id} value={instrumento.id} className="hover:bg-cyan-600 font-normal">
-                            {instrumento.nome}</option>
-                    ))}
-                </select>
+                </Select>
                 <DialogFooter className="">
-                    <Button className="hover:bg-rose-500"
+                    <Button className="hover:bg-emerald-500"
                         type="submit" disabled={isLoading} onClick={() => {
                             setLoading(true)
                             console.log(selectedInstrumento)
@@ -118,7 +109,7 @@ export function DialogRemoveInstrumento() {
                                     console.error("Erro na comunicação com a api: ", error);
                                 })
                         }}>Remover</Button>
-                    <Button className="hover:bg-emerald-500" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
+                    <Button className="hover:bg-rose-500" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

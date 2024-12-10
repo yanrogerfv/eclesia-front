@@ -71,7 +71,7 @@ export default function Home() {
 
   const buscarLevita = useMemo(() => {
     return filteredInstruments.length === 0 ? levitasData.filter((levita) => levita.nome.toLowerCase().includes(searchItem.toLowerCase()))
-    : levitasData.filter((levita) => levita.nome.toLowerCase().includes(searchItem.toLowerCase())).filter((levita) => levita.instrumentos.some((instrumento) => filteredInstruments.some((filteredInstrument) => filteredInstrument.id === instrumento.id)));
+      : levitasData.filter((levita) => levita.nome.toLowerCase().includes(searchItem.toLowerCase())).filter((levita) => levita.instrumentos.some((instrumento) => filteredInstruments.some((filteredInstrument) => filteredInstrument.id === instrumento.id)));
   }, [searchItem, levitasData])
 
   function addInstrumentoInFilter(instrumento: Instrumento) {
@@ -87,7 +87,7 @@ export default function Home() {
         <>
           <div className="flex items-center gap-3 justify-between">
             <div className="flex">
-              <Link href="/v0" className="text-4xl p-2 cursor-pointer outline outline-1 outline-teal-400/50 hover:bg-teal-500 hover:text-black rounded-lg">
+              <Link href="/v0" className="w-auto text-4xl justify-center items-center p-2 cursor-pointer outline outline-1 outline-primary/50 hover:bg-secondary hover:text-black rounded-lg">
                 <ChevronLeft className="size-10" />
               </Link>
               <h1 className="mx-5 font-extrabold tracking-tight text-5xl">Levitas</h1>
@@ -109,16 +109,16 @@ export default function Home() {
       <div className="flex w-full items-center space-x-2 col-span-4">
         {isLoading ?
           <Filter
-            className="w-auto text-4xl justify-center size-9 p-1 outline outline-1 outline-teal-500/45 bg-teal-500/30 hover:bg-teal-500/20 text-black rounded-md" />
+            className="w-auto text-4xl justify-center size-9 p-1 outline outline-1 outline-primary/45 bg-subprimary/30 hover:bg-subprimary/20 text-black rounded-md" />
           :
           <Sheet>
             <SheetTrigger asChild>
-              {filteredInstruments.length == 0 ? 
-                <Filter className="w-auto text-4xl justify-center size-9 p-1 cursor-pointer outline outline-1 outline-teal-500/45 hover:bg-teal-500 hover:text-black rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"/> :
+              {filteredInstruments.length == 0 ?
+                <Filter className="w-auto text-4xl justify-center size-9 p-1 cursor-pointer outline outline-1 outline-primary/30 hover:bg-subprimary/80 hover:text-black rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" /> :
                 <FilterX onClick={() => setFilteredInstruments([])}
-                  className="w-auto text-4xl justify-center size-9 p-1 cursor-pointer outline outline-1 outline-rose-500/45 hover:bg-rose-500 hover:text-black rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"/>
+                  className="w-auto text-4xl justify-center size-9 p-1 cursor-pointer outline outline-1 outline-red-500/45 hover:bg-red-500 hover:text-black rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" />
               }
-              </SheetTrigger>
+            </SheetTrigger>
             <SheetContent>
               <SheetHeader>
                 <SheetTitle>Filtrar Levitas</SheetTitle>
@@ -135,7 +135,8 @@ export default function Home() {
                         removeInstrumentoInFilter(instrumento)
                       } else {
                         addInstrumentoInFilter(instrumento)
-                      }}}/>
+                      }
+                    }} />
                     <Label
                       htmlFor="terms"
                       className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
@@ -163,8 +164,8 @@ export default function Home() {
         {
           isLoading ? (
             <div className="col-span-4 h-full flex items-center justify-center mt-20">
-              <div className="size-80 border-4 border-transparent text-cyan-400/40 text-4xl animate-spin flex items-center justify-center border-t-cyan-400 rounded-full">
-                <div className="size-64 border-4 border-transparent text-teal-400/40 text-2xl animate-spin flex items-center justify-center border-t-teal-400 rounded-full" />
+              <div className="size-80 border-4 border-transparent text-primary/40 text-4xl animate-spin flex items-center justify-center border-t-primary rounded-full">
+                <div className="size-64 border-4 border-transparent text-subprimary/40 text-2xl animate-spin flex items-center justify-center border-t-subprimary rounded-full" />
               </div>
             </div>
           ) : (
@@ -186,7 +187,7 @@ export default function Home() {
                     })
                 }} />
                 <CardHeader >
-                  <CardTitle className="flex text-teal-500">{levita.nome}
+                  <CardTitle className="flex text-primary">{levita.nome}
                   </CardTitle>
                   <CardDescription>
                     {levita.email ? levita.email : levita.contato}
@@ -194,7 +195,7 @@ export default function Home() {
                 </CardHeader>
                 <CardContent key={levita.id} className="h-28">
                   {levita.instrumentos.map(instrumento => (
-                    <div key={instrumento.id} className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold 
+                    <div key={instrumento.id} className="inline-flex border-secondary/30 items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold 
                 transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 m-1">{instrumento.nome.toUpperCase()}</div>))}
                 </CardContent>
                 <CardFooter className="flex justify-stretch">

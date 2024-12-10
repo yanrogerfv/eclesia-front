@@ -65,7 +65,7 @@ export default function Home() {
             <nav>
                 <div className="flex items-center gap-4 justify-between">
                     <div className="flex">
-                        <Link href="/v0" className="text-4xl p-2 cursor-pointer outline outline-1 outline-cyan-400/50 hover:bg-teal-400 hover:text-black rounded-lg">
+                        <Link href="/v0" className="w-auto text-4xl justify-center items-center p-2 cursor-pointer outline outline-1 outline-primary/50 hover:bg-secondary hover:text-black rounded-lg">
                             <ChevronLeft className="size-10" />
                         </Link>
                         <h1 className="mx-5 font-extrabold tracking-tight text-5xl">Músicas</h1>
@@ -81,12 +81,12 @@ export default function Home() {
             <br />
 
             <div className="flex w-full items-center space-x-2">
-                <Input disabled={isLoading} className="flex" type="text"
+                <Input disabled={isLoading} className="flex bg-card" type="text"
                     value={searchItem} onChange={(e) => setSearchItem(e.target.value)} placeholder="Procurar por uma música." />
             </div>
             <br />
 
-            <Card className="flex p-3 bg-current/85">
+            <Card className="flex p-3">
                 <Table className="bg-black/70 rounded-xl">
                     {/* <TableCaption>Listagem das músicas cadastradas.</TableCaption> */}
                     <TableHeader>
@@ -104,7 +104,7 @@ export default function Home() {
                                     <TableCell>{musicas.indexOf(musica) + 1}</TableCell>
                                     <TableCell>{musica.nome}</TableCell>
                                     <TableCell><Link href={musica.link} target="_blank">{musica.link}</Link></TableCell>
-                                    <TableCell><TbMusicX className="justify-end size-5 hover:cursor-pointer hover:text-rose-600/70"
+                                    <TableCell><TbMusicX className="justify-end size-5 hover:cursor-pointer hover:text-red-500/90"
                                         onClick={() => {
                                             // const {toast} = useToast();
                                             fetch(`http://localhost:1004/v1/musicas/${musica.id}`, {

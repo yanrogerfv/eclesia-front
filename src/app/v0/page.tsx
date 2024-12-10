@@ -19,12 +19,27 @@ import { EscalaSimpleCard, LevitaSimpleCard } from "@/components/customCards";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
+import ThemeToggle from "@/components/themeToggle";
 
 export default function Home() {
   const [nextEscalas, setNextEscalas] = useState<EscalaResumida[]>([]);
   const [levitasData, setLevitasData] = useState<Levita[]>([]);
   const [isEscalasLoading, setEscalaLoader] = useState(true)
   const [isLevitasLoading, setLevitaLoader] = useState(true)
+  const [sereneMode, setsereneMode] = useState(document.documentElement.classList.contains("serene"));
+
+  function handleSereneMode() {
+    setsereneMode(!sereneMode)
+    if (sereneMode) {
+      document.documentElement.classList.remove("sunset");
+      document.documentElement.classList.add("serene");
+      localStorage.setItem("theme", "serene");
+    } else {
+      document.documentElement.classList.remove("serene");
+      document.documentElement.classList.add("sunset");
+      localStorage.setItem("theme", "sunset");
+    }
+  }
 
   useEffect(() => {
     fetch("http://localhost:1004/v1/escala/resumed")
@@ -55,17 +70,27 @@ export default function Home() {
 
   return (
     <main className="max-w-6xl mx-auto my-12">
-      <PageHeader urlBack="null" title="Planejador" subtitle="Planejador de Escalas" />
+      <nav>
+        <div className="flex justify-between">
+          <h1 className="font-extrabold tracking-tight text-5xl">Planejador</h1>
+          {/* <Button onClick={() => handleSereneMode()} variant={sereneMode ? "outline" : "default"} className="flex h-12 text-lg rounded-lg">Modo Sereno</Button> */}
+          <ThemeToggle />
+        </div>
+        <br />
+        <h2 className="scroll-m-20 border-b text-base text-neutral-700 tracking-tight transition-colors first:mt-0">
+          Planejador de Escalas</h2>
+      </nav>
+      <br />
       <div>
         <div key={"card-bg"} className="flex items-center justify-between gap-4 w-full">
           {/* <ButtonLink title="Escalas" reff="v0/escalas" /> */}
-          <Button variant={"outfill"} className="flex h-12 w-full text-lg rounded-lg"><Link href="v0/escalas">Escala</Link></Button>
+          <Button variant={"outfill"} className="flex h-12 w-full text-lg rounded-lg"><Link href="v0/escalas" className="w-full">Escala</Link></Button>
           {/* <ButtonLink title="Levitas" reff="v0/levitas" /> */}
-          <Button variant={"outfill"} className="flex h-12 w-full text-lg rounded-lg"><Link href="v0/levitas">Levitas</Link></Button>
+          <Button variant={"outfill"} className="flex h-12 w-full text-lg rounded-lg"><Link href="v0/levitas" className="w-full">Levitas</Link></Button>
           {/* <ButtonLink title="Músicas" reff="v0/musicas" /> */}
-          <Button variant={"outfill"} className="flex h-12 w-full text-lg rounded-lg"><Link href="v0/musicas">Músicas</Link></Button>
+          <Button variant={"outfill"} className="flex h-12 w-full text-lg rounded-lg"><Link href="v0/musicas" className="w-full">Músicas</Link></Button>
           {/* <ButtonLink title="Instrumentos" reff="v0/instrumentos" /> */}
-          <Button variant={"outfill"} className="flex h-12 w-full text-lg rounded-lg"><Link href="v0/instrumentos">Instrumentos</Link></Button>
+          <Button variant={"outfill"} className="flex h-12 w-full text-lg rounded-lg"><Link href="v0/instrumentos" className="w-full">Instrumentos</Link></Button>
         </div>
         <br />
         <Card className="p-10 bg-current/30">
@@ -97,9 +122,9 @@ export default function Home() {
                           baixo={escala.baixo}
                           data={escala.data}
                           quarta={escala.quarta}
-                          observacoes={escala.observacoes?escala.observacoes:""}
+                          observacoes={escala.observacoes ? escala.observacoes : ""}
                           domingo={escala.domingo}
-                          especial={escala.especial}/>
+                          especial={escala.especial} />
                       </CarouselItem>
                     ))}
                   </CarouselContent>
