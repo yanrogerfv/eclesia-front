@@ -72,26 +72,38 @@ export function DialogAddLevita() {
     }
 
     const handleSubmitLevita = () => {
-        fetch('http://localhost:1004/v1/levita', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                nome: nomeLevita,
-                email: emailLevita,
-                contato: contatoLevita,
-                descricao: descricaoLevita,
-                instrumentos: instrumentosLevita.map((instrumento) => instrumento.id)
-            }),
-        })
-            .then((res) => {
-                res.json()
-                setLoading(false)
-                setOpen(false)
+        setLoading(true)
+        if (nomeLevita === "") {
+            alert("Insira o nome do Levita.")
+            setLoading(false)
+        } else if (emailLevita === "" && contatoLevita === "") {
+            alert("Insira um email e/ou contato do Levita.")
+            setLoading(false)
+        } else if (instrumentosLevita.length === 0) {
+            alert("Selecione pelo menos um instrumento.")
+            setLoading(false)
+        } else {
+            fetch('http://localhost:1004/v1/levita', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    nome: nomeLevita,
+                    email: emailLevita,
+                    contato: contatoLevita,
+                    descricao: descricaoLevita,
+                    instrumentos: instrumentosLevita.map((instrumento) => instrumento.id)
+                }),
             })
-            // .then((result) => setData(result.rows))
-            .catch((err) => alert("Erro ao adicionar levita: " + err.message))
+                .then((res) => {
+                    res.json()
+                    setLoading(false)
+                    setOpen(false)
+                })
+                // .then((result) => setData(result.rows))
+                .catch((err) => alert("Erro ao adicionar levita: " + err.message))
+        }
     }
 
     return (
@@ -145,7 +157,6 @@ export function DialogAddLevita() {
                 </DialogHeader>
                 <DialogFooter className="">
                     <Button className="hover:bg-emerald-500" disabled={isLoading} type="submit" onClick={() => {
-                        setLoading(true)
                         handleSubmitLevita()
                     }}>Salvar</Button>
                     <Button className="hover:bg-rose-600/80" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>

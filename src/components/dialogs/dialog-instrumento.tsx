@@ -38,16 +38,19 @@ export function DialogAddInstrumento() {
                     <Button className="hover:bg-emerald-500"
                         type="submit" disabled={isLoading} onClick={() => {
                             setLoading(true)
-                            fetch("http://localhost:1004/v1/instrumento", {
-                                method: "POST",
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify({
-                                    nome: nomeInstrumento,
-                                })
-                            })
-                                .then((res) => res.json())
+                            if (nomeInstrumento === "") {
+                                alert("O nome do instrumento não pode ser vazio.")
+                                setLoading(false)
+                            } else {
+                                fetch("http://localhost:1004/v1/instrumento", {
+                                    method: "POST",
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                    },
+                                    body: JSON.stringify({
+                                        nome: nomeInstrumento,
+                                    })
+                                }).then((res) => res.json())
                                 .then(() => {
                                     setOpen(false)
                                     setLoading(false)
@@ -56,6 +59,7 @@ export function DialogAddInstrumento() {
                                 .catch((error) => {
                                     console.error("Erro na comunicação com a api: ", error);
                                 })
+                            }
                         }}>Salvar</Button>
                     <Button className="hover:bg-rose-600/80" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
                 </DialogFooter>
@@ -84,7 +88,7 @@ export function DialogRemoveInstrumento() {
                     <SelectTrigger>
                         <SelectValue placeholder="Escolha o instrumento a ser removido." />
                     </SelectTrigger>
-                    <SelectContent onChange={(e) => {setSelectedInstrumento(e.target)}}>
+                    <SelectContent onChange={(e) => { setSelectedInstrumento(e.target) }}>
                         <SelectGroup>
                             <SelectLabel>Instrumentos</SelectLabel>
                             {allInstrumentos.map((instrumento) => (

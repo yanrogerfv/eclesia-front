@@ -53,6 +53,10 @@ export function DialogAddMusica() {
                     <Button className="hover:bg-emerald-500"
                         type="submit"  disabled={isLoading} onClick={() => {
                             setLoading(true)
+                            if(nomeMusica === "" || linkMusica === ""){
+                                alert("Preencha todos os campos!")
+                                setLoading(false)
+                            }
                             fetch("http://localhost:1004/v1/musicas", {
                                 method: "POST",
                                 headers: {

@@ -165,10 +165,10 @@ export function DialogAddEditEscala(pp: addEditDialogProps) {
                 <ScrollArea className="max-h-[47dvh]">
                     <Label>Título:</Label>
                     <Input type="text" placeholder="Insira um título para a Escala."
-                        value={pp.escala?.titulo} onChange={(e) => setTitulo(e.target.value)} />
+                        value={titulo} onChange={(e) => setTitulo(e.target.value)} />
                     <Label>Data:</Label>
-                    <Input type="date" placeholder="Data."
-                        value={pp.escala ? pp.escala.data.toString() : undefined} onChange={(e) => setData(e.target.value)} />
+                    <Input type="date" placeholder={pp.escala?.data.toString()}
+                        value={data} onChange={(e) => setData(e.target.value)} />
                     <br />
 
                     <Label>Ministro</Label>
@@ -277,18 +277,26 @@ export function DialogAddEditEscala(pp: addEditDialogProps) {
                 </ScrollArea>
                 <DialogFooter>
                     <Button className="hover:bg-emerald-500" onClick={() => {
+                        if(titulo.length == 0){
+                            alert("Insira um título para a escala!")
+                        } else if(data.length == 0){
+                            alert("Insira uma data para a escala!")
+                        } else if(ministro.length == 0){
+                            alert("Selecione um ministro!")
+                        }
+                        else {
                         setIsLoading(true)
                         pp.isEdit ?
                             pp.escala ?
-                                fetch("http://localhost:1004/v1/escala", {
+                                fetch("http://localhost:1004/v1/escala/"+pp.escala.id, {
                                     method: "PUT",
                                     headers: {
                                         'Content-Type': 'application/json',
                                     },
                                     body: JSON.stringify({
                                         id: pp.escala.id,
-                                        titulo: titulo,
-                                        data: data,
+                                        titulo: titulo.length == 0 ? pp.escala.titulo : titulo,
+                                        data: data.length == 0 ? pp.escala.data : data,
                                         ministro: ministro == "null" ? null : ministro,
                                         violao: violao == "null" ? null : violao,
                                         teclado: teclado == "null" ? null : teclado,
@@ -331,7 +339,7 @@ export function DialogAddEditEscala(pp: addEditDialogProps) {
                                 alert("Erro ao adicionar escala!")
                                 console.error("Erro na comunicação com a api: ", error);
                             })
-                    }}>{pp.isEdit ? "Confirmar" : "Adicionar"}</Button>
+                    }}}>{pp.isEdit ? "Confirmar" : "Adicionar"}</Button>
                     <Button className="hover:bg-rose-500" onClick={() => setOpen(false)}>Cancelar</Button>
                 </DialogFooter>
             </DialogContent>
