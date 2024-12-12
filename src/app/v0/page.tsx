@@ -20,6 +20,7 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import ThemeToggle from "@/components/themeToggle";
+import { ArrowLeftFromLine } from "lucide-react";
 
 const document = typeof window !== "undefined" ? window.document : null;
 
@@ -73,10 +74,12 @@ export default function Home() {
   return (
     <main className="max-w-6xl mx-auto my-12">
       <nav>
-        <div className="flex justify-between">
+        <div className="flex">
+          <Link href="/" className="w-auto text-4xl justify-center items-center p-2 mr-5 cursor-pointer outline outline-1 outline-primary/50 hover:bg-primary hover:text-black rounded-lg">
+            <ArrowLeftFromLine className="size-8" />
+          </Link>
           <h1 className="font-extrabold tracking-tight text-5xl">Planejador</h1>
           {/* <Button onClick={() => handleSereneMode()} variant={sereneMode ? "outline" : "default"} className="flex h-12 text-lg rounded-lg">Modo Sereno</Button> */}
-          <ThemeToggle />
         </div>
         <br />
         <h2 className="scroll-m-20 border-b text-base text-neutral-700 tracking-tight transition-colors first:mt-0">
