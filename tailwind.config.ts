@@ -28,9 +28,17 @@ const config = {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
         },
+        subprimary: {
+          DEFAULT: "hsl(var(--subprimary))",
+          foreground: "hsl(var(--sub-primary-foreground))",
+        },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
+        },
+        special: {
+          DEFAULT: "hsl(var(--special))",
+          foreground: "hsl(var(--special-foreground))",
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",

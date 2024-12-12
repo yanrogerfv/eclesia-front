@@ -16,9 +16,9 @@ import { UUID } from "crypto";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { useEffect, useMemo, useState, useTransition } from "react";
-import { ChevronLeft, CircleMinus, CirclePlus, IterationCw, Loader2 } from "lucide-react";
-import { Escala } from "@/components/apiObjects";
-import { DialogEscala } from "@/components/dialog-escala";
+import { ChevronLeft, CircleMinus, CirclePlus, IterationCw, Loader2, X } from "lucide-react";
+import { Escala, EscalaResumida, Levita } from "@/components/apiObjects";
+import { DialogAddEditEscala, DialogAddMusicaInEscala, DialogVerEscala } from "@/components/dialogs/dialog-escala";
 import ModalEscala from "@/components/modal";
 
 /* export async function fetchEscalas() {
@@ -30,13 +30,15 @@ import ModalEscala from "@/components/modal";
 } */
 
 export default function Home() {
-  const [escalasData, setEscalasData] = useState<Escala[]>([])
+  const [escalasData, setEscalasData] = useState<EscalaResumida[]>([])
+  const [levitasDisponiveis, setLevitasDisponiveis] = useState<Levita[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [isEscalaModalOpen, setIsEscalaModalOpen] = useState(false);
+  const [loadingRemove, setLoadingRemove] = useState(false)
+  const [removeOverlay, setRemoveOverlay] = useState(false)
 
   useEffect(() => {
     // setIsLoading(true)
-    fetch("http://localhost:1004/v1/escala")
+    fetch("http://localhost:1004/v1/escala/resumed")
       .then((res) => res.json())
       .then((data) => {
         setIsLoading(false)
@@ -46,24 +48,38 @@ export default function Home() {
         console.error("Erro na comunicação com a api: ", error)
         setEscalasData([]);
       })
-  }, [])
+  }, [escalasData])
 
-  
+  useEffect(() => {
+    fetch("http://localhost:1004/v1/levita/resumed")
+      .then((res) => res.json())
+      .then((data) => {
+        setLevitasDisponiveis(data)
+      })
+      .catch((error) => {
+        console.error("Erro na comunicação com a api: ", error)
+        setLevitasDisponiveis([]);
+      })
+  }, [levitasDisponiveis])
+
   return (
     <main className="max-w-6xl mx-auto my-12">
 
       <nav>
-        <div className="flex items-center gap-3">
-          {
-            <Link href="/v0" className="w-auto text-4xl justify-center p-2 cursor-pointer outline outline-1 outline-cyan-400/50 hover:bg-teal-400 hover:text-black rounded-lg">
+        <div className="flex justify-between">
+          <div className="flex">
+            <Link href="/v0" className="w-auto text-4xl justify-center items-center p-2 cursor-pointer outline outline-1 outline-primary/50 hover:bg-secondary hover:text-black rounded-lg">
               <ChevronLeft className="size-10" />
-            </Link>}
-          <h1 className="font-extrabold tracking-tight text-5xl">Escalas</h1>
-          {
-            <div className="flex items-end translate-x-full px-4">
-              <Button variant={"outline"} className="px-4"><CirclePlus className="mx-2" />Adicionar Escala</Button>
-              <Button variant={"outline"} className="px-4"><CircleMinus className="mx-2" />Remover Escala</Button>
-            </div>}
+            </Link>
+            <h1 className="mx-5 font-extrabold tracking-tight text-5xl">Escalas</h1>
+          </div>
+          <div className="flex items-center">
+            <DialogAddEditEscala isEdit={false} escala={undefined} levitasDisponiveis={levitasDisponiveis} />
+            <Button variant="outline" className={removeOverlay ? "mx-2 font-bold bg-rose-500/80 border-rose-600/90 hover:bg-rose-600/40"
+                : "mx-2 font-bold hover:bg-rose-500/40"}
+                onClick={() => setRemoveOverlay(!removeOverlay)}>
+              <CircleMinus className="mx-1 text-rose-500" />Excluir Escala</Button>
+          </div>
         </div>
         <br />
         <h2 className="scroll-m-20 border-b text-base text-neutral-700 tracking-tight transition-colors first:mt-0">
@@ -76,16 +92,30 @@ export default function Home() {
         {
           isLoading ? (
             <div className="col-span-4 h-full flex items-center justify-center mt-20">
-              <div className="size-80 border-4 border-transparent text-cyan-400/40 text-4xl animate-spin flex items-center justify-center border-t-cyan-400 rounded-full">
-                <div className="size-64 border-4 border-transparent text-teal-400/40 text-2xl animate-spin flex items-center justify-center border-t-teal-400 rounded-full" />
+              <div className="size-80 border-4 border-transparent text-primary/40 text-4xl animate-spin flex items-center justify-center border-t-primary rounded-full">
+                <div className="size-64 border-4 border-transparent text-subprimary/40 text-2xl animate-spin flex items-center justify-center border-t-subprimary rounded-full" />
               </div>
             </div>
           ) : (
             escalasData.map(escala => (
-              <Card className="hover:text-current/50" key={escala.id} onClick={() => setIsEscalaModalOpen(true)}>
+              <Card key={escala.id} className={removeOverlay ? "animate-pulse" : ""}>
+                <X className={removeOverlay ? "absolute hover:cursor-pointer bg-rose-500/80 rounded-br-xl animate-none" : "absolute invisible"} onClick={() => {
+                  setLoadingRemove(true)
+                  fetch(`http://localhost:1004/v1/escala/${escala.id}`, {
+                    method: "DELETE"
+                  })
+                    .then((response) => {
+                      setLoadingRemove(false)
+                      alert(response.status === 200 ? "Escala removida com sucesso!" : "Erro ao remover a Escala: " + response.headers.get("error"))
+                    })
+                    .catch((error) => {
+                      alert("Erro ao remover Escala!")
+                      console.error("Erro na comunicação com a api: ", error);
+                    })
+                }} />
                 <CardHeader>
                   <CardTitle className={
-                    escala.domingo ? "text-teal-400" : escala.quarta ? "text-emerald-400" : "text-sky-400"
+                    escala.domingo ? "text-primary" : escala.quarta ? "text-secondary" : "text-special"
                   }>
                     {escala.titulo}
                   </CardTitle>
@@ -95,41 +125,26 @@ export default function Home() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent key={escala.id}>
-                  <a className="text-teal-400">Ministro: </a><a className="text-emerald-400">{escala.ministro.nome}</a><br />
-                  <a className="text-teal-400">Violão: </a>{escala.violao ? escala.violao.nome : <a className="text-zinc-50/50">Não inserido.</a>}<br />
-                  <a className="text-teal-400">Teclado: </a>{escala.teclado ? escala.teclado.nome : <a className="text-zinc-50/50">Não inserido.</a>}<br />
-                  <a className="text-teal-400">Bateria: </a>{escala.bateria ? escala.bateria.nome : <a className="text-zinc-50/50">Não inserido.</a>}<br />
-                  <a className="text-teal-400">Baixo: </a>{escala.baixo ? escala.baixo.nome : <a className="text-zinc-50/50">Não inserido.</a>}<br />
-                  <a className="text-teal-400">Guitarra: </a>{escala.guitarra ? escala.guitarra.nome : <a className="text-zinc-50/50">Não inserido.</a>}<br />
+                  <a className="text-subprimary">Ministro: </a><a className="text-secondary">{escala.ministro}</a><br />
+                  <a className="text-subprimary">Violão: </a>{escala.violao ? escala.violao : <a className="text-secondary/40">Não inserido.</a>}<br />
+                  <a className="text-subprimary">Teclado: </a>{escala.teclado ? escala.teclado : <a className="text-secondary/40">Não inserido.</a>}<br />
+                  <a className="text-subprimary">Bateria: </a>{escala.bateria ? escala.bateria : <a className="text-secondary/40">Não inserido.</a>}<br />
+                  <a className="text-subprimary">Baixo: </a>{escala.baixo ? escala.baixo : <a className="text-secondary/40">Não inserido.</a>}<br />
+                  <a className="text-subprimary">Guitarra: </a>{escala.guitarra ? escala.guitarra : <a className="text-secondary/40">Não inserido.</a>}<br />
                 </CardContent>
-                <CardFooter className="mt-auto inset-x-0 bottom-0 align-bottom self-end flow-root">
-                  {escala.domingo ?
-                    <Badge className="bg-teal-400/80 hover:bg-teal-400/20">Domingo</Badge>
-                    : escala.quarta ?
-                    <Badge className="bg-emerald-400/80 hover:bg-emerald-400/20">Quarta</Badge>
-                    :
-                    <Badge className="bg-sky-400/80 hover:bg-sky-400/20">Especial</Badge>
-                  }
-                 {/* <Button className="float-right" onClick={() => <ModalEscala escala={escala}/>}>Ver Escala</Button>
-                  {isEscalaModalOpen && <ModalEscala escala={escala}/>} */}
-                  <DialogEscala  key={escala.id}
-                      id={escala.id}
-                      titulo={escala.titulo}
-                      ministro={escala.ministro}
-                      violao={escala.violao}
-                      teclado={escala.teclado}
-                      bateria={escala.bateria}
-                      guitarra={escala.guitarra}
-                      baixo={escala.baixo}
-                      data={escala.data}
-                      quarta={escala.quarta}
-                      musicas={escala.musicas}
-                      observacoes={escala.observacoes}
-                      domingo={escala.domingo}
-                      especial={escala.especial}
-                      back={escala.back}
-                      />
-                  {/* <DialogEscala escala={escala}/> */}
+                <CardFooter className="flex items-center justify-between">
+                  <div>
+                    {escala.domingo ?
+                      <Badge className="bg-primary/80 hover:bg-primary/20">Domingo</Badge>
+                      : escala.quarta ?
+                        <Badge className="bg-subprimary/80 hover:bg-subprimary/20">Quarta</Badge>
+                        :
+                        <Badge className="bg-special/80 hover:bg-special/20">Especial</Badge>
+                    }
+                  </div>
+                  <div>
+                    <DialogVerEscala escalaId={escala.id} levitasDisponiveis={levitasDisponiveis}/>
+                  </div>
                 </CardFooter>
               </Card>
             )))

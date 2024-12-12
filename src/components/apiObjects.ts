@@ -5,12 +5,12 @@ export interface Levita {
     nome: string,
     email: string,
     contato: string,
-    
+    descricao: string,
     instrumentos: Instrumento[]
 }
 
 export interface Instrumento {
-    numero: number,
+    id: number,
     nome: string
 }
 
@@ -39,9 +39,26 @@ export interface Escala {
     observacoes: string
 }
 
+export interface EscalaResumida {
+    id: UUID,
+    data: Date,
+    titulo: string,
+    quarta: boolean,
+    domingo: boolean,
+    especial: boolean,
+    ministro: string,
+    baixo: string,
+    bateria: string,
+    guitarra: string,
+    teclado: string,
+    violao: string,
+    observacoes: string
+}
+
 export function convertDateFormat(dateString: Date) {
     const date = new Date(dateString);
-    return String((date.getDate() + 1) + '/' + (date.getMonth() + 1) + '/' + date.getFullYear())
+    const days = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
+    return String(days[date.getDay()] + " - " + (date.getDate() + 1) + '/' + (date.getMonth() + 1) + '/' + date.getFullYear())
 }
 
 

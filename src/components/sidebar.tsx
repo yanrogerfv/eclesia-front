@@ -42,7 +42,7 @@ export function SidebarFiltroLevita(props: props) {
           <div className="grid grid-cols-1">
               <br/>
               {props.instrumentos.map((instrumento) => (
-                  <CheckboxDemo nametag={instrumento.nome} key={instrumento.numero}/>
+                  <CheckboxDemo nametag={instrumento.nome} key={instrumento.id}/>
               ))}
           </div>
           <SheetFooter>
