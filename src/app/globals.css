@@ -76,17 +76,20 @@
 
     /* Dark themes below */
   
-    .dark {
-      --background: 20 14.3% 4.1%;
+    .forest {
+      /* --background: 20 14.3% 4.1%; */
+      --background: 20 60% 3%;
       --foreground: 0 0% 95%;
-      --card: 24 9.8% 10%;
+      --card: 20 9.8% 10%;
       --card-foreground: 0 0% 95%;
       --popover: 0 0% 9%;
       --popover-foreground: 0 0% 95%;
       --primary: 142.1 70.6% 45.3%;
       --primary-foreground: 144.9 80.4% 10%;
-      --secondary: 240 3.7% 15.9%;
-      --secondary-foreground: 0 0% 98%;
+      --secondary: 155, 70%, 45%;
+      --secondary-foreground: 135, 90%, 13%;
+      /* --secondary: 240 3.7% 15.9%; */
+      /* --secondary-foreground: 0 0% 98%; */
       --muted: 0 0% 15%;
       --muted-foreground: 240 5% 64.9%;
       --accent: 12 6.5% 15.1%;
@@ -98,7 +101,7 @@
       --ring: 142.4 71.8% 29.2%;
     }
 
-    .salmon {
+    .lollipop {
       /* Name: custom color palette
          Author: Ilias Ism
          URL: https://gradient.page */
@@ -121,11 +124,20 @@
       --border: -11 54% 23.400000000000002%;
       --input: -11 54% 23.400000000000002%;
   
-      --primary: -11 100% 78%;
+      
+      --primary: 350 89% 60%;
+      /* --primary: -11 100% 78%; */
       --primary-foreground: -11 10% 7.800000000000001%;
+
+      --subprimary: -11 54% 23%;
+      --sub-primary-foreground: -11 10% 98.9%;
   
-      --secondary: -11 54% 23.400000000000002%;
+      /* --secondary: 331 100% 72%; */
+      --secondary: -11 100% 78%;
       --secondary-foreground: -11 10% 98.9%;
+
+      --special: 307 90% 61%;
+      --special-foreground: -11 10% 98.9%;
   
       --accent: -11 54% 23.400000000000002%;
       --accent-foreground: -11 10% 98.9%;
@@ -163,11 +175,11 @@
     --primary: 189 94% 39%;
     --primary-foreground: 189 9.4% 96.7%;
 
-    --subprimary: 172.5 66% 50.4%;
-    --sub-primary-foreground: 25 10% 97.25%;
+    --secondary: 172.5 66% 50.4%;
+    --secondary-foreground: 25 10% 97.25%;
 
-    --secondary: 158.1 64.4% 51.6%;
-    --secondary-foreground: 189 9.4% 96.7%;
+    --subprimary: 158.1 64.4% 51.6%;
+    --subprimary-foreground: 189 9.4% 96.7%;
 
     --special: 198.4 93.2% 59.6%;
     --special-foreground: 189 9.4% 96.7%;

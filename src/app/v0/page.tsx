@@ -19,7 +19,7 @@ import { EscalaSimpleCard, LevitaSimpleCard } from "@/components/customCards";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
-import ThemeToggle from "@/components/themeToggle";
+import ThemeSelector from "@/components/themeSelector";
 import { ArrowLeftFromLine } from "lucide-react";
 
 const document = typeof window !== "undefined" ? window.document : null;
@@ -27,8 +27,8 @@ const document = typeof window !== "undefined" ? window.document : null;
 export default function Home() {
   const [nextEscalas, setNextEscalas] = useState<EscalaResumida[]>([]);
   const [levitasData, setLevitasData] = useState<Levita[]>([]);
-  const [isEscalasLoading, setEscalaLoader] = useState(true)
-  const [isLevitasLoading, setLevitaLoader] = useState(true)
+  const [isEscalasLoading, setEscalasLoading] = useState(true)
+  const [isLevitasLoading, setLevitasLoading] = useState(true)
   const [sereneMode, setsereneMode] = useState(document?.documentElement.classList.contains("serene"));
 
   function handleSereneMode() {
@@ -48,7 +48,7 @@ export default function Home() {
     fetch("http://localhost:1004/v1/escala/resumed")
       .then((res) => res.json())
       .then((data) => {
-        setEscalaLoader(false)
+        setEscalasLoading(false)
         setNextEscalas(data)
       })
       .catch((error) => {
@@ -62,7 +62,7 @@ export default function Home() {
     fetch("http://localhost:1004/v1/levita/resumed")
       .then((res) => res.json())
       .then((data) => {
-        setLevitaLoader(false)
+        setLevitasLoading(false)
         setLevitasData(data)
       })
       .catch((error) => {
@@ -75,7 +75,7 @@ export default function Home() {
     <main className="max-w-6xl mx-auto my-12">
       <nav>
         <div className="flex">
-          <Link href="/" className="w-auto text-4xl justify-center items-center p-2 mr-5 cursor-pointer outline outline-1 outline-primary/50 hover:bg-primary hover:text-black rounded-lg">
+          <Link href="/" className="w-auto text-4xl justify-center items-center p-2 mr-5 cursor-pointer border hover:bg-primary hover:text-black rounded-lg">
             <ArrowLeftFromLine className="size-8" />
           </Link>
           <h1 className="font-extrabold tracking-tight text-5xl">Planejador</h1>
@@ -89,13 +89,17 @@ export default function Home() {
       <div>
         <div key={"card-bg"} className="flex items-center justify-between gap-4 w-full">
           {/* <ButtonLink title="Escalas" reff="v0/escalas" /> */}
-          <Button variant={"outfill"} className="flex h-12 w-full text-lg rounded-lg"><Link href="v0/escalas" className="w-full">Escala</Link></Button>
+          <Link href="v0/escalas" className="flex border hover:bg-primary/90 justify-center items-center h-12 w-full text-lg rounded-lg">Escalas</Link>
+          {/* <Button variant={"outfill"} className="flex h-12 w-full text-lg rounded-lg"><Link href="v0/escalas" className="w-full">Escala</Link></Button> */}
           {/* <ButtonLink title="Levitas" reff="v0/levitas" /> */}
-          <Button variant={"outfill"} className="flex h-12 w-full text-lg rounded-lg"><Link href="v0/levitas" className="w-full">Levitas</Link></Button>
+          <Link href="v0/levitas" className="flex border hover:bg-primary/90 justify-center items-center h-12 w-full text-lg rounded-lg">Levitas</Link>
+          {/* <Button variant={"outfill"} className="flex h-12 w-full text-lg rounded-lg"><Link href="v0/levitas" className="w-full">Levitas</Link></Button> */}
           {/* <ButtonLink title="Músicas" reff="v0/musicas" /> */}
-          <Button variant={"outfill"} className="flex h-12 w-full text-lg rounded-lg"><Link href="v0/musicas" className="w-full">Músicas</Link></Button>
+          <Link href="v0/musicas" className="flex border hover:bg-primary/90 justify-center items-center h-12 w-full text-lg rounded-lg">Músicas</Link>
+          {/* <Button variant={"outfill"} className="flex h-12 w-full text-lg rounded-lg"><Link href="v0/musicas" className="w-full">Músicas</Link></Button> */}
           {/* <ButtonLink title="Instrumentos" reff="v0/instrumentos" /> */}
-          <Button variant={"outfill"} className="flex h-12 w-full text-lg rounded-lg"><Link href="v0/instrumentos" className="w-full">Instrumentos</Link></Button>
+          <Link href="v0/instrumentos" className="flex border hover:bg-primary/90 justify-center items-center h-12 w-full text-lg rounded-lg">Instrumentos</Link>
+          {/* <Button variant={"outfill"} className="flex h-12 w-full text-lg rounded-lg"><Link href="v0/instrumentos" className="w-full">Instrumentos</Link></Button> */}
         </div>
         <br />
         <Card className="p-10 bg-current/30">
@@ -136,7 +140,7 @@ export default function Home() {
                   <CarouselPrevious />
                   <CarouselNext />
                 </Carousel> :
-                <h1 className="text-zinc-200 justify-center self-center align-middle">Nenhuma escala cadastrada para os próximos dias.</h1>
+                <h1 className="text-zinc-200 ml-[2dvh] justify-center self-center align-middle">Nenhuma escala cadastrada para os próximos dias.</h1>
             }
             <br />
           </Card>
