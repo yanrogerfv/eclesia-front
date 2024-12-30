@@ -82,7 +82,7 @@ export default function Home() {
           {/* <Button onClick={() => handleSereneMode()} variant={sereneMode ? "outline" : "default"} className="flex h-12 text-lg rounded-lg">Modo Sereno</Button> */}
         </div>
         <br />
-        <h2 className="scroll-m-20 border-b text-base text-neutral-700 tracking-tight transition-colors first:mt-0">
+        <h2 className="scroll-m-20 border-b border-primary/30 text-base text-neutral-700 tracking-tight transition-colors first:mt-0">
           Planejador de Escalas</h2>
       </nav>
       <br />
