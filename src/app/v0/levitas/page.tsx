@@ -30,6 +30,7 @@ import {
 import { CheckboxDemo } from "@/components/checkboxObj";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 
 export default function Home() {
 
@@ -109,12 +110,12 @@ export default function Home() {
       <div className="flex w-full items-center space-x-2 col-span-4">
         {isLoading ?
           <Filter
-            className="w-auto text-4xl justify-center size-9 p-1 outline outline-1 outline-primary/45 bg-subprimary/30 hover:bg-subprimary/20 text-black rounded-md" />
+            className="w-auto text-4xl justify-center size-9 p-1 outline outline-1 outline-primary/45 bg-secondary/30 hover:bg-secondary/20 text-black rounded-md" />
           :
           <Sheet>
             <SheetTrigger asChild>
               {filteredInstruments.length == 0 ?
-                <Filter className="w-auto text-4xl justify-center size-9 p-1 cursor-pointer outline outline-1 outline-primary/30 hover:bg-subprimary/80 hover:text-black rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" /> :
+                <Filter className="w-auto text-4xl justify-center size-9 p-1 cursor-pointer outline outline-1 outline-primary/30 hover:bg-secondary/80 hover:text-black rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" /> :
                 <FilterX onClick={() => setFilteredInstruments([])}
                   className="w-auto text-4xl justify-center size-9 p-1 cursor-pointer outline outline-1 outline-red-500/45 hover:bg-red-500 hover:text-black rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" />
               }
@@ -195,8 +196,9 @@ export default function Home() {
                 </CardHeader>
                 <CardContent key={levita.id} className="h-28">
                   {levita.instrumentos.map(instrumento => (
-                    <div key={instrumento.id} className="inline-flex border-secondary/30 items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold 
-                transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 m-1">{instrumento.nome.toUpperCase()}</div>))}
+                    <Badge key={instrumento.id} variant={"outline"} className="mx-1">{instrumento.nome}</Badge>))}
+                    {/* <div key={instrumento.id} className="inline-flex border-secondary/30 items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold 
+                transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 m-1">{instrumento.nome.toUpperCase()}</div>))} */}
                 </CardContent>
                 <CardFooter className="flex justify-stretch">
                   <DialogLevita key={levita.id}
