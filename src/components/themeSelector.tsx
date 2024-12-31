@@ -8,10 +8,10 @@ import { Separator } from "./ui/separator";
 
 
 const ThemeSelector = () => {
-    const [sereneMode, setSereneMode] = useState(localStorage.getItem("theme") === "serene" || document.documentElement.classList.contains("serene"));
-    const [sunsetMode, setSunsetMode] = useState(localStorage.getItem("theme") === "sunset" || document.documentElement.classList.contains("sunset"));
-    const [forestMode, setForestMode] = useState(localStorage.getItem("theme") === "forest" || document.documentElement.classList.contains("forest"));
-    const [lollipopMode, setLollipopMode] = useState(localStorage.getItem("theme") === "lollipop" || document.documentElement.classList.contains("lollipop"));
+    const [sereneMode, setSereneMode] = useState(false);
+    const [sunsetMode, setSunsetMode] = useState(false);
+    const [forestMode, setForestMode] = useState(true);
+    const [lollipopMode, setLollipopMode] = useState(false);
 
     function handleSereneMode() {
         setSereneMode(true);
