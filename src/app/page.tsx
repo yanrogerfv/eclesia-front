@@ -8,11 +8,14 @@ import Link from "next/link";
 export default function LandingPage() {
 
     return (
-        <div className="h-full">
+        <div style={{ backgroundImage: "url('https://i.imgur.com/dZ2L7bl.jpeg')" }} 
+        // <div style={{ backgroundImage: "url('https://i.imgur.com/dk8EP9v.jpeg')" }} 
+        className="relative overflow-hidden rounded-lg bg-cover bg-current/25 bg-no-repeat text-center">
+        {/* <div>  */}
             <main className="px-20 h-lvh justify-center items-center">
-                <nav className="bg-primary/25 outline outline-1 outline-primary h-[8dvh] rounded-b-3xl" />
+                <nav className="bg-black/80 outline outline-1 outline-primary h-[8dvh] rounded-b-3xl" />
                 <nav className="pt-16 flex justify-center">
-                    <div className="flex-row justify-center text-center p-10 bg-black/50 outline outline-1 outline-primary rounded-xl">
+                    <div className="flex-row justify-center text-center p-10 bg-black/80 outline outline-1 outline-primary rounded-xl">
                         <h1 className="font-extrabold text-8xl border-b">Eclesia</h1>
                         {/* <Button onClick={() => handleSereneMode()} variant={sereneMode ? "outline" : "default"} className="flex h-12 text-lg rounded-lg">Modo Sereno</Button> */}
                         <p className="text-center text-zinc-300/90 text-2xl mt-1">
@@ -22,13 +25,16 @@ export default function LandingPage() {
                 </nav>
                 <div className="justify-center items-center">
                     <div className="flex justify-center p-8">
-                        <Button variant={"outfill"} className="flex h-[10dvh] w-[20dvh] size-fit border border-primary/90 bg-black/50 text-4xl rounded-lg"><Link href="/v0" className="w-full">Planejar</Link></Button>
+                        <Button variant={"outfill"} className="flex h-[10dvh] w-[20dvh] size-fit border border-primary/90 mx-2 bg-black/80 text-4xl rounded-lg">
+                        <Link href="/v0" className="w-full ">Planejar</Link></Button>
+                        <Button variant={"outfill"} className="flex h-[10dvh] w-[20dvh] size-fit border border-primary/90 mx-2 bg-black/80 text-4xl rounded-lg">
+                        <Link href="/login" className="w-full ">Login</Link></Button>
                     </div>
                     <div className="flex justify-center pb-8">
                         <ThemeSelector/>
                     </div>
                     <div className="flex text-center justify-center">
-                        <Card className="w-[80dvh] bg-subprimary/10 outline outline-1 outline-primary py-3 px-6 text-center justify-center items-center">
+                        <Card className="w-[80dvh] bg-black/80 outline outline-1 outline-primary py-3 px-6 text-center justify-center items-center">
                             <p className="text-xl">Eclesia é uma aplicação web que visa facilitar a organização de escalas e a comunicação entre os membros de um grupo de louvor.
                                 Aqui você pode criar e gerenciar Escalas, Levitas, os Instrumentos usados e as Músicas tocadas!</p>
                             <br />
@@ -36,7 +42,7 @@ export default function LandingPage() {
                         </Card>
                     </div>
                     <div className="flex text-center justify-center pt-24">
-                        <Card className="w-[80svh] bg-primary/25 outline outline-1 items-center outline-primary flex justify-between px-3 py-1">
+                        <Card className="w-[80svh] bg-black/80 outline outline-1 items-center outline-primary flex justify-between px-3 py-1">
                             <p className="text-sm text-zinc-400 pl-2">v0.0.1a</p>
                             <Popover>
                                 <PopoverTrigger asChild>

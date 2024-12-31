@@ -18,11 +18,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-<<<<<<< HEAD
-    <html lang="pt-br" className="dawn">
-=======
     <html lang="pt-br" className="forest">
->>>>>>> refs/remotes/origin/develop
       <body className={inter.className}>
         {children}
       </body>

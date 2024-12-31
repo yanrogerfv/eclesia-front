@@ -8,10 +8,10 @@ import { Separator } from "./ui/separator";
 
 
 const ThemeSelector = () => {
-    const [sereneMode, setSereneMode] = useState(document.documentElement.classList.contains("serene"));
-    const [sunsetMode, setSunsetMode] = useState(document.documentElement.classList.contains("sunset"));
-    const [forestMode, setForestMode] = useState(document.documentElement.classList.contains("forest"));
-    const [lollipopMode, setLollipopMode] = useState(document.documentElement.classList.contains("lollipop"));
+    const [sereneMode, setSereneMode] = useState(localStorage.getItem("theme") === "serene" || document.documentElement.classList.contains("serene"));
+    const [sunsetMode, setSunsetMode] = useState(localStorage.getItem("theme") === "sunset" || document.documentElement.classList.contains("sunset"));
+    const [forestMode, setForestMode] = useState(localStorage.getItem("theme") === "forest" || document.documentElement.classList.contains("forest"));
+    const [lollipopMode, setLollipopMode] = useState(localStorage.getItem("theme") === "lollipop" || document.documentElement.classList.contains("lollipop"));
 
     function handleSereneMode() {
         setSereneMode(true);
@@ -96,7 +96,10 @@ const ThemeSelector = () => {
         //     <Moon className="ml-auto"/>
         // </div>
         <div>
-            <div className="bg-black/70 rounded-lg p-2 flex items-center">
+            <div className="text-center bg-black/70 border text-lg font-semibold text-primary">
+                Themes
+            </div>
+            <div className="bg-black/70 border rounded-lg p-2 flex items-center">
                 {/* <Toggle className="p-0 size-10">
                 <Haze className="flex h-8 w-8"/>
             </Toggle>
