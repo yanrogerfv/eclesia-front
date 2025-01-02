@@ -84,21 +84,27 @@
       --card-foreground: 0 0% 95%;
       --popover: 0 0% 9%;
       --popover-foreground: 0 0% 95%;
-      --primary: 142.1 70.6% 45.3%;
+      --primary: 142.1 80% 37%;
       --primary-foreground: 144.9 80.4% 10%;
-      --secondary: 155, 70%, 45%;
-      --secondary-foreground: 135, 90%, 13%;
+      --subprimary: 155 70% 45%;
+      --sub-primary-foreground: 135 90% 13%;
+      --secondary: 110 62% 44%;
+      /* --secondary: 32 65% 40%; */
+      --secondary-foreground: 145 90% 13%;
       /* --secondary: 240 3.7% 15.9%; */
       /* --secondary-foreground: 0 0% 98%; */
+      --special: 0 68% 60%;
+      --special-foreground: 240 5% 64.9%;
       --muted: 0 0% 15%;
       --muted-foreground: 240 5% 64.9%;
       --accent: 12 6.5% 15.1%;
       --accent-foreground: 0 0% 98%;
       --destructive: 0 62.8% 30.6%;
       --destructive-foreground: 0 85.7% 97.3%;
-      --border: 240 3.7% 15.9%;
-      --input: 240 3.7% 15.9%;
+      --border: 142.1 45% 22%;
+      --input: 142.1 45% 22%;
       --ring: 142.4 71.8% 29.2%;
+      --colortext: 0 0% 95%;
     }
 
     .lollipop {
@@ -109,7 +115,7 @@
       /* CSS: .bg-gradient { background: var(--gradient) } */
       --gradient: #FF91A4;
   
-      --background: -11 65% 6.24%;
+      --background: -11 45% 2.24%;
       --foreground: -11 10% 98.9%;
   
       --muted: -11 54% 23.400000000000002%;
@@ -118,7 +124,7 @@
       --popover: -11 45% 0%;
       --popover-foreground: -11 10% 98.9%;
   
-      --card: -11 45% 0%;
+      --card: -11 65% 6%;
       --card-foreground: -11 10% 98.9%;
   
       --border: -11 54% 23.400000000000002%;
@@ -129,14 +135,14 @@
       /* --primary: -11 100% 78%; */
       --primary-foreground: -11 10% 7.800000000000001%;
 
-      --subprimary: -11 54% 23%;
+      --subprimary: 327 87% 82%;
       --sub-primary-foreground: -11 10% 98.9%;
   
       /* --secondary: 331 100% 72%; */
       --secondary: -11 100% 78%;
       --secondary-foreground: -11 10% 98.9%;
 
-      --special: 307 90% 61%;
+      --special: 277 90% 71%;
       --special-foreground: -11 10% 98.9%;
   
       --accent: -11 54% 23.400000000000002%;
@@ -146,6 +152,7 @@
       --destructive-foreground: -11 10% 98.9%;
   
       --ring: -11 100% 78%;
+      --colortext: 0 0% 95%;
     }
   
 
@@ -191,6 +198,7 @@
     --destructive-foreground: 189 9.4% 96.7%;
 
     --ring: 189 94% 34%;
+    --colortext: 0 0% 95%;
   }
 
   .sunset {
@@ -235,6 +243,7 @@
       --destructive-foreground: 25 10% 97.25%;
   
       --ring: 25 100% 45%;
+      --colortext: 0 0% 95%;
   }
 }
 
