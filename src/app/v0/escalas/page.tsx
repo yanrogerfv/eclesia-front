@@ -88,7 +88,7 @@ export default function Home() {
       <br />
 
       {escalasData.length == 0 ?
-        <Card className="flex text-center justify-center mx-20">
+        <Card className="flex text-center justify-center">
           <p className="p-10 text-2xl text-zinc-400/80">Nenhuma escala cadastrada.</p>
         </Card>
         :

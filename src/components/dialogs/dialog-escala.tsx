@@ -324,11 +324,11 @@ export function DialogAddEditEscala(pp: addEditDialogProps) {
                                     data: data,
                                     titulo: titulo,
                                     ministro: ministro,
-                                    violao: violao,
-                                    teclado: teclado,
-                                    bateria: bateria,
-                                    baixo: baixo,
-                                    guitarra: guitarra,
+                                    violao: violao == "null" ? null : violao,
+                                    teclado: teclado == "null" ? null : teclado,
+                                    bateria: bateria == "null" ? null : bateria,
+                                    baixo: baixo == "null" ? null : baixo,
+                                    guitarra: guitarra == "null" ? null : guitarra,
                                     backs: backs,
                                     observacoes: observacao
                                 })
