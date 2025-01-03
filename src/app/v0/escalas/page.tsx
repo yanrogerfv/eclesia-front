@@ -37,6 +37,19 @@ export default function Home() {
   const [removeOverlay, setRemoveOverlay] = useState(false)
 
   useEffect(() => {
+    fetch("http://localhost:1004/v1/escala/clean",
+      { method: "DELETE" }
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("Escalas limpas com sucesso!")
+      })
+      .catch((error) => {
+        console.error("Erro na comunicação com a api: ", error)
+      })
+  }, [])
+
+  useEffect(() => {
     // setIsLoading(true)
     fetch("http://localhost:1004/v1/escala/resumed")
       .then((res) => res.json())
@@ -127,10 +140,10 @@ export default function Home() {
                         </CardTitle>
                         {convertDateFormat(escala.data)}
                         <CardDescription>
-                          {escala.observacoes.length > 0 ? 
-                            escala.observacoes.length > 30 ? 
-                              escala.observacoes.substring(0, 25).trimEnd().concat("...") 
-                              : escala.observacoes 
+                          {escala.observacoes.length > 0 ?
+                            escala.observacoes.length > 30 ?
+                              escala.observacoes.substring(0, 28).trimEnd().concat("...")
+                              : escala.observacoes
                             : "Sem observações."}
                         </CardDescription>
                       </CardHeader>

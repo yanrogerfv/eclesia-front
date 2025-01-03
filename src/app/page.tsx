@@ -51,7 +51,7 @@ export default function LandingPage() {
                                 <PopoverContent className="w-80 rounded-lg">
                                     <div className="flex text-start justify-normal">
                                         <p className="text-sm">
-                                            <p>Nome: <a className="text-subprimary hover:text-subprimary/90">Yan Roger Fogaça Vieira</a></p>
+                                            <p>Nome: <a className="text-subprimary cursor-default hover:brightness-125">Yan Roger Fogaça Vieira</a></p>
                                             Email: <Link target="_blank" href="https://mail.google.com/mail/u/0/?fs=1&to=yanrogerfv@gmail.com&su=Eclesia%20Software&tf=cm" className="text-subprimary hover:underline">
                                                 yanrogerfv@gmail.com</Link><br />
                                             Github: <Link target="_blank" href="https://github.com/yan-roger-fv" className="text-subprimary hover:underline">
@@ -88,8 +88,8 @@ export default function LandingPage() {
                                             <Link className="text-indigo-100 hover:underline" target="_blank" href={"https://github.com/gregorystevao19"}> Grégory Stevão</Link>,
                                             <Link className="text-indigo-100 hover:underline" target="_blank" href={"https://github.com/Souzaa1"}> Pedro Antônio</Link> e
                                             <Link className="text-indigo-100 hover:underline" target="_blank" href={"https://github.com/SamuelAMT"}> Samuel Tavares</Link>, pelas dicas,
-                                            <a className="text-indigo-100 hover:text-indigo-100/80"> Gabriel Barros </a> pela avaliação, e
-                                            <a className="text-indigo-100 hover:text-indigo-100/80"> Ailton Neves</a> pela oportunidade!
+                                            <a className="text-indigo-100 hover:brightness-125"> Gabriel Barros </a> pela avaliação, e
+                                            <a className="text-indigo-100 hover:brightness-125"> Ailton Neves</a> pela oportunidade!
                                         </p>
                                     </div>
                                 </PopoverContent>

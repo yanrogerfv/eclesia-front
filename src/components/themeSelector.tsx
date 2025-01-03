@@ -7,11 +7,12 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/t
 import { Separator } from "./ui/separator";
 
 
+
 const ThemeSelector = () => {
-    const [sereneMode, setSereneMode] = useState(false);
-    const [sunsetMode, setSunsetMode] = useState(false);
-    const [forestMode, setForestMode] = useState(true);
-    const [lollipopMode, setLollipopMode] = useState(false);
+    const [sereneMode, setSereneMode] = useState(document.documentElement.classList.contains("serene") || localStorage.getItem("theme") === "serene");
+    const [sunsetMode, setSunsetMode] = useState(document.documentElement.classList.contains("sunset") || localStorage.getItem("theme") === "sunset");
+    const [forestMode, setForestMode] = useState(document.documentElement.classList.contains("forest") || localStorage.getItem("theme") === "forest");
+    const [lollipopMode, setLollipopMode] = useState(document.documentElement.classList.contains("lollipop") || localStorage.getItem("theme") === "lollipop");
 
     function handleSereneMode() {
         setSereneMode(true);
