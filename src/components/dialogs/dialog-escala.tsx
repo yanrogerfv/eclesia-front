@@ -288,7 +288,7 @@ export function DialogAddEditEscala(pp: addEditDialogProps) {
                         setIsLoading(true)
                         pp.isEdit ?
                             pp.escala ?
-                                fetch("http://localhost:1004/v1/escala/"+pp.escala.id, {
+                                fetch("http://localhost:1004/v1/escala", {
                                     method: "PUT",
                                     headers: {
                                         'Content-Type': 'application/json',
