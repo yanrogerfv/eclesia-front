@@ -125,6 +125,12 @@ export function DialogAddEditEscala(pp: addEditDialogProps) {
     const [backs, setBacks] = useState<String[]>(pp.escala?.back.map((back) => back.id) || []);
     const [observacao, setObservacao] = useState(pp.escala?.observacoes || "");
 
+    // useEffect(() => {
+    //     setLevitasDisponiveis(pp.levitasDisponiveis.filter((levita) => 
+    //         levita.id != baixo && levita.id != bateria && levita.id != guitarra && levita.id != teclado && levita.id != violao
+    //     ))
+    // }, [baixo, bateria, guitarra, teclado, violao])
+
     function filterByInstrumento(instrumentoId: number) {
         return levitasDisponiveis.filter((levita) => levita.instrumentos.some((instrumento) => instrumento.id == instrumentoId))
     }
@@ -150,8 +156,10 @@ export function DialogAddEditEscala(pp: addEditDialogProps) {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                {pp.isEdit ? <Button><PencilLine />Editar Escala</Button>
-                    : <Button variant={"outline"} className="mx-2 hover:text-emerald-500">
+                {pp.isEdit ? 
+                    <Button variant={"outline"} className="hover:text-sky-500" disabled={levitasDisponiveis.length == 0}>
+                    <PencilLine className="text-sky-500" />Editar Escala</Button>
+                    : <Button variant={"outline"} className="mx-2 hover:text-emerald-500" disabled={levitasDisponiveis.length == 0}>
                         <CirclePlus className="mx-1 text-emerald-500" />Criar Escala</Button>
                 }
             </DialogTrigger>
@@ -276,7 +284,7 @@ export function DialogAddEditEscala(pp: addEditDialogProps) {
 
                 </ScrollArea>
                 <DialogFooter>
-                    <Button className="hover:bg-emerald-500" onClick={() => {
+                    <Button className="hover:bg-emerald-500" disabled={isLoading} onClick={() => {
                         if(titulo.length == 0){
                             alert("Insira um título para a escala!")
                         } else if(data.length == 0){
@@ -340,7 +348,7 @@ export function DialogAddEditEscala(pp: addEditDialogProps) {
                                 console.error("Erro na comunicação com a api: ", error);
                             })
                     }}}>{pp.isEdit ? "Confirmar" : "Adicionar"}</Button>
-                    <Button className="hover:bg-rose-500" onClick={() => setOpen(false)}>Cancelar</Button>
+                    <Button className="hover:bg-rose-500" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog >

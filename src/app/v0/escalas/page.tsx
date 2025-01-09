@@ -17,7 +17,7 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { ChevronLeft, CircleMinus, CirclePlus, IterationCw, Loader2, X } from "lucide-react";
-import { Escala, EscalaResumida, Levita } from "@/components/apiObjects";
+import { convertDateFormat, Escala, EscalaResumida, Levita } from "@/components/apiObjects";
 import { DialogAddEditEscala, DialogAddMusicaInEscala, DialogVerEscala } from "@/components/dialogs/dialog-escala";
 import ModalEscala from "@/components/modal";
 
@@ -176,10 +176,4 @@ export default function Home() {
       }
     </main>
   )
-}
-
-function convertDateFormat(dateString: Date) {
-  const date = new Date(dateString);
-
-  return String((date.getDate() + 1) + '/' + (date.getMonth() + 1) + '/' + date.getFullYear())
 }

@@ -9,10 +9,14 @@ import { Separator } from "./ui/separator";
 
 
 const ThemeSelector = () => {
-    const [sereneMode, setSereneMode] = useState(document.documentElement.classList.contains("serene") || localStorage.getItem("theme") === "serene");
-    const [sunsetMode, setSunsetMode] = useState(document.documentElement.classList.contains("sunset") || localStorage.getItem("theme") === "sunset");
-    const [forestMode, setForestMode] = useState(document.documentElement.classList.contains("forest") || localStorage.getItem("theme") === "forest");
-    const [lollipopMode, setLollipopMode] = useState(document.documentElement.classList.contains("lollipop") || localStorage.getItem("theme") === "lollipop");
+    // const [sereneMode, setSereneMode] = useState(document.documentElement.classList.contains("serene") || localStorage.getItem("theme") === "serene");
+    // const [sunsetMode, setSunsetMode] = useState(document.documentElement.classList.contains("sunset") || localStorage.getItem("theme") === "sunset");
+    // const [forestMode, setForestMode] = useState(document.documentElement.classList.contains("forest") || localStorage.getItem("theme") === "forest");
+    // const [lollipopMode, setLollipopMode] = useState(document.documentElement.classList.contains("lollipop") || localStorage.getItem("theme") === "lollipop");
+    const [sereneMode, setSereneMode] = useState(true);
+    const [sunsetMode, setSunsetMode] = useState(false);
+    const [forestMode, setForestMode] = useState(false);
+    const [lollipopMode, setLollipopMode] = useState(false);
 
     function handleSereneMode() {
         setSereneMode(true);
