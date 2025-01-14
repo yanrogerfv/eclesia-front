@@ -1,6 +1,5 @@
 "use client"
 
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -10,170 +9,187 @@ import {
   CardHeader,
   CardTitle
 } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
-import * as React from "react"
-import { UUID } from "crypto";
+import * as React from "react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { useEffect, useMemo, useState, useTransition } from "react";
-import { ChevronLeft, CircleMinus, CirclePlus, IterationCw, Loader2, X } from "lucide-react";
-import { convertDateFormat, Escala, EscalaResumida, Levita } from "@/components/apiObjects";
-import { DialogAddEditEscala, DialogAddMusicaInEscala, DialogVerEscala } from "@/components/dialogs/dialog-escala";
-import ModalEscala from "@/components/modal";
-
-/* export async function fetchEscalas() {
-  var escalas = await (fetch('http://localhost:1005/v1/escala'));
-  if (!escalas.ok)
-    throw new Error(`HTTP error! status: ${escalas.status}`);
-  var data: Escala[] = await escalas.json() as Escala[];
-  return data as Escala[];
-} */
+import { useEffect, useState } from "react";
+import { ChevronLeft, CircleMinus, X } from "lucide-react";
+import { convertDateFormat, EscalaResumida, Levita } from "@/components/apiObjects";
+import { DialogAddEditEscala, DialogVerEscala } from "@/components/dialogs/dialog-escala";
 
 export default function Home() {
-  const [escalasData, setEscalasData] = useState<EscalaResumida[]>([])
-  const [levitasDisponiveis, setLevitasDisponiveis] = useState<Levita[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [loadingRemove, setLoadingRemove] = useState(false)
-  const [removeOverlay, setRemoveOverlay] = useState(false)
+  const [escalasData, setEscalasData] = useState<EscalaResumida[]>([]);
+  const [levitasDisponiveis, setLevitasDisponiveis] = useState<Levita[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [removeOverlay, setRemoveOverlay] = useState(false);
 
   useEffect(() => {
-    fetch("http://localhost:1004/v1/escala/clean",
-      { method: "DELETE" }
-    )
+    fetch("http://localhost:1004/v1/escala/clean", { method: "DELETE" })
       .then((res) => res.json())
-      .then((data) => {
-        console.log("Escalas limpas com sucesso!")
-      })
-      .catch((error) => {
-        console.error("Erro na comunicação com a api: ", error)
-      })
-  }, [])
+      .then(() => console.log("Escalas limpas com sucesso!"))
+      .catch((error) => console.error("Erro na comunicação com a api: ", error));
+  }, []);
 
   useEffect(() => {
-    // setIsLoading(true)
     fetch("http://localhost:1004/v1/escala/resumed")
       .then((res) => res.json())
       .then((data) => {
-        setIsLoading(false)
-        setEscalasData(data)
+        setIsLoading(false);
+        setEscalasData(data);
       })
       .catch((error) => {
-        console.error("Erro na comunicação com a api: ", error)
+        console.error("Erro na comunicação com a api: ", error);
         setEscalasData([]);
-      })
-  }, [escalasData])
+      });
+  }, []);
 
   useEffect(() => {
     fetch("http://localhost:1004/v1/levita/resumed")
       .then((res) => res.json())
       .then((data) => {
-        setLevitasDisponiveis(data)
+        setLevitasDisponiveis(data);
       })
       .catch((error) => {
-        console.error("Erro na comunicação com a api: ", error)
+        console.error("Erro na comunicação com a api: ", error);
         setLevitasDisponiveis([]);
-      })
-  }, [levitasDisponiveis])
+      });
+  }, []);
 
   return (
-    <main className="max-w-6xl mx-auto my-12">
-
+    <main className="max-w-6xl px-4 sm:px-8 lg:px-16 mx-auto my-6 sm:my-12">
       <nav>
-        <div className="flex justify-between">
-          <div className="flex">
-            <Link href="/v0" className="w-auto text-4xl justify-center items-center p-2 cursor-pointer outline outline-1 outline-primary/50 hover:bg-secondary hover:text-black rounded-lg">
-              <ChevronLeft className="size-10" />
-            </Link>
-            <h1 className="mx-5 font-extrabold tracking-tight text-5xl">Escalas</h1>
-          </div>
+        <div className="flex flex-wrap justify-between items-center">
           <div className="flex items-center">
+            <Link href="/v0" className="w-auto text-2xl sm:text-4xl flex items-center p-2 cursor-pointer outline outline-1 outline-primary/50 hover:bg-secondary hover:text-black rounded-lg">
+              <ChevronLeft className="h-6 w-6 sm:h-8 sm:w-8" />
+            </Link>
+            <h1 className="ml-4 font-extrabold tracking-tight text-2xl sm:text-5xl">Escalas</h1>
+          </div>
+          <div className="flex items-center mt-4 sm:mt-0">
             <DialogAddEditEscala isEdit={false} escala={undefined} levitasDisponiveis={levitasDisponiveis} />
-            <Button variant="outline" className={removeOverlay ? "mx-2 font-bold bg-rose-500/80 border-rose-600/90 hover:bg-rose-600/40"
-              : "mx-2 font-bold hover:bg-rose-500/40"}
-              onClick={() => setRemoveOverlay(!removeOverlay)}>
-              <CircleMinus className="mx-1 text-rose-500" />Excluir Escala</Button>
+            <Button
+              variant="outline"
+              className={
+                removeOverlay
+                  ? "mx-2 font-bold bg-rose-500/80 border-rose-600/90 hover:bg-rose-600/40"
+                  : "mx-2 font-bold hover:bg-rose-500/40"
+              }
+              onClick={() => setRemoveOverlay(!removeOverlay)}
+            >
+              <CircleMinus className="mx-1 text-rose-500" />Excluir Escala
+            </Button>
           </div>
         </div>
         <br />
-        <h2 className="scroll-m-20 border-b text-base text-neutral-700 tracking-tight transition-colors first:mt-0">
-          {isLoading ? "Carregando Escalas..." : "Visualizando Escalas"}</h2>
+        <h2 className="border-b text-sm sm:text-base text-neutral-700 tracking-tight">
+          {isLoading ? "Carregando Escalas..." : "Visualizando Escalas"}
+        </h2>
       </nav>
       <br />
 
-      {
-        isLoading ? (
-          <div className="col-span-4 h-full flex items-center justify-center mt-20">
-            <div className="size-80 border-4 border-transparent text-primary/40 text-4xl animate-spin flex items-center justify-center border-t-primary rounded-full">
-              <div className="size-64 border-4 border-transparent text-subprimary/40 text-2xl animate-spin flex items-center justify-center border-t-subprimary rounded-full" />
-            </div>
-          </div>
-        )
-          :
-          <div className="grid grid-cols-4 gap-8">
-            {
-              escalasData.length == 0 ?
-                <Card className="flex text-center justify-center">
-                  <p className="p-10 text-2xl text-zinc-400/80">Nenhuma escala cadastrada.</p>
-                </Card>
-                : (
-                  escalasData.map(escala => (
-                    <Card key={escala.id} className={removeOverlay ? "animate-pulse" : ""}>
-                      <X className={removeOverlay ? "absolute hover:cursor-pointer bg-rose-500/80 rounded-br-xl animate-none" : "absolute invisible"} onClick={() => {
-                        setLoadingRemove(true)
-                        fetch(`http://localhost:1004/v1/escala/${escala.id}`, {
-                          method: "DELETE"
-                        })
-                          .then((response) => {
-                            setLoadingRemove(false)
-                            alert(response.status === 200 ? "Escala removida com sucesso!" : "Erro ao remover a Escala: " + response.headers.get("error"))
-                          })
-                          .catch((error) => {
-                            alert("Erro ao remover Escala!")
-                            console.error("Erro na comunicação com a api: ", error);
-                          })
-                      }} />
-                      <CardHeader>
-                        <CardTitle className={
-                          escala.domingo ? "text-primary" : escala.quarta ? "text-secondary" : "text-special"
-                        }>
-                          {escala.titulo}
-                        </CardTitle>
-                        {convertDateFormat(escala.data)}
-                        <CardDescription>
-                          {escala.observacoes.length > 0 ?
-                            escala.observacoes.length > 30 ?
-                              escala.observacoes.substring(0, 28).trimEnd().concat("...")
-                              : escala.observacoes
-                            : "Sem observações."}
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent key={escala.id}>
-                        <a className="text-subprimary">Ministro: </a><a className="text-secondary">{escala.ministro}</a><br />
-                        <a className="text-subprimary">Violão: </a>{escala.violao ? escala.violao : <a className="text-secondary/40">Não inserido.</a>}<br />
-                        <a className="text-subprimary">Teclado: </a>{escala.teclado ? escala.teclado : <a className="text-secondary/40">Não inserido.</a>}<br />
-                        <a className="text-subprimary">Bateria: </a>{escala.bateria ? escala.bateria : <a className="text-secondary/40">Não inserido.</a>}<br />
-                        <a className="text-subprimary">Baixo: </a>{escala.baixo ? escala.baixo : <a className="text-secondary/40">Não inserido.</a>}<br />
-                        <a className="text-subprimary">Guitarra: </a>{escala.guitarra ? escala.guitarra : <a className="text-secondary/40">Não inserido.</a>}<br />
-                      </CardContent>
-                      <CardFooter className="flex items-center justify-between">
-                        <div>
-                          {escala.domingo ?
-                            <Badge className="bg-primary/80 hover:bg-primary/60 cursor-default">Domingo</Badge>
-                            : escala.quarta ?
-                              <Badge className="bg-secondary/80 hover:bg-secondary/60 cursor-default">Quarta</Badge>
-                              :
-                              <Badge className="bg-special/80 hover:bg-special/60 cursor-default">Especial</Badge>
-                          }
-                        </div>
-                        <div>
-                          <DialogVerEscala escalaId={escala.id} levitasDisponiveis={levitasDisponiveis} />
-                        </div>
-                      </CardFooter>
-                    </Card>
-                  )))
-            }
-          </div>
-      }
+      {isLoading ? (
+        <div className="flex justify-center items-center h-40">
+          <div className="h-16 w-16 border-4 border-transparent border-t-primary rounded-full animate-spin" />
+        </div>
+      ) : (
+        <div className={
+          escalasData.length === 0
+            ? ""
+            : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-8"
+        }>
+          {escalasData.length === 0 ? (
+            <Card className="text-center">
+              <p className="p-6 sm:p-10 text-lg sm:text-2xl text-zinc-400/80">
+                Nenhuma escala cadastrada.
+              </p>
+            </Card>
+          ) : (
+            escalasData.map((escala) => (
+              <Card key={escala.id} className={removeOverlay ? "animate-pulse" : ""}>
+                <X
+                  className={
+                    removeOverlay
+                      ? "absolute hover:cursor-pointer bg-rose-500/80 rounded-br-xl"
+                      : "absolute invisible"
+                  }
+                  onClick={() => {
+                    fetch(`http://localhost:1004/v1/escala/${escala.id}`, {
+                      method: "DELETE",
+                    })
+                      .then((response) => {
+                        alert(
+                          response.status === 200
+                            ? "Escala removida com sucesso!"
+                            : "Erro ao remover a Escala: " +
+                                response.headers.get("error")
+                        );
+                      })
+                      .catch((error) => {
+                        alert("Erro ao remover Escala!");
+                        console.error("Erro na comunicação com a api: ", error);
+                      });
+                  }}
+                />
+                <CardHeader>
+                  <CardTitle
+                    className={
+                      escala.domingo
+                        ? "text-primary"
+                        : escala.quarta
+                        ? "text-secondary"
+                        : "text-special"
+                    }
+                  >
+                    {escala.titulo}
+                  </CardTitle>
+                  {convertDateFormat(escala.data)}
+                  <CardDescription>
+                    {escala.observacoes.length > 0
+                      ? escala.observacoes.length > 30
+                        ? escala.observacoes.substring(0, 28).trimEnd().concat("...")
+                        : escala.observacoes
+                      : "Sem observações."}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p>
+                    <span className="text-subprimary">Ministro:</span> <span className="text-secondary">{escala.ministro}</span>
+                  </p>
+                  <p>
+                    <span className="text-subprimary">Violão:</span> {escala.violao || <span className="text-secondary/40">Não inserido.</span>}
+                  </p>
+                  <p>
+                    <span className="text-subprimary">Teclado:</span> {escala.teclado || <span className="text-secondary/40">Não inserido.</span>}
+                  </p>
+                  <p>
+                    <span className="text-subprimary">Bateria:</span> {escala.bateria || <span className="text-secondary/40">Não inserido.</span>}
+                  </p>
+                  <p>
+                    <span className="text-subprimary">Baixo:</span> {escala.baixo || <span className="text-secondary/40">Não inserido.</span>}
+                  </p>
+                  <p>
+                    <span className="text-subprimary">Guitarra:</span> {escala.guitarra || <span className="text-secondary/40">Não inserido.</span>}
+                  </p>
+                </CardContent>
+                <CardFooter className="flex items-center justify-between">
+                  <div>
+                    {escala.domingo ? (
+                      <Badge className="bg-primary/80 hover:bg-primary/60 cursor-default">Domingo</Badge>
+                    ) : escala.quarta ? (
+                      <Badge className="bg-secondary/80 hover:bg-secondary/60 cursor-default">Quarta</Badge>
+                    ) : (
+                      <Badge className="bg-special/80 hover:bg-special/60 cursor-default">Especial</Badge>
+                    )}
+                  </div>
+                  <div>
+                    <DialogVerEscala escalaId={escala.id} levitasDisponiveis={levitasDisponiveis} />
+                  </div>
+                </CardFooter>
+              </Card>
+            ))
+          )}
+        </div>
+      )}
     </main>
-  )
+  );
 }

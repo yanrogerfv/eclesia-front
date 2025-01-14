@@ -1,18 +1,60 @@
 "use client"
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader } from "@/components/ui/card";
+import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Eye, EyeOff, Lock, LockOpen } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
+
+const formSchema = z.object({
+  username: z.string(),
+  password: z.string().min(5),
+})
+
+type FormData = z.infer<typeof formSchema>
 
 
 export default function LoginPage() {
-  const [isLoading, setIsLoading] = useState(true)
-  const [username, setUsername] = useState("")
-  const [password, setPassword] = useState("")
+  const [cookie, setCookie, removeCookie] = useCookie("token");
+  const router = useRouter();
+  const form = useForm<FormData>({
+    defaultValues: {
+      username: "",
+      password: ""
+    }
+  })
+
+  const handleLogin = async (data: FormData) => {
+    try {
+      setIsLoading(true);
+      const response = await fetch("http://localhost:1004/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data)
+      })
+
+      if (!response.ok) {
+        console.error("Erro ao efetuar login!")
+      }
+      router.push("/v0")
+    } catch (error) {
+      console.error("Erro na comunicação com a api: ", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+
+  const [isLoading, setIsLoading] = useState(false)
   const [seePass, setSeePass] = useState(false)
 
   return (
@@ -24,7 +66,7 @@ export default function LoginPage() {
       <div style={{ backgroundImage: "url('https://i.imgur.com/dZ2L7bl.jpeg')" }}
         className="relative overflow-hidden rounded-lg bg-cover bg-current/25 bg-no-repeat text-center">
 
-        <Card className="justify-center outline outline-1 outline-primary rounded-2xl
+        {/* <Card className="justify-center outline outline-1 outline-primary rounded-2xl
           lg:w-[20dvw] lg:h-fit lg:ml-[70dvw] lg:mr-[10dvw] lg:my-[31dvh] 
           md:w-[40dvw] md:h-[80dvh] md:ml-[30dvw] md:mr-[30dvw] md:my-[10dvh]
           w-4/5 h-[60dvh] mx-[10dvw] my-[5dvh]
@@ -38,17 +80,68 @@ export default function LoginPage() {
             <Label>Senha</Label>
             <div className="flex justify-between mb-2">
               <Input type={seePass ? "password" : "text"} placeholder="Insira a Senha" onChange={(e) => setPassword(e.target.value)} />
-                {seePass ? <Lock className="absolute lg:right-[12dvw] self-center align-middle cursor-pointer" onClick={() => setSeePass(!seePass)} />
-                  : <LockOpen className="absolute lg:right-[12dvw] self-center align-middle cursor-pointer" onClick={() => setSeePass(!seePass)} />}
+              {seePass ? <Lock className="absolute lg:right-[12dvw] self-center align-middle cursor-pointer" onClick={() => setSeePass(!seePass)} />
+                : <LockOpen className="absolute lg:right-[12dvw] self-center align-middle cursor-pointer" onClick={() => setSeePass(!seePass)} />}
             </div>
             <Button variant={"outfill"} className="px-5 mb-4" onClick={() => console.log("Username: " + username + "\nPassword: " + password)}>Entrar</Button>
             <br />
             <Link href={"/"} className="text-sm text-secondary/75 hover:text-secondary/75">Esqueci minha senha</Link>
             <p className="text-xs mt-1 text-zinc-400">v0.0.1a</p>
           </CardContent>
-        </Card>
+        </Card> */}
 
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleLogin)}>
+            <FormField
+              control={form.control}
+              name="username"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Usuário</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Insira o Usuário"
+                      {...field}
+                    />
+                  </FormControl>
+                </FormItem>
 
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Senha</FormLabel>
+                  <FormControl>
+                    <Input
+                      type={seePass ? "password" : "text"}
+                      placeholder="Insira a Senha"
+                      {...field}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            <Button
+              type="submit"
+              variant="outfill"
+              className="px-5 mb-4"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <div>
+                  <div className="animate-spin h-5 w-5 border-b-2 border-white rounded-full" />
+                  Entrando...
+                </div>
+              ) : "Entrar"}
+            </Button>
+
+          </form>
+        </Form>
 
 
 
