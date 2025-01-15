@@ -11,6 +11,10 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import Cookies from "js-cookie";
+import { resolve } from "path";
+import { usePermission } from "@/context/permissionContext";
+
 
 
 const formSchema = z.object({
@@ -22,7 +26,9 @@ type FormData = z.infer<typeof formSchema>
 
 
 export default function LoginPage() {
-  const [cookie, setCookie, removeCookie] = useCookie("token");
+  const {setPermission} = usePermission();
+  var expireMinutes = 15;
+  var expireTime = new Date(new Date().getTime() + expireMinutes * 60 * 1000);
   const router = useRouter();
   const form = useForm<FormData>({
     defaultValues: {
@@ -30,7 +36,6 @@ export default function LoginPage() {
       password: ""
     }
   })
-
   const handleLogin = async (data: FormData) => {
     try {
       setIsLoading(true);
@@ -42,10 +47,17 @@ export default function LoginPage() {
         body: JSON.stringify(data)
       })
 
+
+      if (response.ok) {
+        let resp = await response.json();
+        console.log("TOKEN " + resp.token)
+        Cookies.set("token", resp.token, { expires: expireTime })
+        setPermission(resp.role);
+        router.push("/v0")
+      }
       if (!response.ok) {
         console.error("Erro ao efetuar login!")
       }
-      router.push("/v0")
     } catch (error) {
       console.error("Erro na comunicação com a api: ", error);
     } finally {
@@ -142,13 +154,6 @@ export default function LoginPage() {
 
           </form>
         </Form>
-
-
-
-
-
-
-
         <Card className="flex outline outline-1 outline-primary rounded-2xl
       lg:hidden md:hidden w-4/5 h-[25dvh] mx-[10dvw] my-[5dvh]
       "></Card>

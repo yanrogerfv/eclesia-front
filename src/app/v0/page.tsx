@@ -1,7 +1,5 @@
 "use client"
 
-import Image from "next/image";
-import { Button } from "@/components/ui/button";
 import { //Card
   Card,
   CardContent,
@@ -10,42 +8,38 @@ import { //Card
   CardHeader,
   CardTitle
 } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
 import React, { useEffect, useState, useTransition } from "react";
-import { ButtonLink } from "@/components/buttonlink";
-import PageHeader from "@/components/pgtitle";
-import { Escala, EscalaResumida, Levita } from "@/components/apiObjects";
+import { EscalaResumida, Levita } from "@/components/apiObjects";
 import { EscalaSimpleCard, LevitaSimpleCard } from "@/components/customCards";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
-import ThemeSelector from "@/components/themeSelector";
 import { ArrowLeftFromLine } from "lucide-react";
+import Cookies from "js-cookie";
+import { permission } from "process";
+import { usePermission } from "@/context/permissionContext";
 
 const document = typeof window !== "undefined" ? window.document : null;
 
 export default function Home() {
+
+  const { permission } = usePermission();
   const [nextEscalas, setNextEscalas] = useState<EscalaResumida[]>([]);
   const [levitasData, setLevitasData] = useState<Levita[]>([]);
   const [isEscalasLoading, setEscalasLoading] = useState(true)
   const [isLevitasLoading, setLevitasLoading] = useState(true)
-  const [sereneMode, setsereneMode] = useState(document?.documentElement.classList.contains("serene"));
 
-  function handleSereneMode() {
-    setsereneMode(!sereneMode)
-    if (sereneMode) {
-      document?.documentElement.classList.remove("sunset");
-      document?.documentElement.classList.add("serene");
-      localStorage.setItem("theme", "serene");
-    } else {
-      document?.documentElement.classList.remove("serene");
-      document?.documentElement.classList.add("sunset");
-      localStorage.setItem("theme", "sunset");
-    }
-  }
+
 
   useEffect(() => {
-    fetch("http://localhost:1004/v1/escala/resumed")
+    fetch("http://localhost:1004/v1/escala/resumed", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${Cookies.get("token")}`
+      }
+    }
+    )
       .then((res) => res.json())
       .then((data) => {
         setEscalasLoading(false)
@@ -89,7 +83,9 @@ export default function Home() {
       <div>
         <div key={"card-bg"} className="flex items-center justify-between gap-4 w-full">
           {/* <ButtonLink title="Escalas" reff="v0/escalas" /> */}
-          <Link href="v0/escalas" className="flex border hover:bg-primary/90 justify-center items-center h-12 w-full text-lg rounded-lg">Escalas</Link>
+          {
+            permission === "ADMIN" && <Link href="v0/escalas" className="flex border hover:bg-primary/90 justify-center items-center h-12 w-full text-lg rounded-lg">Escalas</Link>
+          }
           {/* <Button variant={"outfill"} className="flex h-12 w-full text-lg rounded-lg"><Link href="v0/escalas" className="w-full">Escala</Link></Button> */}
           {/* <ButtonLink title="Levitas" reff="v0/levitas" /> */}
           <Link href="v0/levitas" className="flex border hover:bg-primary/90 justify-center items-center h-12 w-full text-lg rounded-lg">Levitas</Link>
@@ -178,7 +174,7 @@ export default function Home() {
                   <CarouselPrevious />
                   <CarouselNext />
                 </Carousel> :
-                <h1 className="text-zinc-200 justify-center self-center align-middle">Todos os levitas disponíveis!</h1>
+                <h1 className="text-zinc-200 justify-center self-center align-middle">Nenhum levita encontrado!</h1>
             }
             <br />
           </Card>
