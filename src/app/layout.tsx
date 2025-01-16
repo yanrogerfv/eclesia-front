@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { PermissionProvider } from "@/context/permissionContext";
+// import { PermissionProvider } from "@/context/permissionContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,11 +20,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-br" className="serene">
-      <PermissionProvider>
+      {/* <PermissionProvider> */}
         <body className={inter.className}>
           {children}
         </body>
-      </PermissionProvider>
+      {/* </PermissionProvider> */}
     </html>
   );
 }
