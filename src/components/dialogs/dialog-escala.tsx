@@ -30,7 +30,6 @@ interface props {
 
 export function DialogVerEscala(props: props) {
     // const [escalaData, setEscalaData] = useState<Escala>()
-    const [isLoading, setIsLoading] = useState(false)
     const [backs, setBacks] = useState<string>("")
 
     const escalaData = getMethod<Escala>(`escala/${props.escalaId}`)
@@ -51,49 +50,48 @@ export function DialogVerEscala(props: props) {
     // const backs = escalaData?.back.map((back) => (back.nome)).join(", ")
 
     return (
-        !isLoading && escalaData && props.levitasDisponiveis ?
             <Dialog>
-                <DialogTrigger asChild key={escalaData.id} className="p-5">
-                    <Button variant={"outline"} className="flex items-center justify-center">Ver Escala</Button>
+                <DialogTrigger asChild key={escalaData?.id} className="p-5">
+                    <Button variant={"outfill"} disabled={(!escalaData && !props.levitasDisponiveis)} className="flex items-center rounded-lg justify-center">Ver Escala</Button>
                 </DialogTrigger>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle className={"text-2xl " + (escalaData.domingo ? "text-primary/80" :
-                            escalaData.quarta ? "text-secondary/80" : "text-special"
-                        )}>{escalaData.titulo}</DialogTitle>
+                        <DialogTitle className={"text-2xl " + (escalaData?.domingo ? "text-primary/80" :
+                            escalaData?.quarta ? "text-secondary/80" : "text-special"
+                        )}>{escalaData?.titulo}</DialogTitle>
                         <DialogDescription className="border-b border-zinc-600">
-                            {convertDateFormat(escalaData.data)}
+                            {convertDateFormat(escalaData ? escalaData.data : undefined)}
                         </DialogDescription>
                         <br />
-                        <p className="text-subprimary">Ministro: <a className="text-secondary">{escalaData.ministro.nome}</a></p>
-                        <p className="text-subprimary">Violão: {escalaData.violao ? <a className="text-white"> {escalaData.violao.nome}</a> : <a className="text-zinc-50/50">Não inserido.</a>}</p>
-                        <p className="text-subprimary">Teclado: {escalaData.teclado ? <a className="text-white"> {escalaData.teclado.nome}</a> : <a className="text-zinc-50/50">Não inserido.</a>}</p>
-                        <p className="text-subprimary">Bateria: {escalaData.bateria ? <a className="text-white"> {escalaData.bateria.nome}</a> : <a className="text-zinc-50/50">Não inserido.</a>}</p>
-                        <p className="text-subprimary">Baixo: {escalaData.baixo ? <a className="text-white"> {escalaData.baixo.nome}</a> : <a className="text-zinc-50/50">Não inserido.</a>}</p>
-                        <p className="text-subprimary">Guitarra: {escalaData.guitarra ? <a className="text-white"> {escalaData.guitarra.nome}</a> : <a className="text-zinc-50/50">Não inserido.</a>}</p>
-                        <p className="text-subprimary">Backs: {escalaData.back.length > 0 ? <a className="text-white"> {
+                        <p className="text-subprimary">Ministro: <a className="text-secondary">{escalaData?.ministro.nome}</a></p>
+                        <p className="text-subprimary">Violão: {escalaData?.violao ? <a className="text-white"> {escalaData.violao.nome}</a> : <a className="text-zinc-50/50">Não inserido.</a>}</p>
+                        <p className="text-subprimary">Teclado: {escalaData?.teclado ? <a className="text-white"> {escalaData.teclado.nome}</a> : <a className="text-zinc-50/50">Não inserido.</a>}</p>
+                        <p className="text-subprimary">Bateria: {escalaData?.bateria ? <a className="text-white"> {escalaData.bateria.nome}</a> : <a className="text-zinc-50/50">Não inserido.</a>}</p>
+                        <p className="text-subprimary">Baixo: {escalaData?.baixo ? <a className="text-white"> {escalaData.baixo.nome}</a> : <a className="text-zinc-50/50">Não inserido.</a>}</p>
+                        <p className="text-subprimary">Guitarra: {escalaData?.guitarra ? <a className="text-white"> {escalaData.guitarra.nome}</a> : <a className="text-zinc-50/50">Não inserido.</a>}</p>
+                        <p className="text-subprimary">Backs: {escalaData ? <a className="text-white"> {
                             escalaData.back.map((back) => (back.nome)).join(", ")}.</a> : <a className="text-zinc-50/50">Não inseridos.</a>}</p>
                         <br />
 
                     </DialogHeader>
                     <Label className="text-secondary/85">Observações:</Label>
-                    {escalaData.observacoes ? <p className="text-zinc-200">{escalaData.observacoes}</p> : <p className="text-foreground/25">Nenhuma observação.</p>}
+                    {escalaData?.observacoes ? <p className="text-zinc-200">{escalaData?.observacoes}</p> : <p className="text-foreground/25">Nenhuma observação.</p>}
                     <br />
 
                     <Label className="text-secondary/85">Músicas:</Label>
                     <Card className="bg-transparent grid grid-flow-row p-2">
-                        {escalaData.musicas ?
+                        {escalaData?.musicas ?
                             escalaData.musicas.map((musica) => (
                                 <Button key={musica.id} variant={"outline"} className="p-2 rounded-lg m-2">
                                     <Link href={musica.link} target="_blank">{musica.nome}</Link></Button>
                             )) : <p className="text-foreground/25">Nenhuma música inserida.</p>}
                     </Card>
                     <DialogFooter>
-                        <DialogAddMusicaInEscala escalaId={escalaData.id} />
+                        <DialogAddMusicaInEscala escalaId={escalaData?.id} />
                         <DialogAddEditEscala isEdit={true} escala={escalaData} levitasDisponiveis={props.levitasDisponiveis} />
                     </DialogFooter>
                 </DialogContent>
-            </Dialog> : <Button variant={"outline"} disabled={true} className="flex items-center justify-center">Ver Escala</Button>
+            </Dialog>
     )
 }
 
@@ -162,7 +160,7 @@ export function DialogAddEditEscala(pp: addEditDialogProps) {
                 {pp.isEdit ? 
                     <Button variant={"outline"} className="hover:text-sky-500" disabled={!levitasDisponiveis}>
                     <PencilLine className="text-sky-500" />Editar Escala</Button>
-                    : <Button variant={"outline"} className="mx-2 hover:text-emerald-500" disabled={!levitasDisponiveis}>
+                    : <Button variant={"outline"} className="hover:text-emerald-500" disabled={!levitasDisponiveis}>
                         <CirclePlus className="mx-1 text-emerald-500" />Criar Escala</Button>
                 }
             </DialogTrigger>
@@ -359,7 +357,7 @@ export function DialogAddEditEscala(pp: addEditDialogProps) {
 }
 
 interface DialogAddMusicaInEscalaProps {
-    escalaId: UUID
+    escalaId: UUID | undefined
 }
 export function DialogAddMusicaInEscala(props: DialogAddMusicaInEscalaProps) {
     // const [musicas, setMusicas] = useState<Musica[]>();

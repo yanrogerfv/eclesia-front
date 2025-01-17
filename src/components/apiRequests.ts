@@ -1,7 +1,7 @@
 "use client"
 
 import { UUID } from "crypto";
-import { useEffect, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import { EscalaResumida, Instrumento, Musica } from "./apiObjects";
 import Cookies from "js-cookie";
 
@@ -75,24 +75,27 @@ export function GetInstrumentos() {
     return instrumentosBase;
 }
 
-export function getMethod<T>(url: string): T | undefined {
-    const [returnData, setReturnData] = useState<T>();
+/**
+ * Function to perform a GET request to the API
+ * @function 
+ * 
+ * 
+ * @param url - Request URL
+ * @param setState - SetStateAction to update the state with the response data
+ */
 
-    useEffect(() => {
-        fetch(`http://localhost:1004/v1/${url}`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${Cookies.get("token")}`
-            }
-        }).then((res) => res.json())
-            .then((data) => {
-                setReturnData(data)
-            })
-            .catch((error) => {
-                console.error("Erro na comunicação com a api: ", error)
-            })
-    }, [returnData])
-
-    return returnData;
+export async function getMethod<T>(url: string, setState: React.Dispatch<React.SetStateAction<T | undefined>>){
+    const req = await fetch(`http://localhost:1004/v1/${url}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${Cookies.get("token")}`
+        }
+    })
+    const status = req.status;
+    if (status !== 200) {
+        console.error(`Erro na comunicação com a api: ${status}`);
+    }
+    const data = await req.json();
+    setState(data);
 }

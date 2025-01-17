@@ -14,7 +14,7 @@ import { EscalaSimpleCard, LevitaSimpleCard } from "@/components/customCards";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
-import { ArrowLeftFromLine } from "lucide-react";
+import { ArrowLeftFromLine, ChevronLeft } from "lucide-react";
 import Cookies from "js-cookie";
 import { getMethod } from "@/components/apiRequests";
 // import { usePermission } from "@/context/permissionContext";
@@ -72,7 +72,7 @@ export default function Home() {
 			<nav>
 				<div className="flex">
 					<Link href="/" className="w-auto text-4xl justify-center items-center p-2 mr-5 cursor-pointer border hover:bg-primary hover:text-black rounded-lg">
-						<ArrowLeftFromLine className="size-8" />
+						<ChevronLeft className="size-8" />
 					</Link>
 					<h1 className="font-extrabold tracking-tight text-5xl">Planejador</h1>
 					{/* <Button onClick={() => handleSereneMode()} variant={sereneMode ? "outline" : "default"} className="flex h-12 text-lg rounded-lg">Modo Sereno</Button> */}
