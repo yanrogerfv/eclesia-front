@@ -30,8 +30,14 @@ export default function Home() {
 	// const [levitasData, setLevitasData] = useState<Levita[]>([]);
 	const [isLevitasLoading, setLevitasLoading] = useState(true)
 
-	const nextEscalas: EscalaResumida[] | undefined = getMethod<EscalaResumida[]>("escala/resumed")
-	const levitasData: Levita[] | undefined = getMethod<Levita[]>("levita/resumed")
+	const [nextEscalas, setNextEscalas] = useState<EscalaResumida[] | undefined>(undefined) 
+	const [levitasData, setLevitasData] = useState<Levita[] | undefined>(undefined)
+
+	useEffect(() => {
+			if (nextEscalas && levitasData) return;
+			getMethod<EscalaResumida[]>("escala/resumed", setNextEscalas)
+			getMethod<Levita[]>("levita/resumed", setLevitasData)
+		}, [])
 
 	// useEffect(() => {
 	//   fetch("http://localhost:1004/v1/escala/resumed", {

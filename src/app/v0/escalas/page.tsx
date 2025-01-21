@@ -16,7 +16,7 @@ import { useEffect, useMemo, useState } from "react";
 import { ChevronLeft, CircleMinus, X } from "lucide-react";
 import { convertDateFormat, EscalaResumida, Levita } from "@/components/apiObjects";
 import { DialogAddEditEscala, DialogVerEscala } from "@/components/dialogs/dialog-escala";
-import { getMethod } from "@/components/apiRequests";
+import { deleteMethod, getMethod } from "@/components/apiRequests";
 import { Input } from "@/components/ui/input";
 // import React from "react";
 
@@ -27,12 +27,11 @@ export default function Home() {
 	const [domingoFilter, setDomingoFilter] = useState(false);
 	const [quartaFilter, setQuartaFilter] = useState(false);
 	const [especialFilter, setEspecialFilter] = useState(false);
-	const [selfFilter, setSelfFilter] = useState(false);
-	const [searchItem, setSearchItem] = useState("");
+	// const [selfFilter, setSelfFilter] = useState(false);
 	const [filteredEscalas, setFilteredEscalas] = useState<EscalaResumida[] | undefined>(undefined);
 
-	const escalasData = useState<EscalaResumida[] | undefined>(undefined);
-	const [levitasDisponiveis, setLevitasDisponiveis] = useState<Levita[] | undefined>([]);
+	const [escalasData, setEscalasData] = useState<EscalaResumida[] | undefined>(undefined);
+	const [levitasDisponiveis, setLevitasDisponiveis] = useState<Levita[] | undefined>(undefined);
 
 
 	// function filterEscalas() {
@@ -44,37 +43,33 @@ export default function Home() {
 
 	// const filteredEscalas = useMemo(() => {
 	// 	if (domingoFilter || quartaFilter || especialFilter)
-	// 		return escalasData[0]?.filter(escala => { return (domingoFilter && escala.domingo) || (quartaFilter && escala.quarta) || (especialFilter && escala.especial) })
+	// 		return escalasData?.filter(escala => { return (domingoFilter && escala.domingo) || (quartaFilter && escala.quarta) || (especialFilter && escala.especial) })
 	// 			.filter((escala) => escala.titulo.toLowerCase().includes(searchItem.toLowerCase()));
-	// 	else return escalasData[0]?.filter((escala) => escala.titulo.toLowerCase().includes(searchItem.toLowerCase()));
+	// 	else return escalasData?.filter((escala) => escala.titulo.toLowerCase().includes(searchItem.toLowerCase()));
 	// }, [searchItem, escalasData, domingoFilter, quartaFilter, especialFilter]);
 
 	useEffect(() => {
-		if (!escalasData && !levitasDisponiveis) return;
-		getMethod<EscalaResumida[]>("escala/resumed", escalasData[1])
+		if (escalasData && levitasDisponiveis ) return;
+		getMethod<EscalaResumida[]>("escala/resumed", setEscalasData)
 		getMethod<Levita[]>("levita/resumed", setLevitasDisponiveis)
-	}, [])
+	}, [escalasData, levitasDisponiveis])
 
 	useEffect(() => {
 		if (!escalasData) return;
-		setFilteredEscalas(escalasData[0]);
+		setFilteredEscalas(escalasData);
 	}, [escalasData]);
 
-
 	useEffect(() => {
-		fetch("http://localhost:1004/v1/escala/clean", { method: "DELETE" })
-			.then((res) => res.json())
-			.then(() => console.log("Escalas limpas com sucesso!"))
-			.catch((error) => console.error("Erro na comunicação com a api: ", error));
-	}, []);
+		setFilteredEscalas(escalasData?.filter(escala => { 
+			return (domingoFilter && escala.domingo) || (quartaFilter && escala.quarta) || (especialFilter && escala.especial) }))
+	}, [domingoFilter, quartaFilter, especialFilter]);
 
-	function fiterData() {
-		setFilteredEscalas(escalasData[0]?.filter(escala => {
-			return (domingoFilter && escala.domingo) || (quartaFilter && escala.quarta) || (especialFilter && escala.especial);
-		}));
-	}
-
-	console.log("filtredEscalas", filteredEscalas);
+	// useEffect(() => {
+	// 	fetch("http://localhost:1004/v1/escala/clean", { method: "DELETE" })
+	// 		.then((res) => res.json())
+	// 		.then(() => console.log("Escalas limpas com sucesso!"))
+	// 		.catch((error) => console.error("Erro na comunicação com a api: ", error));
+	// }, []);
 
 	// useEffect(() => {
 	//   fetch("http://localhost:1004/v1/escala/resumed")
@@ -112,9 +107,10 @@ export default function Home() {
 						<h1 className="ml-4 font-extrabold tracking-tight text-2xl sm:text-5xl">Escalas</h1>
 					</div>
 					<div className="flex w-full justify-between sm:justify-end gap-2 mt-4 sm:w-full">
-						<DialogAddEditEscala isEdit={false} escala={undefined} levitasDisponiveis={levitasDisponiveis[0] ? levitasDisponiveis[0] : []} />
+						<DialogAddEditEscala isEdit={false} escala={undefined} levitasDisponiveis={levitasDisponiveis} />
 						<Button
 							variant="outline"
+							disabled={escalasData === undefined}
 							className={removeOverlay ? "font-bold bg-rose-500/80 border-rose-600/90 hover:bg-rose-600/40" : "font-bold hover:bg-rose-500/40"}
 							onClick={() => setRemoveOverlay(!removeOverlay)}
 						>
@@ -143,13 +139,9 @@ export default function Home() {
 							onClick={() => setQuartaFilter(!quartaFilter)}>Quartas</Button>
 						<Button variant="outfill" className={"md:flex-1 w-full text-lg hover:text-foreground text-special hover:bg-special".concat(especialFilter ? " bg-special text-foreground" : "")}
 							onClick={() => setEspecialFilter(!especialFilter)}>Especiais</Button>
-						<Button variant="outfill" className={"md:flex-1 w-full text-lg hover:text-foreground text-subprimary hover:bg-subprimary".concat(selfFilter ? " bg-subprimary text-foreground" : "")}
-							onClick={() => setSelfFilter(!selfFilter)}>Minhas Escalas</Button>
+						{/* <Button variant="outfill" className={"md:flex-1 w-full text-lg hover:text-foreground text-subprimary hover:bg-subprimary".concat(selfFilter ? " bg-subprimary text-foreground" : "")}
+							onClick={() => setSelfFilter(!selfFilter)}>Minhas Escalas</Button> */}
 					</div>
-					<br />
-
-					<Input disabled={!escalasData} className="flex" type="text"
-						value={searchItem} onChange={(e) => setSearchItem(e.target.value)} placeholder="Procurar por uma Escala." />
 					<br />
 
 					{Array.isArray(filteredEscalas) && filteredEscalas.length === 0 ? (
@@ -174,21 +166,24 @@ export default function Home() {
 												: "absolute invisible"
 										}
 										onClick={() => {
-											fetch(`http://localhost:1004/v1/escala/${escala.id}`, {
-												method: "DELETE",
-											})
-												.then((response) => {
-													alert(
-														response.status === 200
-															? "Escala removida com sucesso!"
-															: "Erro ao remover a Escala: " +
-															response.headers.get("error")
-													);
-												})
-												.catch((error) => {
-													alert("Erro ao remover Escala!");
-													console.error("Erro na comunicação com a api: ", error);
-												});
+											deleteMethod(`escala/${escala.id}`)
+											.then(() => alert("Escala removida com sucesso!"))
+											.catch((error) => alert("Erro ao remover escala: " + error))
+											// fetch(`http://localhost:1004/v1/escala/${escala.id}`, {
+											// 	method: "DELETE",
+											// })
+											// 	.then((response) => {
+											// 		alert(
+											// 			response.status === 200
+											// 				? "Escala removida com sucesso!"
+											// 				: "Erro ao remover a Escala: " +
+											// 				response.headers.get("error")
+											// 		);
+											// 	})
+											// 	.catch((error) => {
+											// 		alert("Erro ao remover Escala!");
+											// 		console.error("Erro na comunicação com a api: ", error);
+											// 	});
 										}}
 									/>
 									<CardHeader className="items-center lg:items-start">
@@ -235,7 +230,7 @@ export default function Home() {
 											)}
 										</div>
 										<div>
-											{/* <DialogVerEscala escalaId={escala.id} levitasDisponiveis={levitasDisponiveis[0]} /> */}
+											<DialogVerEscala escalaId={escala.id} levitasDisponiveis={levitasDisponiveis} />
 										</div>
 									</CardFooter>
 								</Card>

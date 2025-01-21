@@ -1,4 +1,5 @@
 import { UUID } from "crypto";
+import { formatDate } from "date-fns";
 
 export interface Levita {
     id: UUID,
@@ -56,6 +57,8 @@ export interface EscalaResumida {
 }
 
 export function convertDateFormat(dateString: Date | undefined) {
+    // return dateString ? formatDate(dateString, "dd/MM/yyyy") : ""
+    // return formatDate(new Date(), "dd/MM/yyyy")
     if (dateString == undefined) return "";
     const date = new Date(dateString);
     const days = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];

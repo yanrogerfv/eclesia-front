@@ -1,13 +1,13 @@
 
-import { Escala, EscalaResumida, Levita } from "./apiObjects";
+import { convertDateFormat, Escala, EscalaResumida, Levita } from "./apiObjects";
 import { DialogVerEscala } from "./dialogs/dialog-escala";
 import { Badge } from "./ui/badge";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card";
 
-function convertDateFormat(dateString: Date) {
-    const date = new Date(dateString);
-    return String((date.getDate() + 1) + '/' + (date.getMonth() + 1) + '/' + date.getFullYear())
-}
+// function convertDateFormat(dateString: Date) {
+//     const date = new Date(dateString);
+//     return String((date.getDate() + 1) + '/' + (date.getMonth() + 1) + '/' + date.getFullYear())
+// }
 
 export function EscalaSimpleCard(escala: EscalaResumida) {
     const day = escala.domingo ? "Domingo" : escala.quarta ? "Quarta" : "Especial"
@@ -16,7 +16,7 @@ export function EscalaSimpleCard(escala: EscalaResumida) {
             <CardHeader>
                 {/* <CardTitle> */}
                 <CardTitle className={escala.domingo ? "text-secondary" : escala.quarta ? "text-subprimary" : "text-special"}>
-                    {day + " - " + convertDateFormat(escala.data)}</CardTitle>
+                    {convertDateFormat(escala.data)}</CardTitle>
                 <CardDescription>
                     {escala.titulo}
                 </CardDescription>
