@@ -59,7 +59,7 @@ export function DialogVerEscala(props: props) {
 	return (
 		<Dialog>
 			<DialogTrigger asChild key={escalaData?.id} className="p-5">
-				<Button variant={"outfill"} disabled={(!escalaData && !props.levitasDisponiveis)} className="flex items-center rounded-lg justify-center">Ver Escala</Button>
+				<Button variant={"outfill"} disabled={(!escalaData && !props.levitasDisponiveis)} className="flex items-center rounded-md justify-center">Ver Escala</Button>
 			</DialogTrigger>
 			<DialogContent>
 				<DialogHeader>

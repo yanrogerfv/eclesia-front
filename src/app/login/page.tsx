@@ -13,6 +13,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import Cookies from "js-cookie";
 import { Separator } from "@/components/ui/separator";
+import { toast } from "sonner";
 // import { usePermission } from "@/context/permissionContext";
 
 
@@ -35,6 +36,9 @@ export default function LoginPage() {
 			password: ""
 		}
 	})
+
+	const promise = () => new Promise((resolve) => setTimeout(() => resolve({name : "Sonner"}), 3000))
+
 	const handleLogin = async (data: FormData) => {
 		try {
 			setIsLoading(true);
@@ -46,15 +50,17 @@ export default function LoginPage() {
 				body: JSON.stringify(data)
 			})
 
-
 			if (response.ok) {
 				let resp = await response.json();
-				console.log("TOKEN " + resp.token)
-				console.log("ROLE " + resp.role)
 				Cookies.set("token", resp.token, { expires: expireTime })
 				// setPermission(resp.role);
 				Cookies.set("username", data.username, { expires: expireTime })
 				localStorage.setItem("role", resp.role)
+				toast.promise(promise(), {
+					loading: "Carregando...",
+					success: "Usuário logado com sucesso!",
+					error: "Erro ao efetuar login!"
+				})
 				router.push("/v0")
 			}
 			if (!response.ok) {
@@ -72,11 +78,11 @@ export default function LoginPage() {
 	const [seePass, setSeePass] = useState(false)
 
 	return (
-		<div className="flex flex-col items-center justify-center h-screen bg-gradient-to-tr from-emerald-600 via-teal-600 to-orange-600 *:">
-			<Card className="md:w-[20vw] md:h-[40vh] border-none">
+		<div className="flex flex-col items-center justify-center h-screen bg-gradient-to-tr from-primary via-secondary to-violet-600 *:">
+			<Card>
 				<CardHeader className="text-center p-4">
 					Login de Usuário
-					<Separator className="mt-4"/>
+					<Separator className="mt-4" />
 				</CardHeader>
 				<CardContent>
 					<Form {...form}>
@@ -95,7 +101,7 @@ export default function LoginPage() {
 												<Input
 													placeholder="Insira o Usuário"
 													{...field}
-													className="pl-10 text-white border-none rounded-xl"
+													className="pl-10 text-white rounded-lg"
 												/>
 												<span className="absolute inset-y-0 left-0 flex items-center pl-3">
 													<User size={20} />
@@ -119,7 +125,7 @@ export default function LoginPage() {
 												<Input
 													type={seePass ? "text" : "password"}
 													placeholder="Insira a Senha"
-													className="pl-10 text-white border-none rounded-xl"
+													className="pl-10 text-white rounded-lg"
 													{...field}
 												/>
 												<span className="absolute inset-y-0 left-0 flex items-center pl-3">
@@ -152,7 +158,7 @@ export default function LoginPage() {
 								<Button
 									type="submit"
 									variant="default"
-									className="px-5 mb-4 mt-10 w-full border-none rounded-xl"
+									className="px-5 mb-4 mt-10 w-full rounded-lg"
 									disabled={isLoading}
 								>
 									{isLoading ? (

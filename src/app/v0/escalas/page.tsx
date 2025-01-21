@@ -60,7 +60,9 @@ export default function Home() {
 	}, [escalasData]);
 
 	useEffect(() => {
-		setFilteredEscalas(escalasData?.filter(escala => { 
+		if (!escalasData) return;
+		if(!domingoFilter && !quartaFilter && !especialFilter) setFilteredEscalas(escalasData);
+		else setFilteredEscalas(escalasData?.filter(escala => { 
 			return (domingoFilter && escala.domingo) || (quartaFilter && escala.quarta) || (especialFilter && escala.especial) }))
 	}, [domingoFilter, quartaFilter, especialFilter]);
 
