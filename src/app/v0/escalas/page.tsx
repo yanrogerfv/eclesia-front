@@ -28,9 +28,9 @@ export default function Home() {
 	const [quartaFilter, setQuartaFilter] = useState(false);
 	const [especialFilter, setEspecialFilter] = useState(false);
 	// const [selfFilter, setSelfFilter] = useState(false);
-	const [filteredEscalas, setFilteredEscalas] = useState<EscalaResumida[] | undefined>(undefined);
-
+	
 	const [escalasData, setEscalasData] = useState<EscalaResumida[] | undefined>(undefined);
+	const [filteredEscalas, setFilteredEscalas] = useState<EscalaResumida[] | undefined>(undefined);
 	const [levitasDisponiveis, setLevitasDisponiveis] = useState<Levita[] | undefined>(undefined);
 
 
@@ -49,7 +49,7 @@ export default function Home() {
 	// }, [searchItem, escalasData, domingoFilter, quartaFilter, especialFilter]);
 
 	useEffect(() => {
-		if (escalasData && levitasDisponiveis ) return;
+		if (escalasData && levitasDisponiveis) return;
 		getMethod<EscalaResumida[]>("escala/resumed", setEscalasData)
 		getMethod<Levita[]>("levita/resumed", setLevitasDisponiveis)
 	}, [escalasData, levitasDisponiveis])
@@ -170,7 +170,7 @@ export default function Home() {
 										onClick={() => {
 											deleteMethod(`escala/${escala.id}`)
 											.then(() => alert("Escala removida com sucesso!"))
-											.catch((error) => alert("Erro ao remover escala: " + error))
+											.catch((error : any) => alert("Erro ao remover escala: " + error))
 											// fetch(`http://localhost:1004/v1/escala/${escala.id}`, {
 											// 	method: "DELETE",
 											// })

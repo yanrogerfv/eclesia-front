@@ -21,9 +21,9 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang="pt-br" className="dawn">
+		<html lang="pt-br" className="serene">
 			{/* <PermissionProvider> */}
-			<body className={inter.className}>
+			<body className={inter.className} suppressHydrationWarning={true}>
 				{/* <ThemeProvider
 					attribute="class"
 					defaultTheme="system"

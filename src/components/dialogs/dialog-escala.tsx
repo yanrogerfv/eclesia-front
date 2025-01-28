@@ -22,6 +22,7 @@ import { ScrollArea } from "../ui/scroll-area";
 import { Card } from "../ui/card";
 import Link from "next/link";
 import { getMethod, postMethod } from "../apiRequests";
+import Cookies from "js-cookie";
 
 interface props {
 	escalaId: UUID,
@@ -29,30 +30,35 @@ interface props {
 }
 
 export function DialogVerEscala(props: props) {
-	// const [escalaData, setEscalaData] = useState<Escala>()
-	const [backs, setBacks] = useState<string>("")
+	const [escalaData, setEscalaData] = useState<Escala>()
 
-	const [escalaData, setEscalaData] = useState<Escala | undefined>(undefined);
+	// const [escalaData, setEscalaData] = useState<Escala | undefined>(undefined);
 
-	useEffect(() => {
-		if (!escalaData) return;
-		getMethod<Escala>(`escala/${props.escalaId}`, setEscalaData)
-	}, [])
+	// useEffect(() => {
+	// 	if (!escalaData) return;
+	// 	getMethod<Escala>(`escala/${props.escalaId}`, setEscalaData)
+	// }, [])
 
 	// const escalaData = getMethod<Escala>(`escala/${props.escalaId}`)
-	// useEffect(() => {
-	//     // setIsLoading(true)
-	//     fetch(`http://localhost:1004/v1/escala/${props.escalaId}`)
-	//         .then((res) => res.json())
-	//         .then((data) => {
-	//             setIsLoading(false)
-	//             setEscalaData(data)
-	//         })
-	//         .catch((error) => {
-	//             console.error("Erro na comunicação com a api: ", error)
-	//             setEscalaData(undefined);
-	//         })
-	// }, [])
+	useEffect(() => {
+	    // setIsLoading(true)
+	    fetch(`http://localhost:1004/v1/escala/${props.escalaId}`, {
+			method: "GET",
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': 'Bearer ' + Cookies.get("token")
+			}
+		})
+	        .then((res) => res.json())
+	        .then((data) => {
+	            // setIsLoading(false)
+	            setEscalaData(data)
+	        })
+	        .catch((error) => {
+	            console.error("Erro na comunicação com a api: ", error)
+	            setEscalaData(undefined);
+	        })
+	}, [])
 
 	// const backs = escalaData?.back.map((back) => (back.nome)).join(", ")
 

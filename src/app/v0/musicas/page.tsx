@@ -3,62 +3,57 @@ import { Card } from "@/components/ui/card";
 import {
 	Table,
 	TableBody,
-	TableCaption,
 	TableCell,
-	TableFooter,
 	TableHead,
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { UUID } from "crypto";
 import { ChevronLeft, CircleMinus, ListFilter, ListFilterIcon } from "lucide-react";
 import { TbMusicX } from "react-icons/tb";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { ChangeEvent, useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Musica } from "@/components/apiObjects";
 import { DialogAddMusica } from "@/components/dialogs/dialog-musica";
 import { useToast } from "@/components/ui/use-toast";
-
-// async function fetchMusicas() {
-//     const musicas = await (fetch('http://localhost:1004/v1/musicas'));
-//     if (!musicas.ok)
-//         throw new Error(`HTTP error! status: ${musicas.status}`);
-//     const data: Musica[] = await musicas.json() as Musica[];
-//     return data as Musica[];
-// }
+import { deleteMethod, getMethod } from "@/components/apiRequests";
+import { toast } from "sonner";
 
 export default function Home() {
 
-	const [musicas, setMusicas] = useState<Musica[]>([])
+	const [musicas, setMusicas] = useState<Musica[] | undefined>(undefined)
+	const [filteredMusicas, setFilteredMusicas] = useState<Musica[] | undefined>(undefined)
 	const [isLoading, setLoading] = useState(true)
 	const [searchItem, setSearchItem] = useState("");
 	const [update, setUpdate] = useState(false)
-	const { toast } = useToast();
+	// const { toast } = useToast();
+
+	const promise = () => new Promise((resolve) => setTimeout(() => resolve({name : "Sonner"}), 3000))
 
 	useEffect(() => {
-		fetch("http://localhost:1004/v1/musicas")
-			.then((res) => res.json())
-			.then((data) => {
-				setLoading(false)
-				setMusicas(data)
-				setUpdate(false)
-			})
-			.catch((error) => {
-				console.error("Erro na comunicação com a api: ", error)
-				setMusicas([]);
-			})
+		if (musicas) return;
+		getMethod<Musica[]>("musicas", (data) => {
+			setMusicas(data);
+			setLoading(false);
+		// }).then(() => {
+		// 	toast({ title: "Músicas carregadas com sucesso!" });
+		// }).catch((error) => {
+		// 	console.error("Erro na comunicação com a api: ", error);
+		// 	toast({ title: "Erro ao carregar músicas!", description: "Tente novamente mais tarde.", color: "red" });
+		// })
+		})
 	}, [update, musicas])
 
-	const filtrarMusica = useMemo(() => {
-		const lowerCase = searchItem.toLowerCase();
-		return musicas.filter((musica) => musica.nome.toLowerCase().includes(lowerCase));
-	}, [searchItem, musicas])
+	useEffect(() => {
+		if (musicas) setLoading(false);
+		else setLoading(true);
+	}, [musicas])
 
-	// var searchHandler = (filter: string) => {
-	//     setMusicas(musicas.filter((music) => music.nome.includes(filter)))
-	// }
+	useEffect(() => {
+		if (!musicas) return;
+		if(!searchItem) setFilteredMusicas(musicas);
+		setFilteredMusicas(musicas.filter((musica) => musica.nome.toLowerCase().includes(searchItem.toLowerCase())));
+	}, [searchItem, musicas])
 
 	return (
 		<main className="max-w-6xl mx-auto my-12">
@@ -71,7 +66,7 @@ export default function Home() {
 						<h1 className="mx-5 font-extrabold tracking-tight text-5xl">Músicas</h1>
 					</div>
 					<div className="">
-						<DialogAddMusica />
+						<DialogAddMusica setState={setMusicas} />
 					</div>
 				</div>
 				<br />
@@ -86,45 +81,50 @@ export default function Home() {
 			</div>
 			<br />
 
-			<Card className="flex p-3">
-				<Table className="bg-black/70 rounded-xl">
-					{/* <TableCaption>Listagem das músicas cadastradas.</TableCaption> */}
-					<TableHeader>
-						<TableRow>
-							<TableHead></TableHead>
-							<TableHead>Título</TableHead>
-							<TableHead>Link</TableHead>
-							<TableHead />
-						</TableRow>
-					</TableHeader>
-					<TableBody>
-						{
-							filtrarMusica.map((musica) => (
+			{isLoading  ? (
+				<div className="col-span-4 h-full flex items-center justify-center mt-20">
+					<div className="size-80 border-4 border-transparent text-primary/40 text-4xl animate-spin flex items-center justify-center border-t-primary rounded-full">
+						<div className="size-64 border-4 border-transparent text-subprimary/40 text-2xl animate-spin flex items-center justify-center border-t-subprimary rounded-full" />
+					</div>
+				</div>
+			) : (
+				<Card className="flex p-3">
+					<Table className="bg-black/70 rounded-xl">
+						{/* <TableCaption>Listagem das músicas cadastradas.</TableCaption> */}
+						<TableHeader>
+							<TableRow>
+								<TableHead></TableHead>
+								<TableHead>Título</TableHead>
+								<TableHead>Link</TableHead>
+								<TableHead />
+							</TableRow>
+						</TableHeader>
+						<TableBody>
+							{filteredMusicas?.map((musica) => (
 								<TableRow key={musica.id}>
-									<TableCell>{musicas.indexOf(musica) + 1}</TableCell>
+									<TableCell>{musicas ? musicas.indexOf(musica) + 1 : 0}</TableCell>
 									<TableCell>{musica.nome}</TableCell>
 									<TableCell><Link href={musica.link} target="_blank">{musica.link}</Link></TableCell>
 									<TableCell><TbMusicX className="justify-end size-5 hover:cursor-pointer hover:text-red-500/90"
 										onClick={() => {
-											// const {toast} = useToast();
-											fetch(`http://localhost:1004/v1/musicas/${musica.id}`, {
-												method: "DELETE"
+											// deleteMethod(`musicas/${musica.id}`)
+											// toast.promise(promise(), {
+											// 	loading: "Carregando...",
+											// 	success: "Usuário logado com sucesso!",
+											// 	error: "Erro ao efetuar login!"
+											// })
+											toast.promise(deleteMethod(`musicas/${musica.id}`), {
+												loading: "Carregando...",
+												success: "Música deletada com sucesso!",
+												error: "Erro ao deletar música!"
 											})
-												.then(() => {
-													toast({
-														description: "Your message has been sent.",
-													})
-												})
-												.catch((error) => {
-													console.error("Erro na comunicação com a api: ", error);
-												})
-											toast({ title: "Música deletada com sucesso!" })
 										}} /></TableCell>
 								</TableRow>
 							))}
-					</TableBody>
-				</Table>
-			</Card>
+						</TableBody>
+					</Table>
+				</Card>
+			)}
 		</main>
 	)
 }

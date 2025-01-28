@@ -8,12 +8,12 @@ import { Label } from "../ui/label"
 import { Input } from "../ui/input"
 import { toast } from "sonner"
 import { UUID } from "crypto"
-import { GetInstrumentos } from "../apiRequests"
+import { deleteMethod, GetInstrumentos } from "../apiRequests"
 import { Select, SelectTrigger, SelectItem, SelectContent, SelectGroup, SelectLabel, SelectValue } from "../ui/select"
 import { Instrumento } from "../apiObjects"
 import { get } from "http"
 
-export function DialogAddInstrumento() {
+export function DialogAddInstrumento( {}) {
     const [nomeInstrumento, setNomeInstrumento] = useState("")
     const [isLoading, setLoading] = useState(false);
     const [open, setOpen] = useState(false);
@@ -68,16 +68,15 @@ export function DialogAddInstrumento() {
     )
 }
 
-export function DialogRemoveInstrumento() {
+export function DialogRemoveInstrumento({allInstrumentos}: {allInstrumentos: Instrumento[] | undefined}) {
     const [isLoading, setLoading] = useState(false);
     const [open, setOpen] = useState(false);
-    const allInstrumentos = GetInstrumentos();
     const [selectedInstrumento, setSelectedInstrumento] = useState<any>(null);
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant={"outline"} className="mx-2 hover:bg-rose-500/40" >
+                <Button variant={"outline"} disabled={!allInstrumentos} className="mx-2 hover:bg-rose-500/40" >
                     <CircleMinus />Remover Instrumento</Button>
             </DialogTrigger>
             <DialogContent>
@@ -91,7 +90,7 @@ export function DialogRemoveInstrumento() {
                     <SelectContent onChange={(e) => { setSelectedInstrumento(e.target) }}>
                         <SelectGroup>
                             <SelectLabel>Instrumentos</SelectLabel>
-                            {allInstrumentos.map((instrumento) => (
+                            {allInstrumentos?.map((instrumento) => (
                                 <SelectItem key={instrumento.id} value={instrumento.id.toString()} onSelect={() => setSelectedInstrumento(instrumento.id)}>{instrumento.nome}</SelectItem>
                             ))}
                         </SelectGroup>
@@ -102,9 +101,7 @@ export function DialogRemoveInstrumento() {
                         type="submit" disabled={isLoading} onClick={() => {
                             setLoading(true)
                             console.log(selectedInstrumento)
-                            fetch(`http://localhost:1004/v1/instrumento/${selectedInstrumento}`, {
-                                method: "DELETE",
-                            })
+                            deleteMethod(`instrumento/${selectedInstrumento}`)
                                 .then(() => {
                                     setOpen(false)
                                     setLoading(false)

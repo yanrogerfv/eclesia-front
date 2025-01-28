@@ -1,6 +1,7 @@
 "use client"
 
 import { Instrumento } from "@/components/apiObjects";
+import { getMethod } from "@/components/apiRequests";
 import { DialogAddInstrumento, DialogRemoveInstrumento } from "@/components/dialogs/dialog-instrumento";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChevronLeft } from "lucide-react";
@@ -8,57 +9,60 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function Home() {
-  const [isLoading, setLoading] = useState(true)
-  const [instrumentosData, setInstrumentosData] = useState<Instrumento[]>([])
+	const [isLoading, setLoading] = useState(true)
+	const [instrumentosData, setInstrumentosData] = useState<Instrumento[] | undefined>(undefined)
 
-  useEffect(() => {
-    fetch("http://localhost:1004/v1/instrumento")
-      .then((res) => res.json())
-      .then((data) => {
-        setInstrumentosData(data)
-        setLoading(false)
-      })
-      .catch((error) => {
-        console.error("Erro na comunicação com a api: ", error)
-        setInstrumentosData([]);
-      })
-  }, [instrumentosData])
+	useEffect(() => {
+		if (instrumentosData) return;
+		getMethod<Instrumento[]>("instrumento", setInstrumentosData)
+	}, [instrumentosData])
 
-  return (
-    <main className="max-w-6xl mx-auto my-12">
-      <nav>
-        <div className="flex items-center gap-4 justify-between">
-          <div className="flex">
-            <Link href="/v0" className="w-auto text-4xl justify-center items-center p-2 cursor-pointer outline outline-1 outline-primary/50 hover:bg-secondary hover:text-black rounded-lg">
-              <ChevronLeft className="size-10" />
-            </Link>
-            <h1 className="mx-5 font-extrabold tracking-tight text-5xl">Instrumentos</h1>
-          </div>
-          <div className="flex">
-              <DialogAddInstrumento />
-              <DialogRemoveInstrumento />
-          </div>
-        </div>
-        <br />
-        <h2 className="scroll-m-20 border-b text-base text-neutral-700 tracking-tight transition-colors first:mt-0">
-          {isLoading ? "Carregando Instrumentos..." : "Visualizando Instrumentos"}</h2>
-      </nav>
-      <br />
+	useEffect(() => {
+		if (instrumentosData) setLoading(false);
+	}, [instrumentosData])
+
+	return (
+		<main className="max-w-6xl mx-auto my-12">
+			<nav>
+				<div className="flex items-center gap-4 justify-between">
+					<div className="flex">
+						<Link href="/v0" className="w-auto text-4xl justify-center items-center p-2 cursor-pointer outline outline-1 outline-primary/50 hover:bg-secondary hover:text-black rounded-lg">
+							<ChevronLeft className="size-10" />
+						</Link>
+						<h1 className="mx-5 font-extrabold tracking-tight text-5xl">Instrumentos</h1>
+					</div>
+					<div className="flex">
+						<DialogAddInstrumento />
+						<DialogRemoveInstrumento allInstrumentos={instrumentosData ? instrumentosData : undefined} />
+					</div>
+				</div>
+				<br />
+				<h2 className="scroll-m-20 border-b text-base text-neutral-700 tracking-tight transition-colors first:mt-0">
+					{isLoading ? "Carregando Instrumentos..." : "Visualizando Instrumentos"}</h2>
+			</nav>
+			<br />
 
 
-      <div className="grid grid-cols-3 gap-8"> {//Geração dos Cards dos instrumentos
-      }
-        {instrumentosData.map(instrumento => (
-          <Card key={instrumento.nome}>
-            <CardHeader>
-              <CardTitle className="flex items-center justify-center text-secondary">{instrumento.nome}
-              </CardTitle>
-              <CardDescription>
-              </CardDescription>
-            </CardHeader>
-          </Card>
-        ))}
-      </div>
-    </main>
-  )
+			<div className="grid grid-cols-3 gap-8">
+				{isLoading || !instrumentosData ? (
+					<div className="col-span-4 h-full flex items-center justify-center mt-20">
+						<div className="size-80 border-4 border-transparent text-primary/40 text-4xl animate-spin flex items-center justify-center border-t-primary rounded-full">
+							<div className="size-64 border-4 border-transparent text-subprimary/40 text-2xl animate-spin flex items-center justify-center border-t-subprimary rounded-full" />
+						</div>
+					</div>
+				) : (
+					instrumentosData.map(instrumento => (
+						<Card key={instrumento.nome}>
+							<CardHeader>
+								<CardTitle className="flex items-center justify-center text-secondary">{instrumento.nome}
+								</CardTitle>
+								<CardDescription>
+								</CardDescription>
+							</CardHeader>
+						</Card>
+					))
+				)}
+			</div>
+		</main>
+	)
 }

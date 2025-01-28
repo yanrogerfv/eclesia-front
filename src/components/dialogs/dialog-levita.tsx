@@ -16,15 +16,14 @@ import { Church, PencilLine, UserMinus, UserPlus } from "lucide-react"
 import { useEffect, useState } from "react"
 import { Levita, Instrumento } from "../apiObjects"
 import { Checkbox } from "../ui/checkbox"
-import { GetInstrumentos } from "../apiRequests"
+import { GetInstrumentos, getMethod } from "../apiRequests"
 import { Textarea } from "../ui/textarea"
 
-interface propsView {
+export function DialogVerLevita(att: {
     levita: Levita,
     disabled: boolean
 }
-
-export function DialogLevita(att: propsView) {
+) {
     return (
         <Dialog>
             <DialogTrigger asChild key={att.levita.nome} className="p-5">
@@ -57,13 +56,19 @@ export function DialogLevita(att: propsView) {
 export function DialogAddLevita() {
     const [open, setOpen] = useState(false);
     const [isLoading, setLoading] = useState(false);
-    const allInstrumentos = GetInstrumentos();
+    const [allInstrumentos, setAllInstrumentos] = useState<Instrumento[] | undefined>(undefined);
 
     const [nomeLevita, setNomeLevita] = useState("");
     const [emailLevita, setEmailLevita] = useState("");
     const [contatoLevita, setTelLevita] = useState("");
     const [descricaoLevita, setDescLevita] = useState("");
     const [instrumentosLevita, setInstrumentos] = useState<Instrumento[]>([]);
+
+    useEffect(() => {
+        if (allInstrumentos) return;
+        getMethod<Instrumento[]>("instrumento", setAllInstrumentos)
+    }, [])
+
     function addInstrumentoInFilter(instrumento: Instrumento) {
         setInstrumentos([...instrumentosLevita, instrumento])
     }
@@ -133,7 +138,7 @@ export function DialogAddLevita() {
                     <br />
                     <br />
                     <Label>Instrumentos:</Label>
-                    {allInstrumentos.map((instrumento) => (
+                    {allInstrumentos?.map((instrumento) => (
                         <div key={instrumento.id} className="flex items-center space-x-2">
                             <Checkbox id={instrumento.nome} onClick={() => {
                                 if (instrumentosLevita.some((currentInstrument) => currentInstrument.id === instrumento.id)) {
@@ -262,8 +267,8 @@ export function DialogEditLevita(levita: Levita) {
                     <br />
                     <br />
                     <Label>Descrição:</Label>
-                    <Textarea placeholder="Insira uma descrição do Levita." onChange={(e) => setDescricaoLevita(e.target.value)}
-                        value={levita.descricao ? levita.descricao : undefined} />
+                    <Textarea placeholder={levita.descricao ? levita.descricao : "Insira uma descrição do Levita."} onChange={(e) => setDescricaoLevita(e.target.value)}
+                        value={descricaoLevita} />
 
 
                 </DialogHeader>

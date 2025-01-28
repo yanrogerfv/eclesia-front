@@ -14,17 +14,17 @@ import { Button } from "../ui/button";
 import { Check, Music } from "lucide-react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
-import { CreateMusica } from "../apiRequests";
-import { toast, useToast } from "../ui/use-toast";
+import { CreateMusica, postMethod } from "../apiRequests";
 import { title } from "process";
+import { useToast } from "../ui/use-toast";
 
-export function DialogAddMusica() {
+export function DialogAddMusica(props: { setState: React.Dispatch<React.SetStateAction<Musica[] | undefined>> }) {
     const [nomeMusica, setNomeMusica] = useState("");
     const [linkMusica, setLinkMusica] = useState("");
     const [cifraMusica, setCifraMusica] = useState("");
     const [open, setOpen] = useState(false);
     const [isLoading, setLoading] = useState(false);
-
+    const { toast } = useToast();
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -57,19 +57,24 @@ export function DialogAddMusica() {
                                 alert("Preencha todos os campos!")
                                 setLoading(false)
                             }
-                            fetch("http://localhost:1004/v1/musicas", {
-                                method: "POST",
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify({
-                                    nome: nomeMusica,
-                                    link: linkMusica,
-                                    cifra: cifraMusica
-                                })
-                            })
-                                .then((res) => res.json())
-                                .then(() => { setOpen(false) })
+                            postMethod<Musica>("musicas", {
+                                nome: nomeMusica,
+                                link: linkMusica,
+                                cifra: cifraMusica
+                            }, () => setOpen(false)).then(() => props.setState(undefined))
+                            // fetch("http://localhost:1004/v1/musicas", {
+                            //     method: "POST",
+                            //     headers: {
+                            //         'Content-Type': 'application/json',
+                            //     },
+                            //     body: JSON.stringify({
+                            //         nome: nomeMusica,
+                            //         link: linkMusica,
+                            //         cifra: cifraMusica
+                            //     })
+                            // })
+                                // .then((res) => res.json())
+                                // .then(() => { setOpen(false) })
                                 // .then((data) => setCreatedMusic(data))
                                 .catch((error) => {
                                     console.error("Erro na comunicação com a api: ", error);

@@ -93,14 +93,11 @@ export async function getMethod<T>(url: string, setState: React.Dispatch<React.S
 	}).catch((error) => {
 		console.error("Erro na comunicação com a api: ", error);
 	});
-	if (req) {
-		const status = req.status;
-		if (status !== 200) {
-			console.error(`Erro na comunicação com a api: ${status}`);
-		}
-		const data = await req.json();
-		setState(data);
+	if (req?.status !== 200) {
+		console.error(`Erro na comunicação com a api: ${req?.status}`);
 	}
+	const data = await req?.json();
+	setState(data);
 }
 
 /**
@@ -129,7 +126,7 @@ export async function postMethod<T>(url: string, body: body, setState: React.Dis
 			console.error(`Erro na comunicação com a api: ${status}`);
 		}
 		const data = await req.json();
-		if(setState)
+		if (setState)
 			setState(data);
 	}
 } interface body {
@@ -162,10 +159,10 @@ export async function putMethod<T>(url: string, body: body, setState: React.Disp
 			console.error(`Erro na comunicação com a api: ${status}`);
 		}
 		const data = await req.json();
-		if(setState)
+		if (setState)
 			setState(data);
 	}
-} 
+}
 
 /**
  * Function to perform a POST request to the API
@@ -190,8 +187,6 @@ export async function deleteMethod<T>(url: string) {
 		if (status !== 200) {
 			console.error(`Erro na comunicação com a api: ${status}`);
 		}
-		const data = await req.json();
-		return data
+		// const data = await req.json();
 	}
-	return undefined;
 } 
