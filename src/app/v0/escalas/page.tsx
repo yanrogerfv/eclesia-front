@@ -135,13 +135,13 @@ export default function Home() {
 				<div>
 					<div className="flex flex-col md:flex-row justify-between items-center gap-2 sm:gap-4 md:gap-6">
 						{/* <div className="flex justify-between gap-4 w-full"> */}
-						<Button variant="outfill" className={"md:flex-1 w-full text-lg hover:text-foreground text-primary hover:bg-primary".concat(domingoFilter ? " bg-primary text-foreground" : "")}
+						<Button variant="outline" className={"md:flex-1 w-full text-lg hover:text-foreground text-primary hover:bg-primary".concat(domingoFilter ? " bg-primary text-foreground" : "")}
 							onClick={() => setDomingoFilter(!domingoFilter)}>Domingos</Button>
 						<Button variant="outline" className={"md:flex-1 w-full text-lg hover:text-foreground text-subprimary hover:bg-secondary".concat(quartaFilter ? " bg-secondary text-foreground" : "")}
 							onClick={() => setQuartaFilter(!quartaFilter)}>Quartas</Button>
-						<Button variant="outfill" className={"md:flex-1 w-full text-lg hover:text-foreground text-special hover:bg-special".concat(especialFilter ? " bg-special text-foreground" : "")}
+						<Button variant="outline" className={"md:flex-1 w-full text-lg hover:text-foreground text-special hover:bg-special".concat(especialFilter ? " bg-special text-foreground" : "")}
 							onClick={() => setEspecialFilter(!especialFilter)}>Especiais</Button>
-						{/* <Button variant="outfill" className={"md:flex-1 w-full text-lg hover:text-foreground text-subprimary hover:bg-subprimary".concat(selfFilter ? " bg-subprimary text-foreground" : "")}
+						{/* <Button variant="outline" className={"md:flex-1 w-full text-lg hover:text-foreground text-subprimary hover:bg-subprimary".concat(selfFilter ? " bg-subprimary text-foreground" : "")}
 							onClick={() => setSelfFilter(!selfFilter)}>Minhas Escalas</Button> */}
 					</div>
 					<br />

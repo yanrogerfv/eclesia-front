@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader } from "@/co
 import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Eye, EyeOff, Key, Loader, Lock, LockOpen, LogIn, RectangleEllipsis, User } from "lucide-react";
+import { ArrowLeftCircle, Eye, EyeOff, Key, Loader, Lock, LockOpen, LogIn, RectangleEllipsis, User } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -37,7 +37,7 @@ export default function LoginPage() {
 		}
 	})
 
-	const promise = () => new Promise((resolve) => setTimeout(() => resolve({name : "Sonner"}), 3000))
+	const promise = () => new Promise((resolve) => setTimeout(() => resolve({ name: "Sonner" }), 3000))
 
 	const handleLogin = async (data: FormData) => {
 		try {
@@ -81,7 +81,11 @@ export default function LoginPage() {
 		<div className="flex flex-col items-center justify-center h-screen bg-gradient-to-tr from-primary via-secondary to-violet-600 *:">
 			<Card>
 				<CardHeader className="text-center p-4">
-					Login de Usuário
+					<div className="flex flex-row justify-between">
+						<ArrowLeftCircle className="cursor-pointer text-secondary hover:text-current/20" onClick={() => router.push("/")}/>
+						Login de Usuário
+						<ArrowLeftCircle color="transparent"/>
+					</div>
 					<Separator className="mt-4" />
 				</CardHeader>
 				<CardContent>

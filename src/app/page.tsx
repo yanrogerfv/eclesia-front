@@ -34,7 +34,7 @@ export default function LandingPage() {
                 </nav>
                 <div className="justify-center items-center">
                     <div className="flex justify-center p-8">
-                        {/* <Button variant={"outfill"} className="flex h-[10dvh] w-[20dvh] size-fit border border-primary/90 mx-2 bg-black/80 text-4xl rounded-lg">
+                        {/* <Button variant={"outline"} className="flex h-[10dvh] w-[20dvh] size-fit border border-primary/90 mx-2 bg-black/80 text-4xl rounded-lg">
                         <Link href="/v0" className="w-full ">Planejar</Link></Button> */}
                         <Button
                             variant="default"
@@ -48,7 +48,7 @@ export default function LandingPage() {
                                 <span className="sr-only">Toggle theme</span>
                             </div>
                         </Button>
-                        <Button variant={"outfill"} className={"flex h-[10dvh] w-[20dvh] size-fit border border-primary/90 mx-2 text-4xl rounded-lg ".concat(localStorage.getItem("theme") == "light" ? "bg-primary/20 " : "bg-black/80 ")}>
+                        <Button variant={"outline"} className={"flex h-[10dvh] w-[20dvh] size-fit border border-primary/90 mx-2 text-4xl rounded-lg ".concat(localStorage.getItem("theme") == "light" ? "bg-primary/20 " : "bg-black/80 ")}>
                             <Link href="/login" className="w-full ">Login</Link></Button>
                     </div>
                     <div className="flex justify-center pb-8">

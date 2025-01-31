@@ -29,7 +29,7 @@ export function DialogAddMusica(props: { setState: React.Dispatch<React.SetState
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild className="flex p-5">
-                <Button variant={"outfill"} className="mx-2 font-bold" onClick={() => setLoading(false)}>
+                <Button variant={"outline"} className="mx-2 font-bold" onClick={() => setLoading(false)}>
                     <Music className="mr-2" />Adicionar Música</Button>
             </DialogTrigger>
             <DialogContent>

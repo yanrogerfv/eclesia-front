@@ -92,16 +92,16 @@ export default function Home() {
 				<div key={"card-bg"} className="flex items-center justify-between gap-4 w-full">
 					{/* <ButtonLink title="Escalas" reff="v0/escalas" /> */}
 					<Link href="v0/escalas" className="flex border hover:bg-primary/90 justify-center items-center h-12 w-full text-lg rounded-lg">Escalas</Link>
-					{/* <Button variant={"outfill"} className="flex h-12 w-full text-lg rounded-lg"><Link href="v0/escalas" className="w-full">Escala</Link></Button> */}
+					{/* <Button variant={"outline"} className="flex h-12 w-full text-lg rounded-lg"><Link href="v0/escalas" className="w-full">Escala</Link></Button> */}
 					{/* <ButtonLink title="Levitas" reff="v0/levitas" /> */}
 					<Link href="v0/levitas" className="flex border hover:bg-primary/90 justify-center items-center h-12 w-full text-lg rounded-lg">Levitas</Link>
-					{/* <Button variant={"outfill"} className="flex h-12 w-full text-lg rounded-lg"><Link href="v0/levitas" className="w-full">Levitas</Link></Button> */}
+					{/* <Button variant={"outline"} className="flex h-12 w-full text-lg rounded-lg"><Link href="v0/levitas" className="w-full">Levitas</Link></Button> */}
 					{/* <ButtonLink title="Músicas" reff="v0/musicas" /> */}
 					<Link href="v0/musicas" className="flex border hover:bg-primary/90 justify-center items-center h-12 w-full text-lg rounded-lg">Músicas</Link>
-					{/* <Button variant={"outfill"} className="flex h-12 w-full text-lg rounded-lg"><Link href="v0/musicas" className="w-full">Músicas</Link></Button> */}
+					{/* <Button variant={"outline"} className="flex h-12 w-full text-lg rounded-lg"><Link href="v0/musicas" className="w-full">Músicas</Link></Button> */}
 					{/* <ButtonLink title="Instrumentos" reff="v0/instrumentos" /> */}
 					<Link href="v0/instrumentos" className="flex border hover:bg-primary/90 justify-center items-center h-12 w-full text-lg rounded-lg">Instrumentos</Link>
-					{/* <Button variant={"outfill"} className="flex h-12 w-full text-lg rounded-lg"><Link href="v0/instrumentos" className="w-full">Instrumentos</Link></Button> */}
+					{/* <Button variant={"outline"} className="flex h-12 w-full text-lg rounded-lg"><Link href="v0/instrumentos" className="w-full">Instrumentos</Link></Button> */}
 				</div>
 				<br />
 				<Card className="p-10 bg-current/30">
