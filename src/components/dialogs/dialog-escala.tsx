@@ -380,7 +380,7 @@ export function DialogAddEditEscala(pp: addEditDialogProps) {
 							// })
 						}
 					}}>{pp.isEdit ? "Confirmar" : "Adicionar"}</Button>
-					<Button className="hover:bg-rose-500" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
+					<Button className="hover:bg-rose-700" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
 				</DialogFooter>
 			</DialogContent>
 		</Dialog >

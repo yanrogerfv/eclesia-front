@@ -165,13 +165,11 @@ export async function putMethod<T>(url: string, body: body, setState: React.Disp
 }
 
 /**
- * Function to perform a POST request to the API
+ * Function to perform a DELETE request to the API
  * @function 
  * 
  * 
  * @param url - Request URL
- * @param body - Fields with the parameters to be passed as a body of the request
- * @param setState - SetStateAction to update the state with the response data
  */
 export async function deleteMethod<T>(url: string) {
 	const req = await fetch(`http://localhost:1004/v1/${url}`, {

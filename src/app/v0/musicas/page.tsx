@@ -28,31 +28,24 @@ export default function Home() {
 	const [update, setUpdate] = useState(false)
 	// const { toast } = useToast();
 
-	const promise = () => new Promise((resolve) => setTimeout(() => resolve({name : "Sonner"}), 3000))
+	const promise = () => new Promise((resolve) => setTimeout(() => resolve({ name: "Sonner" }), 3000))
 
 	useEffect(() => {
+		if (!filteredMusicas)
+			setFilteredMusicas(musicas)
 		if (musicas) return;
-		getMethod<Musica[]>("musicas", (data) => {
-			setMusicas(data);
-			setLoading(false);
-		// }).then(() => {
-		// 	toast({ title: "Músicas carregadas com sucesso!" });
-		// }).catch((error) => {
-		// 	console.error("Erro na comunicação com a api: ", error);
-		// 	toast({ title: "Erro ao carregar músicas!", description: "Tente novamente mais tarde.", color: "red" });
-		// })
-		})
+		setLoading(true)
+		getMethod<Musica[]>("musicas", setMusicas)
 	}, [update, musicas])
 
 	useEffect(() => {
-		if (musicas) setLoading(false);
-		else setLoading(true);
+		if (musicas)
+			setLoading(false)
 	}, [musicas])
 
 	useEffect(() => {
 		if (!musicas) return;
-		if(!searchItem) setFilteredMusicas(musicas);
-		setFilteredMusicas(musicas.filter((musica) => musica.nome.toLowerCase().includes(searchItem.toLowerCase())));
+		setFilteredMusicas(musicas?.filter((musica) => musica.nome.toLowerCase().includes(searchItem.toLowerCase())));
 	}, [searchItem, musicas])
 
 	return (
@@ -81,7 +74,7 @@ export default function Home() {
 			</div>
 			<br />
 
-			{isLoading  ? (
+			{isLoading ? (
 				<div className="col-span-4 h-full flex items-center justify-center mt-20">
 					<div className="size-80 border-4 border-transparent text-primary/40 text-4xl animate-spin flex items-center justify-center border-t-primary rounded-full">
 						<div className="size-64 border-4 border-transparent text-subprimary/40 text-2xl animate-spin flex items-center justify-center border-t-subprimary rounded-full" />
@@ -113,11 +106,12 @@ export default function Home() {
 											// 	success: "Usuário logado com sucesso!",
 											// 	error: "Erro ao efetuar login!"
 											// })
-											toast.promise(deleteMethod(`musicas/${musica.id}`), {
-												loading: "Carregando...",
-												success: "Música deletada com sucesso!",
-												error: "Erro ao deletar música!"
-											})
+											deleteMethod(`musicas/${musica.id}`)
+												.then(() => {
+													setLoading(true)
+													setFilteredMusicas(undefined)
+													setMusicas(undefined)
+												})
 										}} /></TableCell>
 								</TableRow>
 							))}

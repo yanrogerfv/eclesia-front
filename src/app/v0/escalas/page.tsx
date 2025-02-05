@@ -17,41 +17,22 @@ import { ChevronLeft, CircleMinus, X } from "lucide-react";
 import { convertDateFormat, EscalaResumida, Levita } from "@/components/apiObjects";
 import { DialogAddEditEscala, DialogVerEscala } from "@/components/dialogs/dialog-escala";
 import { deleteMethod, getMethod } from "@/components/apiRequests";
-import { Input } from "@/components/ui/input";
-// import React from "react";
 
 export default function Home() {
-	// const [escalasData, setEscalasData] = useState<EscalaResumida[]>([]);
-	// const [levitasDisponiveis, setLevitasDisponiveis] = useState<Levita[]>([]);
 	const [removeOverlay, setRemoveOverlay] = useState(false);
 	const [domingoFilter, setDomingoFilter] = useState(false);
 	const [quartaFilter, setQuartaFilter] = useState(false);
 	const [especialFilter, setEspecialFilter] = useState(false);
-	// const [selfFilter, setSelfFilter] = useState(false);
 	
 	const [escalasData, setEscalasData] = useState<EscalaResumida[] | undefined>(undefined);
 	const [filteredEscalas, setFilteredEscalas] = useState<EscalaResumida[] | undefined>(undefined);
 	const [levitasDisponiveis, setLevitasDisponiveis] = useState<Levita[] | undefined>(undefined);
 
-
-	// function filterEscalas() {
-	// 	if (domingoFilter || quartaFilter || especialFilter)
-	// 		return escalasData?.filter(escala => { return (domingoFilter && escala.domingo) || (quartaFilter && escala.quarta) || (especialFilter && escala.especial) })
-	// 	.some();
-	// 	else return escalasData;
-	// }
-
-	// const filteredEscalas = useMemo(() => {
-	// 	if (domingoFilter || quartaFilter || especialFilter)
-	// 		return escalasData?.filter(escala => { return (domingoFilter && escala.domingo) || (quartaFilter && escala.quarta) || (especialFilter && escala.especial) })
-	// 			.filter((escala) => escala.titulo.toLowerCase().includes(searchItem.toLowerCase()));
-	// 	else return escalasData?.filter((escala) => escala.titulo.toLowerCase().includes(searchItem.toLowerCase()));
-	// }, [searchItem, escalasData, domingoFilter, quartaFilter, especialFilter]);
-
 	useEffect(() => {
 		if (escalasData && levitasDisponiveis) return;
-		getMethod<EscalaResumida[]>("escala/resumed", setEscalasData)
-		getMethod<Levita[]>("levita/resumed", setLevitasDisponiveis)
+		getMethod<EscalaResumida[]>("escala/resumed", setEscalasData);
+		getMethod<Levita[]>("levita/resumed", setLevitasDisponiveis);
+		deleteMethod("escala/clean");
 	}, [escalasData, levitasDisponiveis])
 
 	useEffect(() => {
@@ -65,38 +46,6 @@ export default function Home() {
 		else setFilteredEscalas(escalasData?.filter(escala => { 
 			return (domingoFilter && escala.domingo) || (quartaFilter && escala.quarta) || (especialFilter && escala.especial) }))
 	}, [domingoFilter, quartaFilter, especialFilter]);
-
-	// useEffect(() => {
-	// 	fetch("http://localhost:1004/v1/escala/clean", { method: "DELETE" })
-	// 		.then((res) => res.json())
-	// 		.then(() => console.log("Escalas limpas com sucesso!"))
-	// 		.catch((error) => console.error("Erro na comunicação com a api: ", error));
-	// }, []);
-
-	// useEffect(() => {
-	//   fetch("http://localhost:1004/v1/escala/resumed")
-	//     .then((res) => res.json())
-	//     .then((data) => {
-	//       setIsLoading(false);
-	//       setEscalasData(data);
-	//     })
-	//     .catch((error) => {
-	//       console.error("Erro na comunicação com a api: ", error);
-	//       setEscalasData([]);
-	//     });
-	// }, []);
-
-	// useEffect(() => {
-	//   fetch("http://localhost:1004/v1/levita/resumed")
-	//     .then((res) => res.json())
-	//     .then((data) => {
-	//       setLevitasDisponiveis(data);
-	//     })
-	//     .catch((error) => {
-	//       console.error("Erro na comunicação com a api: ", error);
-	//       setLevitasDisponiveis([]);
-	//     });
-	// }, []);
 
 	return (
 		<main className="max-w-6xl px-4 sm:px-8 lg:px-6 mx-auto my-6 sm:my-12">
@@ -135,11 +84,11 @@ export default function Home() {
 				<div>
 					<div className="flex flex-col md:flex-row justify-between items-center gap-2 sm:gap-4 md:gap-6">
 						{/* <div className="flex justify-between gap-4 w-full"> */}
-						<Button variant="outline" className={"md:flex-1 w-full text-lg hover:text-foreground text-primary hover:bg-primary".concat(domingoFilter ? " bg-primary text-foreground" : "")}
+						<Button variant="outline" className={"md:flex-1 w-full text-lg hover:text-foreground rounded-lg text-primary hover:bg-primary".concat(domingoFilter ? " bg-primary text-foreground" : "")}
 							onClick={() => setDomingoFilter(!domingoFilter)}>Domingos</Button>
-						<Button variant="outline" className={"md:flex-1 w-full text-lg hover:text-foreground text-subprimary hover:bg-secondary".concat(quartaFilter ? " bg-secondary text-foreground" : "")}
+						<Button variant="outline" className={"md:flex-1 w-full text-lg hover:text-foreground rounded-lg text-subprimary hover:bg-secondary".concat(quartaFilter ? " bg-secondary text-foreground" : "")}
 							onClick={() => setQuartaFilter(!quartaFilter)}>Quartas</Button>
-						<Button variant="outline" className={"md:flex-1 w-full text-lg hover:text-foreground text-special hover:bg-special".concat(especialFilter ? " bg-special text-foreground" : "")}
+						<Button variant="outline" className={"md:flex-1 w-full text-lg hover:text-foreground rounded-lg text-special hover:bg-special".concat(especialFilter ? " bg-special text-foreground" : "")}
 							onClick={() => setEspecialFilter(!especialFilter)}>Especiais</Button>
 						{/* <Button variant="outline" className={"md:flex-1 w-full text-lg hover:text-foreground text-subprimary hover:bg-subprimary".concat(selfFilter ? " bg-subprimary text-foreground" : "")}
 							onClick={() => setSelfFilter(!selfFilter)}>Minhas Escalas</Button> */}

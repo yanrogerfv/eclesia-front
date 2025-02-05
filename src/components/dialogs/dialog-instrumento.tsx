@@ -3,17 +3,17 @@
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Button } from "../ui/button"
 import { CircleMinus, CirclePlus } from "lucide-react"
-import { useState } from "react"
+import React, { useState } from "react"
 import { Label } from "../ui/label"
 import { Input } from "../ui/input"
 import { toast } from "sonner"
 import { UUID } from "crypto"
-import { deleteMethod, GetInstrumentos } from "../apiRequests"
+import { deleteMethod, GetInstrumentos, postMethod } from "../apiRequests"
 import { Select, SelectTrigger, SelectItem, SelectContent, SelectGroup, SelectLabel, SelectValue } from "../ui/select"
 import { Instrumento } from "../apiObjects"
 import { get } from "http"
 
-export function DialogAddInstrumento( {}) {
+export function DialogAddInstrumento(props: { disabled: boolean, state: React.Dispatch<React.SetStateAction<Instrumento[] | undefined>> }) {
     const [nomeInstrumento, setNomeInstrumento] = useState("")
     const [isLoading, setLoading] = useState(false);
     const [open, setOpen] = useState(false);
@@ -21,7 +21,7 @@ export function DialogAddInstrumento( {}) {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant={"outline"} className="mx-2 hover:text-emerald-500">
+                <Button variant={"outline"} disabled={props.disabled} className="mx-2 hover:text-emerald-500">
                     <CirclePlus />Adicionar Instrumento</Button>
             </DialogTrigger>
             <DialogContent>
@@ -42,21 +42,23 @@ export function DialogAddInstrumento( {}) {
                                 alert("O nome do instrumento não pode ser vazio.")
                                 setLoading(false)
                             } else {
-                                fetch("http://localhost:1004/v1/instrumento", {
-                                    method: "POST",
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                    },
-                                    body: JSON.stringify({
-                                        nome: nomeInstrumento,
-                                    })
-                                }).then((res) => res.json())
-                                .then(() => {
+                                // fetch("http://localhost:1004/v1/instrumento", {
+                                //     method: "POST",
+                                //     headers: {
+                                //         'Content-Type': 'application/json',
+                                //     },
+                                //     body: JSON.stringify({
+                                //         nome: nomeInstrumento,
+                                //     })
+                                // })
+                                // .then((data) => setCreatedMusic(data))
+                                postMethod("instrumento", {
+                                    nome: nomeInstrumento
+                                }, () => { }).then(() => {
                                     setOpen(false)
                                     setLoading(false)
-                                })
-                                // .then((data) => setCreatedMusic(data))
-                                .catch((error) => {
+                                    props.state(undefined)
+                                }).catch((error) => {
                                     console.error("Erro na comunicação com a api: ", error);
                                 })
                             }
@@ -68,7 +70,7 @@ export function DialogAddInstrumento( {}) {
     )
 }
 
-export function DialogRemoveInstrumento({allInstrumentos}: {allInstrumentos: Instrumento[] | undefined}) {
+export function DialogRemoveInstrumento( props: { allInstrumentos: Instrumento[] | undefined, state: React.Dispatch<React.SetStateAction<Instrumento[] | undefined>> }) {
     const [isLoading, setLoading] = useState(false);
     const [open, setOpen] = useState(false);
     const [selectedInstrumento, setSelectedInstrumento] = useState<any>(null);
@@ -76,7 +78,7 @@ export function DialogRemoveInstrumento({allInstrumentos}: {allInstrumentos: Ins
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant={"outline"} disabled={!allInstrumentos} className="mx-2 hover:bg-rose-500/40" >
+                <Button variant={"outline"} disabled={!props.allInstrumentos} className="mx-2 hover:bg-rose-500/40" >
                     <CircleMinus />Remover Instrumento</Button>
             </DialogTrigger>
             <DialogContent>
@@ -90,7 +92,7 @@ export function DialogRemoveInstrumento({allInstrumentos}: {allInstrumentos: Ins
                     <SelectContent onChange={(e) => { setSelectedInstrumento(e.target) }}>
                         <SelectGroup>
                             <SelectLabel>Instrumentos</SelectLabel>
-                            {allInstrumentos?.map((instrumento) => (
+                            {props.allInstrumentos?.map((instrumento) => (
                                 <SelectItem key={instrumento.id} value={instrumento.id.toString()} onSelect={() => setSelectedInstrumento(instrumento.id)}>{instrumento.nome}</SelectItem>
                             ))}
                         </SelectGroup>
@@ -105,6 +107,7 @@ export function DialogRemoveInstrumento({allInstrumentos}: {allInstrumentos: Ins
                                 .then(() => {
                                     setOpen(false)
                                     setLoading(false)
+                                    props.state(undefined)
                                 })
                                 .catch((error) => {
                                     console.error("Erro na comunicação com a api: ", error);

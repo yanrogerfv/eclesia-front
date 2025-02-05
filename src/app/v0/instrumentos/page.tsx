@@ -13,6 +13,7 @@ export default function Home() {
 	const [instrumentosData, setInstrumentosData] = useState<Instrumento[] | undefined>(undefined)
 
 	useEffect(() => {
+		setLoading(true)
 		if (instrumentosData) return;
 		getMethod<Instrumento[]>("instrumento", setInstrumentosData)
 	}, [instrumentosData])
@@ -32,8 +33,8 @@ export default function Home() {
 						<h1 className="mx-5 font-extrabold tracking-tight text-5xl">Instrumentos</h1>
 					</div>
 					<div className="flex">
-						<DialogAddInstrumento />
-						<DialogRemoveInstrumento allInstrumentos={instrumentosData ? instrumentosData : undefined} />
+						<DialogAddInstrumento disabled={isLoading} state={setInstrumentosData} />
+						<DialogRemoveInstrumento allInstrumentos={instrumentosData ? instrumentosData : undefined} state={setInstrumentosData}/>
 					</div>
 				</div>
 				<br />

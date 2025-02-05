@@ -1,5 +1,6 @@
 "use client"
 
+import Cookies from "js-cookie";
 import {
 	Card,
 	CardContent,
@@ -31,7 +32,7 @@ import { CheckboxDemo } from "@/components/checkboxObj";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { getMethod } from "@/components/apiRequests";
+import { deleteMethod, getMethod } from "@/components/apiRequests";
 
 export default function Home() {
 
@@ -44,20 +45,6 @@ export default function Home() {
 	const [reload, setReload] = useState(false)
 	const [filteredInstruments, setFilteredInstruments] = useState<Instrumento[]>([])
 	const [filteredLevitas, setFilteredLevita] = useState<Levita[] | undefined>(undefined)
-
-	// useEffect(() => {
-	// 	// setIsLoading(true)
-	// 	fetch("http://localhost:1004/v1/levita/resumed")
-	// 		.then((res) => res.json())
-	// 		.then((data) => {
-	// 			setIsLoading(false)
-	// 			setLevitas(data)
-	// 		})
-	// 		.catch((error) => {
-	// 			console.error("Erro na comunicação com a api: ", error)
-	// 		})
-	// }, [searchItem, levitas, reload, loadingRemove])
-
 
 	useEffect(() => {
 		if (!filteredLevitas) 
@@ -80,8 +67,6 @@ export default function Home() {
 			setFilteredLevita(levitas.filter((levita) => levita.nome.toLowerCase().includes(searchItem.toLowerCase())
 				&& levita.instrumentos.some((instrumento) => filteredInstruments.some((filteredInstrument) => filteredInstrument.id === instrumento.id))))
 
-		// filteredInstruments.length === 0 ? setFilteredLevita(levitas?.filter((levita) => levita.nome.toLowerCase().includes(searchItem.toLowerCase())))
-		// 	: setFilteredLevita(levitas?.filter((levita) => levita.nome.toLowerCase().includes(searchItem.toLowerCase())).filter((levita) => levita.instrumentos.some((instrumento) => filteredInstruments.some((filteredInstrument) => filteredInstrument.id === instrumento.id))));
 	}, [searchItem, filteredInstruments])
 
 	function addInstrumentoInFilter(instrumento: Instrumento) {
@@ -163,7 +148,6 @@ export default function Home() {
 							</SheetFooter>
 						</SheetContent>
 					</Sheet>}
-				{/* <Input className="flex" type="search"  value={searchItem} onChange={handleInputChange}  placeholder="Procure por um Levita" /> */}
 				<Input disabled={isLoading} className="flex" type="text"
 					value={searchItem} onChange={(e) => setSearchItem(e.target.value)} placeholder="Procure por um Levita" />
 			</div>
@@ -180,16 +164,19 @@ export default function Home() {
 						</div>
 					) : (
 						filteredLevitas?.map(levita => (
-							<Card key={levita.id} className={removeOverlay ? "animate-pulse" : ""}>
+							// <Card key={levita.id} className={removeOverlay ? "animate-pulse" : ""}>
+							<Card key={levita.id} className={`${removeOverlay ? "animate-pulse" : ""} ${Cookies.get("username") == levita.nome ? "border-special/30 bg-special/10" : ""}`}>
 								<X className={removeOverlay ? "absolute hover:cursor-pointer bg-rose-500/80 rounded-br-xl animate-none" : "absolute invisible"} onClick={() => {
 									setLoadingRemove(true)
-									fetch(`http://localhost:1004/v1/levita/${levita.id}`, {
-										method: "DELETE"
-									})
-										.then((response) => {
+									deleteMethod(`levita/${levita.id}`)
+										.then(() => {
 											setLoadingRemove(false)
-											alert(response.status === 200 ? "Levita removido com sucesso!" : "Erro ao remover o Levita: " + response.headers.get("error"))
 											setReload(!reload)
+											setLevitas(undefined)
+											setFilteredLevita(undefined)
+											setInstrumentos(undefined)
+											setIsLoading(true)
+											setRemoveOverlay(false)
 										})
 										.catch((error) => {
 											alert("Erro ao remover o Levita!")
@@ -197,7 +184,7 @@ export default function Home() {
 										})
 								}} />
 								<CardHeader >
-									<CardTitle className="flex text-primary">{levita.nome}
+									<CardTitle className={Cookies.get("username") == levita.nome ? "text-special" : "text-primary"}>{levita.nome}
 									</CardTitle>
 									<CardDescription>
 										{levita.email ? levita.email : levita.contato}
