@@ -22,18 +22,10 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="pt-br" className="lollipop">
-			{/* <PermissionProvider> */}
 			<body className={inter.className} suppressHydrationWarning={true}>
-				{/* <ThemeProvider
-					attribute="class"
-					defaultTheme="system"
-					enableSystem
-				> */}
 					<Toaster richColors />
 					{children}
-				{/* </ThemeProvider> */}
 			</body>
-			{/* </PermissionProvider> */}
 		</html>
 	);
 }
