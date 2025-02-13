@@ -377,7 +377,7 @@
 	}
 
 	::-webkit-scrollbar {
-		width: 0px;
+		width: 1px;
 	}
 
 	::-webkit-scrollbar-track {
@@ -385,7 +385,7 @@
 	}
 
 	::-webkit-scrollbar-thumb {
-		background: var(--background);
+		background: var(--primary);
 		border: none;
 	}
 }

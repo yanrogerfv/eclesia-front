@@ -12,7 +12,7 @@ import {
 import { useEffect, useMemo, useState, useTransition } from "react";
 import Link from "next/link";
 import { ChevronLeft, Filter, FilterX, ListFilter, UserMinus, X } from "lucide-react";
-import { DialogAddLevita, DialogVerLevita } from "@/components/dialogs/dialog-levita";
+import { DialogAddLevita, DialogVerLevita } from "@/components/modals/dialog-levita";
 import { Input } from "@/components/ui/input";
 import { UUID } from "crypto";
 import { Levita, Instrumento } from "@/components/apiObjects";

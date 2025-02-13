@@ -10,30 +10,26 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import Link from "next/link"
+import { SidebarMyAgenda, SidebarMyEscalas, SidebarNextEvents } from "./modals/sidebar-modals"
 
 // Menu items.
 const items = [
-    {
-        title: "Página Inicial",
-        url: "#",
-        icon: Home,
-        className: "text-current",
-    },
-    {
-        title: "Próximos Eventos",
+    {//DONE
+        title: "Próximos Eventos", 
         url: "#",
         icon: Calendar,
         className: "text-current",
     },
-    {
-        title: "Minha Agenda",
+    {//HALFWAY-DONE
+        title: "Minha Agenda", 
         url: "#",
         icon: CalendarClock,
         className: "text-current",
     },
-    {
-        title: "Minhas Escalas",
-        url: "#",
+    {//DONE
+        title: "Minhas Escalas", 
+        url: "/v0/escalas",
         icon: Inbox,
         className: "text-current",
     },
@@ -42,13 +38,22 @@ const items = [
         url: "#",
         icon: User2,
         className: "text-current",
-    },
-    {
-        title: "Sair",
-        url: "#",
-        icon: LogOut,
-        className: "text-red-500 hover:text-rose-500",
-    },
+    }
+    // {items.map((item) => (
+    //     <SidebarMenuItem key={item.title}>
+    //         <SidebarMenuButton asChild>
+    //             {/* <a href={item.url} className={item.className}>
+    //                 <item.icon />
+    //                 <span>{item.title}</span>
+    //             </a> */}
+    //             <MyEscalasSidebar
+    //                 icon={item.icon}
+    //                 title={item.title}
+    //                 style={item.className}
+    //             />
+    //         </SidebarMenuButton>
+    //     </SidebarMenuItem>
+    // ))}
 ]
 
 export function AppSidebar() {
@@ -59,19 +64,58 @@ export function AppSidebar() {
                     <SidebarGroupLabel className="flex justify-between">
                         Meu Perfil <UserCircle2 size={20} />
                     </SidebarGroupLabel>
-                    <p className="p-2 flex text-3xl justify-center text-primary">{Cookies.get("username") ? Cookies.get("username") : "Usuário"}</p>
+                    <SidebarGroupLabel className="flex justify-center">
+                        <p className="p-2 flex text-3xl justify-center text-primary">{Cookies.get("username") ? Cookies.get("username") : "Usuário"}</p>
+                    </SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
-                            {items.map((item) => (
-                                <SidebarMenuItem key={item.title}>
-                                    <SidebarMenuButton asChild>
-                                        <a href={item.url} className={item.className}>
-                                            <item.icon />
-                                            <span>{item.title}</span>
-                                        </a>
-                                    </SidebarMenuButton>
-                                </SidebarMenuItem>
-                            ))}
+                            <SidebarMenuItem key={"initial_page"}> {/* Página Inicial */}
+                                <SidebarMenuButton asChild>
+                                    <a href="/v0" className={"text-current"}>
+                                        <Home size={16}/>
+                                        <span>Página Inicial</span>
+                                    </a>
+                                </SidebarMenuButton>
+                            </SidebarMenuItem>
+                            <SidebarMenuItem key={"next_events"}> {/* Próximos Eventos */}
+                                <SidebarMenuButton asChild>
+                                    <SidebarNextEvents
+                                        icon={<CalendarDays size={16}/>}
+                                        title={"Próximos Eventos"}
+                                    />
+                                </SidebarMenuButton>
+                            </SidebarMenuItem>
+                            <SidebarMenuItem key={"my_agenda"}> {/* Minha Agenda */}
+                                <SidebarMenuButton asChild>
+                                    <SidebarMyAgenda
+                                        icon={<CalendarClock size={16}/>}
+                                        title={"Minha Agenda"}
+                                    />
+                                </SidebarMenuButton>
+                            </SidebarMenuItem>
+                            <SidebarMenuItem key={"my_escalas"}> {/* Minhas Escalas */}
+                                <SidebarMenuButton asChild>
+                                    <SidebarMyEscalas
+                                        icon={<Inbox size={16}/>}
+                                        title={"Minhas Escalas"}
+                                    />
+                                </SidebarMenuButton>
+                            </SidebarMenuItem>
+                            <SidebarMenuItem key={"logout"}> {/* Logout */}
+                                <SidebarMenuButton asChild className={"text-red-500 hover:text-red-600 hover:brightness-125 hover:animate-pulse"} onClick={() => {
+                                    Cookies.remove("token")
+                                    Cookies.remove("username")
+                                    sessionStorage.removeItem("role")
+                                    setTimeout(() => {
+                                        window.location.reload()
+                                    }, 1000)
+                                }}>
+                                    <a href="/">
+                                        <LogOut />
+                                        <span>Sair</span>
+                                    </a>
+                                </SidebarMenuButton>
+                            </SidebarMenuItem>
                         </SidebarMenu>
                     </SidebarGroupContent>
                 </SidebarGroup>

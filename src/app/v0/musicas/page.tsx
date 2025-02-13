@@ -14,7 +14,7 @@ import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 import { Musica } from "@/components/apiObjects";
-import { DialogAddMusica } from "@/components/dialogs/dialog-musica";
+import { DialogAddMusica } from "@/components/modals/dialog-musica";
 import { useToast } from "@/components/ui/use-toast";
 import { deleteMethod, getMethod } from "@/components/apiRequests";
 import { toast } from "sonner";

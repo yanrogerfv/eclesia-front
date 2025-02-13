@@ -55,7 +55,8 @@ export default function LoginPage() {
 				Cookies.set("token", resp.token, { expires: expireTime })
 				// setPermission(resp.role);
 				Cookies.set("username", data.username, { expires: expireTime })
-				localStorage.setItem("role", resp.role)
+				sessionStorage.setItem("role", resp.role)
+				sessionStorage.setItem("levita", resp.levita.id)
 				toast.promise(promise(), {
 					loading: "Carregando...",
 					success: "Usuário logado com sucesso!",
@@ -82,9 +83,9 @@ export default function LoginPage() {
 			<Card>
 				<CardHeader className="text-center p-4">
 					<div className="flex flex-row justify-between">
-						<ArrowLeftCircle className="cursor-pointer text-secondary hover:text-current/20" onClick={() => router.push("/")}/>
+						<ArrowLeftCircle className="cursor-pointer text-secondary hover:text-current/20" onClick={() => router.push("/")} />
 						Login de Usuário
-						<ArrowLeftCircle color="transparent"/>
+						<ArrowLeftCircle color="transparent" />
 					</div>
 					<Separator className="mt-4" />
 				</CardHeader>
@@ -158,11 +159,11 @@ export default function LoginPage() {
 								)}
 							/>
 
-							<div className="flex items-end h-full">
+							<div className="flex flex-row items-end justify-between">
 								<Button
 									type="submit"
 									variant="default"
-									className="px-5 mb-4 mt-10 w-full rounded-lg"
+									className="px-5 mt-10 w-full rounded-lg"
 									disabled={isLoading}
 								>
 									{isLoading ? (
@@ -179,6 +180,10 @@ export default function LoginPage() {
 										</div>
 									)}
 								</Button>
+							</div>
+							<div className="flex justify-center">
+								<a href="https://mail.google.com/mail/u/0/?fs=1&to=yanrogerfv@gmail.com&su=Esqueci%20Minha%20Senha%20-%20Eclesia%20Software&tf=cm"
+									className="text-sm text-zinc-400/80 hover:text-zinc-200/80">Esqueci minha senha</a>
 							</div>
 						</form>
 					</Form>

@@ -18,7 +18,7 @@ import { ArrowLeftFromLine, ChevronLeft } from "lucide-react";
 import Cookies from "js-cookie";
 import { getMethod } from "@/components/apiRequests";
 import { AppSidebar } from "@/components/app-sidebar";
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 // import { usePermission } from "@/context/permissionContext";
 // import { getList } from "@/components/apiRequests";
 // import { getUserRole } from "@/components/permission";
@@ -192,6 +192,7 @@ export default function Home() {
 
 				</div>
 			</main >
+			<SidebarTrigger className="border"/>
 			<AppSidebar />
 		</SidebarProvider>
 

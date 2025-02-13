@@ -41,23 +41,23 @@ export function DialogVerEscala(props: props) {
 
 	// const escalaData = getMethod<Escala>(`escala/${props.escalaId}`)
 	useEffect(() => {
-	    // setIsLoading(true)
-	    fetch(`http://localhost:1004/v1/escala/${props.escalaId}`, {
+		// setIsLoading(true)
+		fetch(`http://localhost:1004/v1/escala/${props.escalaId}`, {
 			method: "GET",
 			headers: {
 				'Content-Type': 'application/json',
 				'Authorization': 'Bearer ' + Cookies.get("token")
 			}
 		})
-	        .then((res) => res.json())
-	        .then((data) => {
-	            // setIsLoading(false)
-	            setEscalaData(data)
-	        })
-	        .catch((error) => {
-	            console.error("Erro na comunicação com a api: ", error)
-	            setEscalaData(undefined);
-	        })
+			.then((res) => res.json())
+			.then((data) => {
+				// setIsLoading(false)
+				setEscalaData(data)
+			})
+			.catch((error) => {
+				console.error("Erro na comunicação com a api: ", error)
+				setEscalaData(undefined);
+			})
 	}, [])
 
 	// const backs = escalaData?.back.map((back) => (back.nome)).join(", ")
@@ -65,7 +65,7 @@ export function DialogVerEscala(props: props) {
 	return (
 		<Dialog>
 			<DialogTrigger asChild key={escalaData?.id} className="p-5">
-				<Button variant={"outline"} disabled={(!escalaData && !props.levitasDisponiveis)} className="flex items-center rounded-md justify-center">Ver Escala</Button>
+				<Button variant={"outline"} disabled={(!escalaData)} className="flex items-center rounded-md justify-center">Ver Escala</Button>
 			</DialogTrigger>
 			<DialogContent>
 				<DialogHeader>
@@ -100,8 +100,16 @@ export function DialogVerEscala(props: props) {
 						)) : <p className="text-foreground/25">Nenhuma música inserida.</p>}
 				</Card>
 				<DialogFooter>
-					<DialogAddMusicaInEscala escalaId={escalaData?.id} />
-					<DialogAddEditEscala isEdit={true} escala={escalaData} levitasDisponiveis={props.levitasDisponiveis} />
+					{
+						sessionStorage.getItem("role") == "ADMIN" ||
+						sessionStorage.getItem("role") == "LIDER" ||
+						sessionStorage.getItem("levita") == escalaData?.ministro.id ?
+						<>
+								<DialogAddMusicaInEscala escala={escalaData} />
+								<DialogAddEditEscala isEdit={true} escala={escalaData} levitasDisponiveis={props.levitasDisponiveis} />
+							</>
+						: <></>
+					}
 				</DialogFooter>
 			</DialogContent>
 		</Dialog>
@@ -171,9 +179,9 @@ export function DialogAddEditEscala(pp: addEditDialogProps) {
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
 				{pp.isEdit ?
-					<Button variant={"outline"} className="hover:text-sky-500" disabled={!levitasDisponiveis}>
+					<Button variant={"outline"} className="hover:text-sky-500" disabled={!pp.levitasDisponiveis}>
 						<PencilLine className="text-sky-500" />Editar Escala</Button>
-					: <Button variant={"outline"} className="hover:text-emerald-500" disabled={!levitasDisponiveis}>
+					: <Button variant={"outline"} className="hover:text-emerald-500" disabled={!pp.levitasDisponiveis}>
 						<CirclePlus className="mx-1 text-emerald-500" />Criar Escala</Button>
 				}
 			</DialogTrigger>
@@ -388,20 +396,20 @@ export function DialogAddEditEscala(pp: addEditDialogProps) {
 }
 
 interface DialogAddMusicaInEscalaProps {
-	escalaId: UUID | undefined
+	escala: Escala | undefined
 }
 export function DialogAddMusicaInEscala(props: DialogAddMusicaInEscalaProps) {
 	// const [musicas, setMusicas] = useState<Musica[]>();
 	const [selectedMusicas, setSelectedMusicas] = useState<String[]>([]);
 	const [open, setOpen] = useState(false);
 	const [isLoading, setLoading] = useState(false);
-
 	const [musicas, setMusicas] = useState<Musica[] | undefined>(undefined);
 
 	useEffect(() => {
-		if (!musicas) return;
-		getMethod<Musica[]>("musicas", setMusicas)
-	}, [])
+		if (musicas != undefined) return;
+		getMethod<Musica[]>(`musicas`, setMusicas)
+		console.log(musicas)
+	}, [musicas])
 
 	function getSelectedMusicas() {
 		return musicas ? selectedMusicas.map((musicaId) => musicas.find((musica) => musica.id == musicaId)) : []
@@ -428,7 +436,7 @@ export function DialogAddMusicaInEscala(props: DialogAddMusicaInEscalaProps) {
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
-				<Button variant={"outline"} className="mx-2 hover:text-emerald-500">
+				<Button variant={"outline"} className={"mx-2 hover:text-emerald-500 "} disabled={false}>
 					<CirclePlus className="mx-1 text-emerald-500" />Adicionar Música</Button>
 			</DialogTrigger>
 			<DialogContent>
@@ -463,7 +471,7 @@ export function DialogAddMusicaInEscala(props: DialogAddMusicaInEscalaProps) {
 							console.log(selectedMusicas)
 							setLoading(true)
 							// postMethod<Musica[]>(`escala/musicas/${props.escalaId}`, { musicasIds: selectedMusicas }, setMusicas)
-							fetch(`http://localhost:1004/v1/escala/musicas/${props.escalaId}`, {
+							fetch(`http://localhost:1004/v1/escala/musicas/${props.escala?.id}`, {
 								method: "POST",
 								headers: {
 									'Content-Type': 'application/json',

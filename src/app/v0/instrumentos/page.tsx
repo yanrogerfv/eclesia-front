@@ -2,7 +2,7 @@
 
 import { Instrumento } from "@/components/apiObjects";
 import { getMethod } from "@/components/apiRequests";
-import { DialogAddInstrumento, DialogRemoveInstrumento } from "@/components/dialogs/dialog-instrumento";
+import { DialogAddInstrumento, DialogRemoveInstrumento } from "@/components/modals/dialog-instrumento";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";

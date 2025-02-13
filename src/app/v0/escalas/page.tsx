@@ -15,7 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { useEffect, useMemo, useState } from "react";
 import { ChevronLeft, CircleMinus, X } from "lucide-react";
 import { convertDateFormat, EscalaResumida, Levita } from "@/components/apiObjects";
-import { DialogAddEditEscala, DialogVerEscala } from "@/components/dialogs/dialog-escala";
+import { DialogAddEditEscala, DialogVerEscala } from "@/components/modals/dialog-escala";
 import { deleteMethod, getMethod } from "@/components/apiRequests";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
