@@ -1,6 +1,5 @@
 "use client"
 
-import { ChangeTheme, ThemeProvider } from "@/components/themeProvider";
 import ThemeSelector from "@/components/themeSelector";
 import { ToastSimple } from "@/components/toastSimple";
 import { Button } from "@/components/ui/button";
@@ -15,19 +14,15 @@ export default function LandingPage() {
 
     const { theme, setTheme } = useTheme();
 
-    const localStorage = typeof window !== "undefined" ? window.localStorage : undefined;
-
     return (
         <div style={{ backgroundImage: "url('https://i.imgur.com/dZ2L7bl.jpeg')" }}
             // <div style={{ backgroundImage: "url('https://i.imgur.com/dk8EP9v.jpeg')" }} 
             className="relative overflow-hidden rounded-lg bg-cover bg-current/25 bg-no-repeat text-center">
             {/* <div>  */}
             <main className="px-20 h-lvh justify-center items-center">
-                <nav className={"outline outline-1 outline-primary h-[8dvh] rounded-b-3xl ".concat(
-                    localStorage?.getItem("theme") == "light" ? "bg-primary/20 " : "bg-black/80 ")} />
+                <nav className={"outline outline-1 outline-primary h-[8dvh] rounded-b-3xl bg-black/80"} />
                 <nav className="pt-16 flex justify-center">
-                    <div className={"flex-row justify-center text-center p-10 outline outline-1 outline-primary rounded-xl ".concat(
-                        localStorage?.getItem("theme") == "light" ? "bg-primary/20 " : "bg-black/80 ")}>
+                    <div className={"flex-row justify-center text-center p-10 outline outline-1 outline-primary rounded-xl bg-black/80"}>
                         <h1 className="font-extrabold text-8xl border-b">Eclesia</h1>
                         {/* <Button onClick={() => handleSereneMode()} variant={sereneMode ? "outline" : "default"} className="flex h-12 text-lg rounded-lg">Modo Sereno</Button> */}
                         <p className="text-center text-zinc-300/90 text-2xl mt-1">
@@ -51,15 +46,14 @@ export default function LandingPage() {
                                 <span className="sr-only">Toggle theme</span>
                             </div>
                         </Button>
-                        <Button variant={"outline"} className={"flex h-[10dvh] w-[20dvh] size-fit border border-primary/90 mx-2 text-4xl rounded-lg ".concat(localStorage?.getItem("theme") == "light" ? "bg-primary/20 " : "bg-black/80 ")}>
+                        <Button variant={"outline"} className={"flex h-[10dvh] w-[20dvh] size-fit border border-primary/90 mx-2 text-4xl rounded-lg bg-black/80"}>
                             <Link href="/login" className="w-full ">Login</Link></Button>
                     </div>
                     <div className="flex justify-center pb-8">
                         <ThemeSelector />
                     </div>
                     <div className="flex text-center justify-center">
-                        <Card className={"w-[80dvh] outline outline-1 outline-primary py-3 px-6 text-center justify-center items-center ".concat(
-                            localStorage?.getItem("theme") == "light" ? "bg-primary/20 " : "bg-black/80 ")}>
+                        <Card className={"w-[80dvh] outline outline-1 outline-primary py-3 px-6 text-center justify-center items-center bg-black/80"}>
                             <p className="text-xl">Eclesia é uma aplicação web que visa facilitar a organização de escalas e a comunicação entre os membros de um grupo de louvor.
                                 Aqui você pode criar e gerenciar Escalas, Levitas, os Instrumentos usados e as Músicas tocadas!</p>
                             <br />
