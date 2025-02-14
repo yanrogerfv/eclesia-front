@@ -12,7 +12,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 export function EscalaSimpleCard(escala: EscalaResumida) {
     const day = escala.domingo ? "Domingo" : escala.quarta ? "Quarta" : "Especial"
     return (
-        <Card className="mx-4 border border-primary/40" key={escala.id}>
+        <Card className={`mx-4 border border-primary/40 ${new Date(escala.data) < new Date() ? 'opacity-60 grayscale' : ''}`} key={escala.id}>
             <CardHeader>
                 {/* <CardTitle> */}
                 <CardTitle className={escala.domingo ? "text-secondary" : escala.quarta ? "text-subprimary" : "text-special"}>

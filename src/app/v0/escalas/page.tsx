@@ -113,7 +113,7 @@ export default function Home() {
 							<div className={Array.isArray(filteredEscalas) && filteredEscalas.length === 0 ? "" :
 								"grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-8"}>
 								{Array.isArray(filteredEscalas) && filteredEscalas.map((escala) => (
-									<Card key={escala.id} className={removeOverlay ? "animate-pulse" : ""}>
+									<Card key={escala.id} className={`${removeOverlay ? "animate-pulse" : ""} ${new Date(escala.data) < new Date() ? 'opacity-60 grayscale' : ''}`}>
 										<X
 											className={
 												removeOverlay

@@ -159,7 +159,13 @@ export function SidebarMyEscalas({ icon, title, style }: SidebarModalsProps) {
         <Dialog>
             <DialogTrigger className={`${!escalas ? `text-zinc-500` : ``} w-full`} disabled={!escalas}>
                 <SidebarMenuButton>
-                    <span className={`${!escalas ? `hidden` : ``} absolute inline-flex [animation-time:3s] top-1 left-5 size-2 bg-special rounded-full`}>
+                    <span className={`${!escalas ? `hidden` : ``} ${!escalas?.some(escala => {
+                        const escalaDate = new Date(escala.data);
+                        const today = new Date();
+                        const sevenDaysFromNow = new Date();
+                        sevenDaysFromNow.setDate(today.getDate() + 7);
+                        return escalaDate >= today && escalaDate <= sevenDaysFromNow;
+                    }) ? 'hidden' : ''} absolute inline-flex [animation-time:3s] top-1 left-5 size-2 bg-special rounded-full`}>
                         <span className="size-2 animate-ping rounded-full bg-special opacity-75" />
                     </span>
                     {icon}
@@ -171,7 +177,7 @@ export function SidebarMyEscalas({ icon, title, style }: SidebarModalsProps) {
                     <DialogTitle>
                         {title}
                     </DialogTitle>
-                    <DialogDescription>
+                    <DialogDescription> 
                         {loading ? "Carregando..." : escalas ? "Escala carregada" : "Erro ao carregar escala"}
                     </DialogDescription>
                 </DialogHeader>
@@ -180,7 +186,7 @@ export function SidebarMyEscalas({ icon, title, style }: SidebarModalsProps) {
                 <div className={!escalas ? "" :
                     "grid grid-cols-2 gap-4"}>
                     {Array.isArray(escalas) && escalas.map((escala) => (
-                        <Card key={escala.id} className="col-span-1">
+                        <Card key={escala.id} className={`col-span-1 ${new Date(escala.data) < new Date() ? 'opacity-60 grayscale' : ''}`}>
                             <CardHeader className="items-center lg:items-start">
                                 <CardTitle className={escala.domingo ? "text-primary" : escala.quarta ? "text-secondary" : "text-special"}>
                                     {escala.titulo}
@@ -196,24 +202,12 @@ export function SidebarMyEscalas({ icon, title, style }: SidebarModalsProps) {
                                 </CardDescription>
                             </CardHeader>
                             <CardContent>
-                                <p>
-                                    <span className="text-subprimary">Ministro:</span> <span className="text-secondary">{escala.ministro.nome}</span>
-                                </p>
-                                <p>
-                                    <span className="text-subprimary">Violão:</span> {escala.violao ? escala.violao.nome : <span className="text-secondary/40">Não inserido.</span>}
-                                </p>
-                                <p>
-                                    <span className="text-subprimary">Teclado:</span> {escala.teclado ? escala.teclado.nome : <span className="text-secondary/40">Não inserido.</span>}
-                                </p>
-                                <p>
-                                    <span className="text-subprimary">Bateria:</span> {escala.bateria ? escala.bateria.nome : <span className="text-secondary/40">Não inserido.</span>}
-                                </p>
-                                <p>
-                                    <span className="text-subprimary">Baixo:</span> {escala.baixo ? escala.baixo.nome : <span className="text-secondary/40">Não inserido.</span>}
-                                </p>
-                                <p>
-                                    <span className="text-subprimary">Guitarra:</span> {escala.guitarra ? escala.guitarra.nome : <span className="text-secondary/40">Não inserido.</span>}
-                                </p>
+                                <p><span className="text-subprimary">Ministro:</span> <span className="text-secondary">{escala.ministro.nome}</span></p>
+                                <p><span className="text-subprimary">Violão:</span> {escala.violao ? escala.violao.nome : <span className="text-secondary/40">Não inserido.</span>}</p>
+                                <p><span className="text-subprimary">Teclado:</span> {escala.teclado ? escala.teclado.nome : <span className="text-secondary/40">Não inserido.</span>}</p>
+                                <p><span className="text-subprimary">Bateria:</span> {escala.bateria ? escala.bateria.nome : <span className="text-secondary/40">Não inserido.</span>}</p>
+                                <p><span className="text-subprimary">Baixo:</span> {escala.baixo ? escala.baixo.nome : <span className="text-secondary/40">Não inserido.</span>}</p>
+                                <p><span className="text-subprimary">Guitarra:</span> {escala.guitarra ? escala.guitarra.nome : <span className="text-secondary/40">Não inserido.</span>}</p>
                             </CardContent>
                             <CardFooter className="flex items-center justify-between">
                                 <div>
