@@ -50,7 +50,7 @@ export default function LandingPage() {
                             <Link href="/login" className="w-full ">Login</Link></Button>
                     </div>
                     <div className="flex justify-center pb-8">
-                        <ThemeSelector />
+                        <ThemeSelector className="bg-black/70" />
                     </div>
                     <div className="flex text-center justify-center">
                         <Card className={"w-[80dvh] outline outline-1 outline-primary py-3 px-6 text-center justify-center items-center bg-black/80"}>

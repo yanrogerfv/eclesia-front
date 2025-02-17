@@ -3,6 +3,7 @@ import Cookies from "js-cookie"
 import {
     Sidebar,
     SidebarContent,
+    SidebarFooter,
     SidebarGroup,
     SidebarGroupContent,
     SidebarGroupLabel,
@@ -12,6 +13,7 @@ import {
 } from "@/components/ui/sidebar"
 import Link from "next/link"
 import { SidebarMyAgenda, SidebarMyEscalas, SidebarNextEvents } from "./modals/sidebar-modals"
+import ThemeSelector from "./themeSelector"
 
 // Menu items.
 const items = [
@@ -116,9 +118,13 @@ export function AppSidebar() {
                                     </a>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
-                        </SidebarMenu>
+                        </SidebarMenu>  
                     </SidebarGroupContent>
                 </SidebarGroup>
+                <SidebarFooter className="mt-auto flex justify-center items-center ">
+                    <ThemeSelector className="bg-zinc-700/10 w-full overflow-hidden 
+                    group-data-[collapsible=icon]:!hidden"/>
+                </SidebarFooter>
             </SidebarContent>
         </Sidebar>
     )

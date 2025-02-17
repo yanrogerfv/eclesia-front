@@ -6,14 +6,16 @@ import { Toggle } from "./ui/toggle";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 import { Separator } from "./ui/separator";
 
+interface ThemeSelectorProps {
+    className?: string;
+}
 
-
-const ThemeSelector = () => {
+function ThemeSelector({ className }: ThemeSelectorProps ) {
     // const [sereneMode, setSereneMode] = useState(document.documentElement.classList.contains("serene") || localStorage.getItem("theme") === "serene");
     // const [sunsetMode, setSunsetMode] = useState(document.documentElement.classList.contains("sunset") || localStorage.getItem("theme") === "sunset");
     // const [forestMode, setForestMode] = useState(document.documentElement.classList.contains("forest") || localStorage.getItem("theme") === "forest");
     // const [lollipopMode, setLollipopMode] = useState(document.documentElement.classList.contains("lollipop") || localStorage.getItem("theme") === "lollipop");
-    const [sereneMode, setSereneMode] = useState(true);
+    const [sereneMode, setSereneMode] = useState(false);
     const [sunsetMode, setSunsetMode] = useState(false);
     const [forestMode, setForestMode] = useState(false);
     const [lollipopMode, setLollipopMode] = useState(false);
@@ -101,10 +103,10 @@ const ThemeSelector = () => {
         //     <Moon className="ml-auto"/>
         // </div>
         <div>
-            <div className="text-center bg-black/70 border text-lg font-semibold text-primary">
+            <div className={`text-center ${className} border text-lg font-semibold text-primary`}>
                 Themes
             </div>
-            <div className="bg-black/70 border rounded-lg p-2 flex items-center">
+            <div className={`${className} border rounded-lg p-2 flex items-center`}>
                 {/* <Toggle className="p-0 size-10">
                 <Haze className="flex h-8 w-8"/>
             </Toggle>

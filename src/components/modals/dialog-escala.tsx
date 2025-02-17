@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog"
 import { Escala, Levita, Musica, convertDateFormat } from "../apiObjects";
 import { Button } from "../ui/button";
-import { CirclePlus, PencilLine } from "lucide-react";
+import { CirclePlus, LoaderCircle, PencilLine } from "lucide-react";
 import { useEffect, useState } from "react";
 import { randomUUID, UUID } from "crypto";
 import { Label } from "../ui/label";
@@ -23,6 +23,7 @@ import { Card } from "../ui/card";
 import Link from "next/link";
 import { getMethod, postMethod } from "../apiRequests";
 import Cookies from "js-cookie";
+import { Checkbox } from "../ui/checkbox";
 
 interface props {
 	escalaId: UUID,
@@ -102,13 +103,13 @@ export function DialogVerEscala(props: props) {
 				<DialogFooter>
 					{
 						sessionStorage.getItem("role") == "ADMIN" ||
-						sessionStorage.getItem("role") == "LIDER" ||
-						sessionStorage.getItem("levita") == escalaData?.ministro.id ?
-						<>
+							sessionStorage.getItem("role") == "LIDER" ||
+							sessionStorage.getItem("levita") == escalaData?.ministro.id ?
+							<>
 								<DialogAddMusicaInEscala escala={escalaData} />
-								<DialogAddEditEscala isEdit={true} escala={escalaData} levitasDisponiveis={props.levitasDisponiveis} />
+								<AddEditEscala isEdit={true} escala={escalaData} levitasDisponiveis={props.levitasDisponiveis} />
 							</>
-						: <></>
+							: <></>
 					}
 				</DialogFooter>
 			</DialogContent>
@@ -127,15 +128,16 @@ export function listBacks(backs: Levita[]) {
 
 interface addEditDialogProps {
 	isEdit: boolean,
-	escala: Escala | undefined,
+	escala?: Escala | undefined,
 	levitasDisponiveis: Levita[] | undefined;
 }
 
-export function DialogAddEditEscala(pp: addEditDialogProps) {
+export function AddEditEscala(pp: addEditDialogProps) {
 	const [open, setOpen] = useState(false);
 	const [isLoading, setIsLoading] = useState(false)
 	const levitasDisponiveis = pp.levitasDisponiveis;
 	const [data, setData] = useState(pp.escala?.data.toString() || "");
+	const [especial, setEspecial] = useState(pp.escala?.especial || false);
 	const [titulo, setTitulo] = useState(pp.escala?.titulo || "");
 	const [ministro, setMinistro] = useState(pp.escala?.ministro?.id || "");
 	const [baixo, setBaixo] = useState(pp.escala?.baixo?.id || "");
@@ -199,7 +201,10 @@ export function DialogAddEditEscala(pp: addEditDialogProps) {
 					<Label>Data:</Label>
 					<Input type="date" placeholder={pp.escala?.data.toString()}
 						value={data} onChange={(e) => setData(e.target.value)} />
-					<br />
+					<div className="my-2">
+						<Label>Especial:    </Label>
+						<Checkbox checked={pp.escala?.especial} onClick={() => setEspecial(!especial)} />
+					</div>
 
 					<Label>Ministro</Label>
 					<Select onValueChange={(value) => setMinistro(value)} disabled={pp.escala?.data.toString().length == 0}>
@@ -327,6 +332,7 @@ export function DialogAddEditEscala(pp: addEditDialogProps) {
 											id: pp.escala.id,
 											titulo: titulo.length == 0 ? pp.escala.titulo : titulo,
 											data: data.length == 0 ? pp.escala.data : data,
+											especial: especial,
 											ministro: ministro == "null" ? null : ministro,
 											violao: violao == "null" ? null : violao,
 											teclado: teclado == "null" ? null : teclado,
@@ -346,9 +352,10 @@ export function DialogAddEditEscala(pp: addEditDialogProps) {
 									: alert("Escala não encontrada.")
 								:
 								postMethod<Escala>("escala", {
-									data: data,
-									titulo: titulo,
 									ministro: ministro,
+									titulo: titulo,
+									data: data,
+									especial: especial,
 									violao: violao == "null" ? null : violao,
 									teclado: teclado == "null" ? null : teclado,
 									bateria: bateria == "null" ? null : bateria,

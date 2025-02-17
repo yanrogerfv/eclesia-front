@@ -13,11 +13,11 @@ import * as React from "react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { useEffect, useMemo, useState } from "react";
-import { ChevronLeft, CircleMinus, X } from "lucide-react";
+import { ChevronLeft, CircleMinus, LoaderCircle, X } from "lucide-react";
 import { convertDateFormat, EscalaResumida, Levita } from "@/components/apiObjects";
-import { DialogAddEditEscala, DialogVerEscala } from "@/components/modals/dialog-escala";
+import { AddEditEscala, DialogVerEscala } from "@/components/modals/dialog-escala";
 import { deleteMethod, getMethod } from "@/components/apiRequests";
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 
 export default function Home() {
@@ -34,7 +34,7 @@ export default function Home() {
 		if (escalasData && levitasDisponiveis) return;
 		getMethod<EscalaResumida[]>("escala/resumed", setEscalasData);
 		getMethod<Levita[]>("levita/resumed", setLevitasDisponiveis);
-		deleteMethod("escala/clean");
+		// deleteMethod("escala/clean");
 	}, [escalasData, levitasDisponiveis])
 
 	useEffect(() => {
@@ -62,7 +62,11 @@ export default function Home() {
 							<h1 className="ml-4 font-extrabold tracking-tight text-2xl sm:text-5xl">Escalas</h1>
 						</div>
 						<div className="flex w-full justify-between sm:justify-end gap-2 mt-4 sm:w-full">
-							<DialogAddEditEscala isEdit={false} escala={undefined} levitasDisponiveis={levitasDisponiveis} />
+							{levitasDisponiveis && levitasDisponiveis.length > 0 ?
+								<AddEditEscala isEdit={false} escala={undefined} levitasDisponiveis={levitasDisponiveis} />
+								: <Button variant={"outline"} className="cursor-not-allowed" disabled>
+									<LoaderCircle className="animate-spin" />Criar Escala</Button>
+							}
 							<Button
 								variant="outline"
 								disabled={escalasData === undefined}
@@ -195,6 +199,7 @@ export default function Home() {
 					</div>
 				)}
 			</main>
+			<SidebarTrigger />
 			<AppSidebar />
 		</SidebarProvider>
 	);

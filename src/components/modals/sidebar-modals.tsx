@@ -7,6 +7,10 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { DialogVerEscala } from "./dialog-escala";
 import { Badge } from "../ui/badge";
 import { SidebarMenuButton } from "../ui/sidebar";
+import { Calendar } from "../ui/calendar";
+import { Input } from "../ui/input";
+import { DateRange } from "react-day-picker";
+import { Button } from "../ui/button";
 
 interface SidebarModalsProps {
     icon: ReactElement,
@@ -117,6 +121,7 @@ export function SidebarNextEvents({ icon, title, style }: SidebarModalsProps) {
 }
 
 export function SidebarMyAgenda({ icon, title, style }: SidebarModalsProps) {
+    const[date, setDate] = useState<DateRange | undefined>(undefined);
 
     return (
         <Dialog>
@@ -135,6 +140,25 @@ export function SidebarMyAgenda({ icon, title, style }: SidebarModalsProps) {
                     </DialogDescription>
                 </DialogHeader>
                 {/* Content aqui */}
+                <div className="flex justify-center items-center">
+                    <Calendar
+                        title="Agenda"
+                        mode="range"
+                        selected={date}
+                        onSelect={setDate}
+                        className="border rounded-lg w-fit p-2 m-2"
+                    />
+                    <Input
+                        type="date"
+                        className="border rounded-lg p-2 m-2"
+                    />
+                    <Button
+                        variant="outline"
+                        className="border rounded-lg p-2 m-2"
+                        onClick={() => console.log(date)}
+                    >Console Dates</Button>
+                    
+                </div>
             </DialogContent>
         </Dialog>
     )
@@ -177,7 +201,7 @@ export function SidebarMyEscalas({ icon, title, style }: SidebarModalsProps) {
                     <DialogTitle>
                         {title}
                     </DialogTitle>
-                    <DialogDescription> 
+                    <DialogDescription>
                         {loading ? "Carregando..." : escalas ? "Escala carregada" : "Erro ao carregar escala"}
                     </DialogDescription>
                 </DialogHeader>
