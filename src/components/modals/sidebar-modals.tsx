@@ -1,6 +1,6 @@
-import { ReactElement, useEffect, useState } from "react";
+import { ReactElement, use, useEffect, useState } from "react";
 import { convertDateFormat, Escala, EscalaResumida, Levita } from "../apiObjects";
-import { getMethod } from "../apiRequests";
+import { getMethod, postMethod } from "../apiRequests";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "../ui/dialog";
 import Cookies from "js-cookie";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card";
@@ -9,7 +9,6 @@ import { Badge } from "../ui/badge";
 import { SidebarMenuButton } from "../ui/sidebar";
 import { Calendar } from "../ui/calendar";
 import { Input } from "../ui/input";
-import { DateRange } from "react-day-picker";
 import { Button } from "../ui/button";
 
 interface SidebarModalsProps {
@@ -29,8 +28,8 @@ export function SidebarNextEvents({ icon, title, style }: SidebarModalsProps) {
     useEffect(() => {
         if (escalas) return;
         setLoading(true);
-        getMethod<EscalaResumida[]>(`escala/resumed`, setEscala)
-        getMethod<Levita[]>(`levita`, setLevitas)
+        getMethod<EscalaResumida[] | undefined>(`escala/resumed`, setEscala)
+        getMethod<Levita[] | undefined>(`levita`, setLevitas)
         setLoading(false);
     }, [escalas])
 
@@ -121,11 +120,30 @@ export function SidebarNextEvents({ icon, title, style }: SidebarModalsProps) {
 }
 
 export function SidebarMyAgenda({ icon, title, style }: SidebarModalsProps) {
-    const[date, setDate] = useState<DateRange | undefined>(undefined);
+    const [userDates, setUserDates] = useState<Date[] | undefined>(undefined);
+    const [dates, setDates] = useState<Date[] | undefined>([]);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (userDates !== undefined) return;
+        getMethod<Date[] | undefined>(`levita/agenda/${sessionStorage.getItem("levita")}`, setUserDates)
+        setDates(userDates)
+    }, [userDates])
+
+    const formattedDates = () => {
+        const dataBody = dates?.map(date => date.toISOString().split("T")[0])
+        if (!dataBody) return;
+
+        postMethod<Date[]>(
+            `levita/agenda/${sessionStorage.getItem("levita")}`,
+            dataBody,
+            setDates
+        )
+    }
 
     return (
         <Dialog>
-            <DialogTrigger className="w-full">
+            <DialogTrigger className="w-full" disabled={!userDates}>
                 <SidebarMenuButton>
                     {icon}
                     {title}
@@ -143,9 +161,11 @@ export function SidebarMyAgenda({ icon, title, style }: SidebarModalsProps) {
                 <div className="flex justify-center items-center">
                     <Calendar
                         title="Agenda"
-                        mode="range"
-                        selected={date}
-                        onSelect={setDate}
+                        mode="multiple"
+                        selected={userDates}
+                        onSelect={setDates}
+                        disabled={(data) => data < new Date(Date.now() - 86400000)}
+                        // fromDate={new Date()} // from today
                         className="border rounded-lg w-fit p-2 m-2"
                     />
                     <Input
@@ -155,9 +175,9 @@ export function SidebarMyAgenda({ icon, title, style }: SidebarModalsProps) {
                     <Button
                         variant="outline"
                         className="border rounded-lg p-2 m-2"
-                        onClick={() => console.log(date)}
+                        onClick={() => console.log(userDates ? userDates : "Nenhuma data")}
                     >Console Dates</Button>
-                    
+
                 </div>
             </DialogContent>
         </Dialog>
@@ -173,8 +193,8 @@ export function SidebarMyEscalas({ icon, title, style }: SidebarModalsProps) {
     useEffect(() => {
         if (escalas) return;
         setLoading(true);
-        getMethod<Escala[]>(`escala?levita=${sessionStorage.getItem("levita")}`, setEscala)
-        getMethod<Levita[]>(`levita`, setLevitas)
+        getMethod<Escala[] | undefined>(`escala?levita=${sessionStorage.getItem("levita")}`, setEscala)
+        getMethod<Levita[] | undefined>(`levita`, setLevitas)
 
         setLoading(false);
     }, [escalas])

@@ -67,7 +67,7 @@ export function DialogAddLevita() {
 
     useEffect(() => {
         if (allInstrumentos) return;
-        getMethod<Instrumento[]>("instrumento", setAllInstrumentos)
+        getMethod<Instrumento[] | undefined>("instrumento", setAllInstrumentos)
     }, [])
 
     function addInstrumentoInFilter(instrumento: Instrumento) {
@@ -181,7 +181,7 @@ export function DialogEditLevita(levita: Levita) {
 
     useEffect(() => {
         if (allInstrumentos) return;
-        getMethod<Instrumento[]>("instrumento", setAllInstrumentos)
+        getMethod<Instrumento[] | undefined>("instrumento", setAllInstrumentos)
     }, [])
 
     return (

@@ -83,8 +83,8 @@ export function GetInstrumentos() {
  * @param url - Request URL
  * @param setState - SetStateAction to update the state with the response data
  */
-export async function getMethod<T>(url: string, setState: React.Dispatch<React.SetStateAction<T | undefined>>) {
-	const req = await fetch(`http://localhost:1004/v1/${url}`, {
+export async function getMethod<T>(url: string, setState: React.Dispatch<React.SetStateAction<T>>) {
+	const req = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${url}`, {
 		method: "GET",
 		headers: {
 			"Content-Type": "application/json",
@@ -110,7 +110,7 @@ export async function getMethod<T>(url: string, setState: React.Dispatch<React.S
  * @param setState - SetStateAction to update the state with the response data
  */
 export async function postMethod<T>(url: string, body: body, setState: React.Dispatch<React.SetStateAction<T | undefined>> | undefined) {
-	const req = await fetch(`http://localhost:1004/v1/${url}`, {
+	const req = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${url}`, {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
@@ -143,7 +143,7 @@ export async function postMethod<T>(url: string, body: body, setState: React.Dis
  * @param setState - SetStateAction to update the state with the response data
  */
 export async function putMethod<T>(url: string, body: body, setState: React.Dispatch<React.SetStateAction<T | undefined>> | undefined) {
-	const req = await fetch(`http://localhost:1004/v1/${url}`, {
+	const req = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${url}`, {
 		method: "PUT",
 		headers: {
 			"Content-Type": "application/json",
@@ -172,7 +172,7 @@ export async function putMethod<T>(url: string, body: body, setState: React.Disp
  * @param url - Request URL
  */
 export async function deleteMethod<T>(url: string) {
-	const req = await fetch(`http://localhost:1004/v1/${url}`, {
+	const req = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${url}`, {
 		method: "DELETE",
 		headers: {
 			"Authorization": `Bearer ${Cookies.get("token")}`

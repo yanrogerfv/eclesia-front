@@ -32,8 +32,8 @@ export default function Home() {
 
 	useEffect(() => {
 		if (escalasData && levitasDisponiveis) return;
-		getMethod<EscalaResumida[]>("escala/resumed", setEscalasData);
-		getMethod<Levita[]>("levita/resumed", setLevitasDisponiveis);
+		getMethod<EscalaResumida[] | undefined>("escala/resumed", setEscalasData);
+		getMethod<Levita[] | undefined>("levita/resumed", setLevitasDisponiveis);
 		// deleteMethod("escala/clean");
 	}, [escalasData, levitasDisponiveis])
 
@@ -128,7 +128,7 @@ export default function Home() {
 												deleteMethod(`escala/${escala.id}`)
 													.then(() => alert("Escala removida com sucesso!"))
 													.catch((error: any) => alert("Erro ao remover escala: " + error))
-												// fetch(`http://localhost:1004/v1/escala/${escala.id}`, {
+												// fetch(`${process.env.NEXT_PUBLIC_API_URL}escala/${escala.id}`, {
 												// 	method: "DELETE",
 												// })
 												// 	.then((response) => {

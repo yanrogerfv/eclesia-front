@@ -43,7 +43,7 @@ export function DialogVerEscala(props: props) {
 	// const escalaData = getMethod<Escala>(`escala/${props.escalaId}`)
 	useEffect(() => {
 		// setIsLoading(true)
-		fetch(`http://localhost:1004/v1/escala/${props.escalaId}`, {
+		fetch(`${process.env.NEXT_PUBLIC_API_URL}escala/${props.escalaId}`, {
 			method: "GET",
 			headers: {
 				'Content-Type': 'application/json',
@@ -414,7 +414,7 @@ export function DialogAddMusicaInEscala(props: DialogAddMusicaInEscalaProps) {
 
 	useEffect(() => {
 		if (musicas != undefined) return;
-		getMethod<Musica[]>(`musicas`, setMusicas)
+		getMethod<Musica[] | undefined>(`musicas`, setMusicas)
 		console.log(musicas)
 	}, [musicas])
 
@@ -478,7 +478,7 @@ export function DialogAddMusicaInEscala(props: DialogAddMusicaInEscalaProps) {
 							console.log(selectedMusicas)
 							setLoading(true)
 							// postMethod<Musica[]>(`escala/musicas/${props.escalaId}`, { musicasIds: selectedMusicas }, setMusicas)
-							fetch(`http://localhost:1004/v1/escala/musicas/${props.escala?.id}`, {
+							fetch(`${process.env.NEXT_PUBLIC_API_URL}escala/musicas/${props.escala?.id}`, {
 								method: "POST",
 								headers: {
 									'Content-Type': 'application/json',
