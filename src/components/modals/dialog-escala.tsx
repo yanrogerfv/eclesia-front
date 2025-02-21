@@ -30,7 +30,7 @@ interface props {
 	levitasDisponiveis: Levita[] | undefined
 }
 
-export function DialogVerEscala(props: props) {
+export function VerEscala(props: props) {
 	const [escalaData, setEscalaData] = useState<Escala>()
 
 	// const [escalaData, setEscalaData] = useState<Escala | undefined>(undefined);
@@ -107,7 +107,7 @@ export function DialogVerEscala(props: props) {
 							sessionStorage.getItem("levita") == escalaData?.ministro.id ?
 							<>
 								<DialogAddMusicaInEscala escala={escalaData} />
-								<AddEditEscala isEdit={true} escala={escalaData} levitasDisponiveis={props.levitasDisponiveis} />
+								<EditEscala isEdit={true} escala={escalaData} levitasDisponiveis={props.levitasDisponiveis} />
 							</>
 							: <></>
 					}
@@ -132,7 +132,7 @@ interface addEditDialogProps {
 	levitasDisponiveis: Levita[] | undefined;
 }
 
-export function AddEditEscala(pp: addEditDialogProps) {
+export function EditEscala(pp: addEditDialogProps) {
 	const [open, setOpen] = useState(false);
 	const [isLoading, setIsLoading] = useState(false)
 	const levitasDisponiveis = pp.levitasDisponiveis;
@@ -321,7 +321,6 @@ export function AddEditEscala(pp: addEditDialogProps) {
 						}
 						else {
 							setIsLoading(true)
-							pp.isEdit ?
 								pp.escala ?
 									fetch("http://localhost:1004/v1/escala", {
 										method: "PUT",
@@ -350,8 +349,191 @@ export function AddEditEscala(pp: addEditDialogProps) {
 										console.error("Erro na comunicação com a api: ", error);
 									})
 									: alert("Escala não encontrada.")
-								:
-								postMethod<Escala>("escala", {
+						}
+					}}>{pp.isEdit ? "Confirmar" : "Adicionar"}</Button>
+					<Button className="hover:bg-rose-700" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
+				</DialogFooter>
+			</DialogContent>
+		</Dialog >
+	)
+}
+
+export function AddEscala() {
+	const [open, setOpen] = useState(false);
+	const [isLoading, setIsLoading] = useState(false)
+	const [escala, setEscala] = useState<Escala | undefined>(undefined);
+	const [levitasDisponiveis, setLevitasDisponiveis] = useState<Levita[] | undefined>(undefined);
+	// const levitasDisponiveis = pp.levitasDisponiveis;
+	const [data, setData] = useState<string>();
+	const [especial, setEspecial] = useState(false);
+	const [titulo, setTitulo] = useState("");
+	const [ministro, setMinistro] = useState("");
+	const [baixo, setBaixo] = useState("");
+	const [bateria, setBateria] = useState("");
+	const [guitarra, setGuitarra] = useState("");
+	const [teclado, setTeclado] = useState("");
+	const [violao, setViolao] = useState("");
+	const [backs, setBacks] = useState<String[]>([]);
+	const [observacao, setObservacao] = useState<string>();
+
+	useEffect(() => {
+		if (levitasDisponiveis) return;
+		getMethod<Levita[] | undefined>("levita/resumed", setLevitasDisponiveis)
+	}, [levitasDisponiveis])
+
+
+	function filterByInstrumento(instrumentoId: number) {
+		return levitasDisponiveis && levitasDisponiveis.filter((levita) => levita.instrumentos.some((instrumento) => instrumento.id == instrumentoId))
+		// return levitasDisponiveis.filter((levita) => levita.instrumentos.some((instrumento) => instrumento.id == instrumentoId))
+	}
+
+	function addBack(levitaId: String) {
+		setBacks([...backs, levitaId])
+	}
+	function removeBack(levitaId: String) {
+		setBacks(backs.filter((back) => back != levitaId))
+	}
+
+	return (
+		<Dialog open={open} onOpenChange={setOpen}>
+			<DialogTrigger asChild>
+					<Button variant={"outline"} className="hover:text-emerald-500" disabled={levitasDisponiveis == undefined || levitasDisponiveis.length == 0}>
+						<CirclePlus className="mx-1 text-emerald-500" />Criar Escala</Button>
+			</DialogTrigger>
+			<DialogContent >
+				<DialogHeader>
+					<DialogTitle>{"Criando uma Escala"}</DialogTitle>
+					<DialogDescription>
+						{"Adicione uma nova escala ao planejador."}
+					</DialogDescription>
+				</DialogHeader>
+				<ScrollArea className="max-h-[47dvh]">
+					<Label>Título:</Label>
+					<Input type="text" placeholder="Insira um título para a Escala."
+						value={titulo} onChange={(e) => setTitulo(e.target.value)} />
+					<Label>Data:</Label>
+					<Input type="date" value={data} onChange={(e) => setData(e.target.value)} />
+					<div className="my-2">
+						<Label>Especial:</Label>
+						<Checkbox onClick={() => setEspecial(!especial)} />
+					</div>
+
+					<Label>Ministro</Label>
+					<Select onValueChange={(value) => setMinistro(value)} disabled={data?.length == 0}>
+						<SelectTrigger>
+							<SelectValue placeholder={"Selecione um ministro."} />
+						</SelectTrigger>
+						<SelectContent>
+							{levitasDisponiveis?.map((levita) => (
+								<SelectItem value={levita.id} key={levita.id} onSelect={() => setMinistro(levita.nome)}>{levita.nome}</SelectItem>
+							))}
+						</SelectContent>
+					</Select>
+					<br />
+
+					<Label>Violão</Label>
+					<Select onValueChange={(value) => setViolao(value)} disabled={data?.length == 0}>
+						<SelectTrigger>
+							<SelectValue className={"text-white"}
+								placeholder={"Escolha um levita para tocar violão."} />
+						</SelectTrigger>
+						<SelectContent>
+							{filterByInstrumento(1)?.map((levita) => (
+								<SelectItem value={levita.id} key={levita.id} onSelect={() => setViolao(levita.id)}>{levita.nome}</SelectItem>
+							))}
+							<SelectItem value={"null"} onSelect={() => setViolao("")} className="text-zinc-400">Sem violão</SelectItem>
+						</SelectContent>
+					</Select>
+					<br />
+
+					<Label>Teclado</Label>
+					<Select onValueChange={(value) => setTeclado(value)} disabled={data?.length == 0}>
+						<SelectTrigger>
+							<SelectValue className={"text-zinc-50/50"}
+								placeholder={"Escolha um levita para tocar teclado."} />
+						</SelectTrigger>
+						<SelectContent>
+							{filterByInstrumento(2)?.map((levita) => (
+								<SelectItem value={levita.id} key={levita.id} onSelect={() => setTeclado(levita.id)}>{levita.nome}</SelectItem>
+							))}
+							<SelectItem value={"null"} onSelect={() => setTeclado("")} className="text-zinc-400">Sem teclado</SelectItem>
+						</SelectContent>
+					</Select>
+					<br />
+
+					<Label>Bateria</Label>
+					<Select onValueChange={(value) => setBateria(value)} disabled={data?.length == 0}>
+						<SelectTrigger>
+							<SelectValue className={"text-zinc-50/50"}
+								placeholder={"Escolha um levita para tocar bateria."} />
+						</SelectTrigger>
+						<SelectContent>
+							{filterByInstrumento(3)?.map((levita) => (
+								<SelectItem value={levita.id} key={levita.id} onSelect={() => setBateria(levita.id)}>{levita.nome}</SelectItem>
+							))}
+							<SelectItem value={"null"} onSelect={() => setBateria("")} className="text-zinc-400">Sem bateria</SelectItem>
+						</SelectContent>
+					</Select>
+					<br />
+
+					<Label>Baixo</Label>
+					<Select onValueChange={(value) => setBaixo(value)} disabled={data?.length == 0}>
+						<SelectTrigger>
+							<SelectValue className={"text-zinc-50/50"}
+								placeholder={"Escolha um levita para tocar baixo."} />
+						</SelectTrigger>
+						<SelectContent>
+							{filterByInstrumento(4)?.map((levita) => (
+								<SelectItem value={levita.id} key={levita.id} onSelect={() => setBaixo(levita.id)}>{levita.nome}</SelectItem>
+							))}
+							<SelectItem value={"null"} onSelect={() => setBaixo("")} className="text-zinc-400">Sem baixo</SelectItem>
+						</SelectContent>
+					</Select>
+					<br />
+
+					<Label>Guitarra</Label>
+					<Select onValueChange={(value) => setGuitarra(value)} disabled={data?.length == 0}>
+						<SelectTrigger>
+							<SelectValue className={"text-zinc-50/50"}
+								placeholder={"Escolha um levita para tocar guitarra."} />
+						</SelectTrigger>
+						<SelectContent>
+							{filterByInstrumento(5)?.map((levita) => (
+								<SelectItem value={levita.id} key={levita.id} onSelect={() => setGuitarra(levita.id)}>{levita.nome}</SelectItem>
+							))}
+							<SelectItem value={"null"} onSelect={() => setGuitarra("")} className="text-zinc-400">Sem guitarra</SelectItem>
+						</SelectContent>
+					</Select>
+					<br />
+
+					<Label>Observação:</Label>
+					<Textarea placeholder="Insira uma observação. (Ex: Dia e hora de ensaio, local de apresentação, etc.)"
+						value={observacao} onChange={(e) => setObservacao(e.target.value)} />
+					<br />
+
+					<Label>Backs:</Label>
+					<Card className="bg-transparent grid grid-cols-4">
+						{filterByInstrumento(0)?.map((levita) => (
+							<Button key={levita.id} variant={backs.includes(levita.id) ? "default" : "outline"} type="submit"
+								className={"p-2 rounded-lg m-2"}
+								onClick={() => { backs.includes(levita.id) ? removeBack(levita.id) : addBack(levita.id) }}>{levita.nome}</Button>
+						))}
+					</Card>
+					<br />
+
+				</ScrollArea>
+				<DialogFooter>
+					<Button className="hover:bg-emerald-500" disabled={isLoading} onClick={() => {
+						if (titulo.length == 0) {
+							alert("Insira um título para a escala!")
+						} else if (!data || data.length == 0) {
+							alert("Insira uma data para a escala!")
+						} else if (ministro.length == 0) {
+							alert("Selecione um ministro!")
+						}
+						else {
+							setIsLoading(true)
+								postMethod<Escala | undefined>("escala", {
 									ministro: ministro,
 									titulo: titulo,
 									data: data,
@@ -363,38 +545,14 @@ export function AddEditEscala(pp: addEditDialogProps) {
 									guitarra: guitarra == "null" ? null : guitarra,
 									backs: backs,
 									observacoes: observacao
-								}, undefined)
+								})
 									.then(() => alert("Escala adicionada com sucesso!"))
 									.catch((error) => {
 										alert("Erro ao adicionar escala!")
 										console.error("Erro na comunicação com a api: ", error);
 									})
-							// fetch("http://localhost:1004/v1/escala", {
-							//     method: "POST",
-							//     headers: {
-							//         'Content-Type': 'application/json',
-							//     },
-							//     body: JSON.stringify({
-							//         data: data,
-							//         titulo: titulo,
-							//         ministro: ministro,
-							//         violao: violao == "null" ? null : violao,
-							//         teclado: teclado == "null" ? null : teclado,
-							//         bateria: bateria == "null" ? null : bateria,
-							//         baixo: baixo == "null" ? null : baixo,
-							//         guitarra: guitarra == "null" ? null : guitarra,
-							//         backs: backs,
-							//         observacoes: observacao
-							//     })
-							// }).then((response) => {
-							//     setIsLoading(false)
-							//     alert(response.status === 200 ? "Escala adicionada com sucesso!" : "Erro ao adicionar escala: " + response.headers.get("error"))
-							// }).catch((error) => {
-							//     alert("Erro ao adicionar escala!")
-							//     console.error("Erro na comunicação com a api: ", error);
-							// })
 						}
-					}}>{pp.isEdit ? "Confirmar" : "Adicionar"}</Button>
+					}}>{"Adicionar"}</Button>
 					<Button className="hover:bg-rose-700" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
 				</DialogFooter>
 			</DialogContent>
@@ -427,18 +585,6 @@ export function DialogAddMusicaInEscala(props: DialogAddMusicaInEscalaProps) {
 	function removeSelectedMusica(musicaId: String) {
 		setSelectedMusicas(selectedMusicas.filter((musica) => musica != musicaId))
 	}
-
-	// useEffect(() => {
-	//     fetch("http://localhost:1004/v1/musicas")
-	//         .then((res) => res.json())
-	//         .then((data) => {
-	//             setMusicas(data)
-	//         })
-	//         .catch((error) => {
-	//             console.error("Erro na comunicação com a api: ", error)
-	//             setMusicas([]);
-	//         })
-	// }, [musicas])
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>

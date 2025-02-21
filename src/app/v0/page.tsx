@@ -105,7 +105,7 @@ export default function Home() {
 						{/* <ButtonLink title="Instrumentos" reff="v0/instrumentos" /> */}
 						<Link href="v0/instrumentos" className="flex border hover:bg-primary/90 justify-center items-center h-12 w-full text-lg rounded-lg">Instrumentos</Link>
 						{/* <Button variant={"outline"} className="flex h-12 w-full text-lg rounded-lg"><Link href="v0/instrumentos" className="w-full">Instrumentos</Link></Button> */}
-					</div>
+					</div>	
 					<br />
 					<Card className="p-10 bg-current/30">
 						{/* <Calendar title="Próximas Escalas" locale={ptBR as unknown as Locale} selected={date} onSelect={setDate} className="flex border"/> */}
@@ -176,7 +176,8 @@ export default function Home() {
 														email={levita.email}
 														contato={levita.contato}
 														descricao={levita.descricao}
-														instrumentos={levita.instrumentos} />
+														instrumentos={levita.instrumentos} 
+														agenda={levita.agenda}/>
 												</CarouselItem>
 											))}
 										</CarouselContent>

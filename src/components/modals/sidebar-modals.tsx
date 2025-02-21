@@ -1,15 +1,14 @@
-import { ReactElement, use, useEffect, useState } from "react";
+import { ReactElement, useEffect, useState } from "react";
 import { convertDateFormat, Escala, EscalaResumida, Levita } from "../apiObjects";
 import { getMethod, postMethod } from "../apiRequests";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "../ui/dialog";
-import Cookies from "js-cookie";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card";
-import { DialogVerEscala } from "./dialog-escala";
+import { VerEscala } from "./dialog-escala";
 import { Badge } from "../ui/badge";
 import { SidebarMenuButton } from "../ui/sidebar";
 import { Calendar } from "../ui/calendar";
-import { Input } from "../ui/input";
 import { Button } from "../ui/button";
+import { ptBR } from "date-fns/locale";
 
 interface SidebarModalsProps {
     icon: ReactElement,
@@ -105,7 +104,7 @@ export function SidebarNextEvents({ icon, title, style }: SidebarModalsProps) {
                                     )}
                                 </div>
                                 <div>
-                                    <DialogVerEscala escalaId={escala.id} levitasDisponiveis={levitas} />
+                                    <VerEscala escalaId={escala.id} levitasDisponiveis={levitas} />
                                 </div>
                             </CardFooter>
                         </Card>
@@ -121,35 +120,52 @@ export function SidebarNextEvents({ icon, title, style }: SidebarModalsProps) {
 
 export function SidebarMyAgenda({ icon, title, style }: SidebarModalsProps) {
     const [userDates, setUserDates] = useState<Date[] | undefined>(undefined);
-    const [dates, setDates] = useState<Date[] | undefined>([]);
-    const [loading, setLoading] = useState(false);
+    const [dates, setDates] = useState<Date[] | undefined>(undefined);
+    const [open, setOpen] = useState(false);
 
+    /* Sorting of dates for better organization when sending to backend */
+    useEffect(() => {
+        setDates(dates?.sort((a, b) => a.getTime() - b.getTime()))
+    }, [dates])
+
+    /* Used to fetch the current agenda of logged user */
     useEffect(() => {
         if (userDates !== undefined) return;
         getMethod<Date[] | undefined>(`levita/agenda/${sessionStorage.getItem("levita")}`, setUserDates)
-        setDates(userDates)
     }, [userDates])
 
-    const formattedDates = () => {
-        const dataBody = dates?.map(date => date.toISOString().split("T")[0])
-        if (!dataBody) return;
+    /* Setter of dates from the data fetched */
+    useEffect(() => {
+        const aux = userDates?.map(date => new Date(date))
+        setDates(aux?.map(date => new Date(date.getTime() + 1000 * 60 * 60 * 3)))
+    }, [userDates])
 
-        postMethod<Date[]>(
+    /* Function to post the agenda of the logged user to backend */
+    const postAgenda = () => {
+        const dataBody = dates
+            ? dates
+                .filter(date => date >= new Date(Date.now() - 1000 * 60 * 60 * 24))
+                .map(date => date.toISOString().split("T")[0])
+            : []
+        postMethod<Date[] | undefined>(
             `levita/agenda/${sessionStorage.getItem("levita")}`,
             dataBody,
             setDates
-        )
+        ).then(() => {
+            setOpen(false)
+            alert("Agenda atualizada com sucesso!")
+        })
     }
 
     return (
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger className="w-full" disabled={!userDates}>
                 <SidebarMenuButton>
                     {icon}
                     {title}
                 </SidebarMenuButton>
             </DialogTrigger>
-            <DialogContent className="max-h-[70vh] max-w-[40vw] overflow-y-auto ">
+            <DialogContent className="max-h-[70vh] max-w-[36vw] overflow-y-auto ">
                 <DialogHeader>
                     <DialogTitle>
                         {title}
@@ -158,26 +174,40 @@ export function SidebarMyAgenda({ icon, title, style }: SidebarModalsProps) {
                     </DialogDescription>
                 </DialogHeader>
                 {/* Content aqui */}
-                <div className="flex justify-center items-center">
+                <div className="grid grid-cols-1 lg:flex lg:justify-between">
                     <Calendar
+                        lang="pt-BR"
+                        locale={ptBR}
                         title="Agenda"
                         mode="multiple"
-                        selected={userDates}
+                        selected={dates}
                         onSelect={setDates}
-                        disabled={(data) => data < new Date(Date.now() - 86400000)}
-                        // fromDate={new Date()} // from today
+                        disabled={(data) => data < new Date(Date.now() - 1000 * 60 * 60 * 24)}
                         className="border rounded-lg w-fit p-2 m-2"
                     />
-                    <Input
-                        type="date"
-                        className="border rounded-lg p-2 m-2"
-                    />
-                    <Button
-                        variant="outline"
-                        className="border rounded-lg p-2 m-2"
-                        onClick={() => console.log(userDates ? userDates : "Nenhuma data")}
-                    >Console Dates</Button>
-
+                    <Card className="w-full p-2 m-2 justify-center">
+                        <CardHeader className="text-2xl flex justify-center font-semibold">
+                            <CardTitle className="flex justify-center">
+                                Agenda
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="justify-center">
+                            <p className="flex justify-center text-center">
+                                Selecione ao lado as datas que você não estará disponível para ser escalado,
+                                seja por viagens, aniversários, compromissos, etc.
+                            </p>
+                            <p className="mt-2 flex justify-center text-center text-sm text-red-300">
+                                Datas que você já foi escalado não podem ser removidas.
+                            </p>
+                        </CardContent>
+                        <CardFooter className="flex justify-center bottom-0">
+                            <Button
+                                variant="outline"
+                                className="border rounded-lg"
+                                onClick={() => postAgenda()}
+                            >Confirmar agenda</Button>
+                        </CardFooter>
+                    </Card>
                 </div>
             </DialogContent>
         </Dialog>
@@ -264,7 +294,7 @@ export function SidebarMyEscalas({ icon, title, style }: SidebarModalsProps) {
                                     )}
                                 </div>
                                 <div>
-                                    <DialogVerEscala escalaId={escala.id} levitasDisponiveis={levitas} />
+                                    <VerEscala escalaId={escala.id} levitasDisponiveis={levitas} />
                                 </div>
                             </CardFooter>
                         </Card>

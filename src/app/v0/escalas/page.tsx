@@ -14,11 +14,11 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { useEffect, useMemo, useState } from "react";
 import { ChevronLeft, CircleMinus, LoaderCircle, X } from "lucide-react";
-import { convertDateFormat, EscalaResumida, Levita } from "@/components/apiObjects";
-import { AddEditEscala, DialogVerEscala } from "@/components/modals/dialog-escala";
+import { AppSidebar } from "@/components/app-sidebar";
 import { deleteMethod, getMethod } from "@/components/apiRequests";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/app-sidebar";
+import { AddEscala, VerEscala } from "@/components/modals/dialog-escala";
+import { convertDateFormat, EscalaResumida, Levita } from "@/components/apiObjects";
 
 export default function Home() {
 	const [removeOverlay, setRemoveOverlay] = useState(false);
@@ -62,11 +62,7 @@ export default function Home() {
 							<h1 className="ml-4 font-extrabold tracking-tight text-2xl sm:text-5xl">Escalas</h1>
 						</div>
 						<div className="flex w-full justify-between sm:justify-end gap-2 mt-4 sm:w-full">
-							{levitasDisponiveis && levitasDisponiveis.length > 0 ?
-								<AddEditEscala isEdit={false} escala={undefined} levitasDisponiveis={levitasDisponiveis} />
-								: <Button variant={"outline"} className="cursor-not-allowed" disabled>
-									<LoaderCircle className="animate-spin" />Criar Escala</Button>
-							}
+							<AddEscala />
 							<Button
 								variant="outline"
 								disabled={escalasData === undefined}
@@ -189,7 +185,7 @@ export default function Home() {
 												)}
 											</div>
 											<div>
-												<DialogVerEscala escalaId={escala.id} levitasDisponiveis={levitasDisponiveis} />
+												<VerEscala escalaId={escala.id} levitasDisponiveis={levitasDisponiveis} />
 											</div>
 										</CardFooter>
 									</Card>
