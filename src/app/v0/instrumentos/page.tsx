@@ -33,8 +33,10 @@ export default function Home() {
 						<h1 className="mx-5 font-extrabold tracking-tight text-5xl">Instrumentos</h1>
 					</div>
 					<div className="flex">
-						<DialogAddInstrumento disabled={isLoading} state={setInstrumentosData} />
-						<DialogRemoveInstrumento allInstrumentos={instrumentosData ? instrumentosData : undefined} state={setInstrumentosData}/>
+						{(sessionStorage.getItem("role") == "ADMIN" || sessionStorage.getItem("role") == "LIDER") && 
+							<DialogAddInstrumento disabled={isLoading} state={setInstrumentosData} />}
+						{(sessionStorage.getItem("role") == "ADMIN" || sessionStorage.getItem("role") == "LIDER") && 
+							<DialogRemoveInstrumento allInstrumentos={instrumentosData ? instrumentosData : undefined} state={setInstrumentosData}/>}
 					</div>
 				</div>
 				<br />

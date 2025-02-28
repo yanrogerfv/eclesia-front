@@ -47,6 +47,7 @@ export function DialogVerLevita(props: {
                         contato={props.levita.contato}
                         descricao={props.levita.descricao}
                         instrumentos={props.levita.instrumentos}
+                        agenda={props.levita.agenda}
                     />
                 </DialogFooter>
             </DialogContent>

@@ -62,15 +62,15 @@ export default function Home() {
 							<h1 className="ml-4 font-extrabold tracking-tight text-2xl sm:text-5xl">Escalas</h1>
 						</div>
 						<div className="flex w-full justify-between sm:justify-end gap-2 mt-4 sm:w-full">
-							<AddEscala />
-							<Button
+							{(sessionStorage.getItem("role") == "ADMIN" || sessionStorage.getItem("role") == "LIDER") && <AddEscala />}
+							{(sessionStorage.getItem("role") == "ADMIN" || sessionStorage.getItem("role") == "LIDER") && <Button
 								variant="outline"
 								disabled={escalasData === undefined}
 								className={removeOverlay ? "font-bold bg-rose-500/80 border-rose-600/90 hover:bg-rose-600/40" : "font-bold hover:bg-rose-500/40"}
 								onClick={() => setRemoveOverlay(!removeOverlay)}
 							>
 								<CircleMinus className="mx-1 text-rose-500" />Excluir Escala
-							</Button>
+							</Button>}
 						</div>
 					</div>
 					<br />

@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog"
 import { Escala, Levita, Musica, convertDateFormat } from "../apiObjects";
 import { Button } from "../ui/button";
-import { CirclePlus, LoaderCircle, PencilLine } from "lucide-react";
+import { CirclePlus, Loader2, LoaderCircle, PencilLine } from "lucide-react";
 import { useEffect, useState } from "react";
 import { randomUUID, UUID } from "crypto";
 import { Label } from "../ui/label";
@@ -321,34 +321,34 @@ export function EditEscala(pp: addEditDialogProps) {
 						}
 						else {
 							setIsLoading(true)
-								pp.escala ?
-									fetch("http://localhost:1004/v1/escala", {
-										method: "PUT",
-										headers: {
-											'Content-Type': 'application/json',
-										},
-										body: JSON.stringify({
-											id: pp.escala.id,
-											titulo: titulo.length == 0 ? pp.escala.titulo : titulo,
-											data: data.length == 0 ? pp.escala.data : data,
-											especial: especial,
-											ministro: ministro == "null" ? null : ministro,
-											violao: violao == "null" ? null : violao,
-											teclado: teclado == "null" ? null : teclado,
-											bateria: bateria == "null" ? null : bateria,
-											baixo: baixo == "null" ? null : baixo,
-											guitarra: guitarra == "null" ? null : guitarra,
-											backs: backs,
-											observacoes: observacao
-										})
-									}).then((response) => {
-										setIsLoading(false)
-										alert(response.status === 200 ? "Escala editada com sucesso!" : "Erro ao editar a escala: " + response.headers.get("error"))
-									}).then(() => console.log(pp.escala)).catch((error) => {
-										alert("Erro ao editar escala!")
-										console.error("Erro na comunicação com a api: ", error);
+							pp.escala ?
+								fetch("http://localhost:1004/v1/escala", {
+									method: "PUT",
+									headers: {
+										'Content-Type': 'application/json',
+									},
+									body: JSON.stringify({
+										id: pp.escala.id,
+										titulo: titulo.length == 0 ? pp.escala.titulo : titulo,
+										data: data.length == 0 ? pp.escala.data : data,
+										especial: especial,
+										ministro: ministro == "null" ? null : ministro,
+										violao: violao == "null" ? null : violao,
+										teclado: teclado == "null" ? null : teclado,
+										bateria: bateria == "null" ? null : bateria,
+										baixo: baixo == "null" ? null : baixo,
+										guitarra: guitarra == "null" ? null : guitarra,
+										backs: backs,
+										observacoes: observacao
 									})
-									: alert("Escala não encontrada.")
+								}).then((response) => {
+									setIsLoading(false)
+									alert(response.status === 200 ? "Escala editada com sucesso!" : "Erro ao editar a escala: " + response.headers.get("error"))
+								}).then(() => console.log(pp.escala)).catch((error) => {
+									alert("Erro ao editar escala!")
+									console.error("Erro na comunicação com a api: ", error);
+								})
+								: alert("Escala não encontrada.")
 						}
 					}}>{pp.isEdit ? "Confirmar" : "Adicionar"}</Button>
 					<Button className="hover:bg-rose-700" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
@@ -358,7 +358,7 @@ export function EditEscala(pp: addEditDialogProps) {
 	)
 }
 
-export function AddEscala() {
+export function AddEscala({ hide }: {hide? : boolean}) {
 	const [open, setOpen] = useState(false);
 	const [isLoading, setIsLoading] = useState(false)
 	const [escala, setEscala] = useState<Escala | undefined>(undefined);
@@ -376,10 +376,16 @@ export function AddEscala() {
 	const [backs, setBacks] = useState<String[]>([]);
 	const [observacao, setObservacao] = useState<string>();
 
+	let disableFields =
+		data == undefined || data.length == 0 || levitasDisponiveis == undefined || levitasDisponiveis.length == 0
+
+
 	useEffect(() => {
-		if (levitasDisponiveis) return;
-		getMethod<Levita[] | undefined>("levita/resumed", setLevitasDisponiveis)
-	}, [levitasDisponiveis])
+		if (data == undefined) return;
+		setIsLoading(true)
+		getMethod<Levita[] | undefined>(`levita/agenda?date=${data}`, setLevitasDisponiveis)
+		setIsLoading(false)
+	}, [data])
 
 
 	function filterByInstrumento(instrumentoId: number) {
@@ -397,17 +403,24 @@ export function AddEscala() {
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
-					<Button variant={"outline"} className="hover:text-emerald-500" disabled={levitasDisponiveis == undefined || levitasDisponiveis.length == 0}>
-						<CirclePlus className="mx-1 text-emerald-500" />Criar Escala</Button>
+				<Button variant={"outline"} className="hover:text-emerald-500">
+					<CirclePlus className="mx-1 text-emerald-500" />Criar Escala</Button>
 			</DialogTrigger>
 			<DialogContent >
+				{isLoading ?
+					<div className="absolute flex items-center justify-center mt-20">
+						<div className="size-80 border-4 border-transparent text-primary/40 text-4xl animate-spin flex items-center justify-center border-t-primary rounded-full">
+							<div className="size-64 border-4 border-transparent text-subprimary/40 text-2xl animate-spin flex items-center justify-center border-t-subprimary rounded-full" />
+						</div>
+					</div>
+					: <></>}
 				<DialogHeader>
 					<DialogTitle>{"Criando uma Escala"}</DialogTitle>
 					<DialogDescription>
 						{"Adicione uma nova escala ao planejador."}
 					</DialogDescription>
 				</DialogHeader>
-				<ScrollArea className="max-h-[47dvh]">
+				<ScrollArea className="max-h-[47dvh]" >
 					<Label>Título:</Label>
 					<Input type="text" placeholder="Insira um título para a Escala."
 						value={titulo} onChange={(e) => setTitulo(e.target.value)} />
@@ -415,11 +428,11 @@ export function AddEscala() {
 					<Input type="date" value={data} onChange={(e) => setData(e.target.value)} />
 					<div className="my-2">
 						<Label>Especial:</Label>
-						<Checkbox onClick={() => setEspecial(!especial)} />
+						<Checkbox className="mx-2" onClick={() => setEspecial(!especial)} />
 					</div>
 
 					<Label>Ministro</Label>
-					<Select onValueChange={(value) => setMinistro(value)} disabled={data?.length == 0}>
+					<Select onValueChange={(value) => setMinistro(value)} disabled={disableFields}>
 						<SelectTrigger>
 							<SelectValue placeholder={"Selecione um ministro."} />
 						</SelectTrigger>
@@ -432,22 +445,29 @@ export function AddEscala() {
 					<br />
 
 					<Label>Violão</Label>
-					<Select onValueChange={(value) => setViolao(value)} disabled={data?.length == 0}>
+					<Select onValueChange={(value) => setViolao(value)} disabled={disableFields}>
 						<SelectTrigger>
 							<SelectValue className={"text-white"}
 								placeholder={"Escolha um levita para tocar violão."} />
 						</SelectTrigger>
 						<SelectContent>
-							{filterByInstrumento(1)?.map((levita) => (
-								<SelectItem value={levita.id} key={levita.id} onSelect={() => setViolao(levita.id)}>{levita.nome}</SelectItem>
-							))}
-							<SelectItem value={"null"} onSelect={() => setViolao("")} className="text-zinc-400">Sem violão</SelectItem>
+							{filterByInstrumento(1)?.length != 0 ?
+								<>
+									{filterByInstrumento(1)?.map((levita) => (
+										<SelectItem value={levita.id} key={levita.id}
+											onSelect={() => setViolao(levita.id)}>{levita.nome}</SelectItem>
+									))}
+									<SelectItem value={"null"} onSelect={() => setViolao("")} className="text-zinc-400">Sem violão</SelectItem>
+								</>
+								:
+								<SelectItem value={"null"} onSelect={() => setViolao("")} className="text-zinc-400">Sem violão disponível</SelectItem>
+							}
 						</SelectContent>
 					</Select>
 					<br />
 
 					<Label>Teclado</Label>
-					<Select onValueChange={(value) => setTeclado(value)} disabled={data?.length == 0}>
+					<Select onValueChange={(value) => setTeclado(value)} disabled={disableFields}>
 						<SelectTrigger>
 							<SelectValue className={"text-zinc-50/50"}
 								placeholder={"Escolha um levita para tocar teclado."} />
@@ -462,7 +482,7 @@ export function AddEscala() {
 					<br />
 
 					<Label>Bateria</Label>
-					<Select onValueChange={(value) => setBateria(value)} disabled={data?.length == 0}>
+					<Select onValueChange={(value) => setBateria(value)} disabled={disableFields}>
 						<SelectTrigger>
 							<SelectValue className={"text-zinc-50/50"}
 								placeholder={"Escolha um levita para tocar bateria."} />
@@ -477,7 +497,7 @@ export function AddEscala() {
 					<br />
 
 					<Label>Baixo</Label>
-					<Select onValueChange={(value) => setBaixo(value)} disabled={data?.length == 0}>
+					<Select onValueChange={(value) => setBaixo(value)} disabled={disableFields}>
 						<SelectTrigger>
 							<SelectValue className={"text-zinc-50/50"}
 								placeholder={"Escolha um levita para tocar baixo."} />
@@ -492,7 +512,7 @@ export function AddEscala() {
 					<br />
 
 					<Label>Guitarra</Label>
-					<Select onValueChange={(value) => setGuitarra(value)} disabled={data?.length == 0}>
+					<Select onValueChange={(value) => setGuitarra(value)} disabled={disableFields}>
 						<SelectTrigger>
 							<SelectValue className={"text-zinc-50/50"}
 								placeholder={"Escolha um levita para tocar guitarra."} />
@@ -508,14 +528,14 @@ export function AddEscala() {
 
 					<Label>Observação:</Label>
 					<Textarea placeholder="Insira uma observação. (Ex: Dia e hora de ensaio, local de apresentação, etc.)"
-						value={observacao} onChange={(e) => setObservacao(e.target.value)} />
+						value={observacao} onChange={(e) => setObservacao(e.target.value)} disabled={disableFields} />
 					<br />
 
 					<Label>Backs:</Label>
 					<Card className="bg-transparent grid grid-cols-4">
 						{filterByInstrumento(0)?.map((levita) => (
 							<Button key={levita.id} variant={backs.includes(levita.id) ? "default" : "outline"} type="submit"
-								className={"p-2 rounded-lg m-2"}
+								className={"p-2 rounded-lg m-2"} disabled={disableFields}
 								onClick={() => { backs.includes(levita.id) ? removeBack(levita.id) : addBack(levita.id) }}>{levita.nome}</Button>
 						))}
 					</Card>
@@ -523,7 +543,7 @@ export function AddEscala() {
 
 				</ScrollArea>
 				<DialogFooter>
-					<Button className="hover:bg-emerald-500" disabled={isLoading} onClick={() => {
+					<Button className="hover:bg-emerald-500" disabled={isLoading || disableFields} onClick={() => {
 						if (titulo.length == 0) {
 							alert("Insira um título para a escala!")
 						} else if (!data || data.length == 0) {
@@ -533,27 +553,27 @@ export function AddEscala() {
 						}
 						else {
 							setIsLoading(true)
-								postMethod<Escala | undefined>("escala", {
-									ministro: ministro,
-									titulo: titulo,
-									data: data,
-									especial: especial,
-									violao: violao == "null" ? null : violao,
-									teclado: teclado == "null" ? null : teclado,
-									bateria: bateria == "null" ? null : bateria,
-									baixo: baixo == "null" ? null : baixo,
-									guitarra: guitarra == "null" ? null : guitarra,
-									backs: backs,
-									observacoes: observacao
+							postMethod<Escala | undefined>("escala", {
+								ministro: ministro,
+								titulo: titulo,
+								data: data,
+								especial: especial,
+								violao: violao == "null" ? null : violao,
+								teclado: teclado == "null" ? null : teclado,
+								bateria: bateria == "null" ? null : bateria,
+								baixo: baixo == "null" ? null : baixo,
+								guitarra: guitarra == "null" ? null : guitarra,
+								backs: backs,
+								observacoes: observacao
+							})
+								.then(() => alert("Escala adicionada com sucesso!"))
+								.catch((error) => {
+									alert("Erro ao adicionar escala!")
+									console.error("Erro na comunicação com a api: ", error);
 								})
-									.then(() => alert("Escala adicionada com sucesso!"))
-									.catch((error) => {
-										alert("Erro ao adicionar escala!")
-										console.error("Erro na comunicação com a api: ", error);
-									})
 						}
 					}}>{"Adicionar"}</Button>
-					<Button className="hover:bg-rose-700" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
+					<Button className="hover:bg-rose-700" disabled={isLoading} onClick={() => console.log(levitasDisponiveis)}>Cancelar</Button>
 				</DialogFooter>
 			</DialogContent>
 		</Dialog >
