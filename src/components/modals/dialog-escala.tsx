@@ -21,10 +21,11 @@ import { Textarea } from "../ui/textarea";
 import { ScrollArea } from "../ui/scroll-area";
 import { Card } from "../ui/card";
 import Link from "next/link";
-import { getMethod, postMethod } from "@/lib/apiRequests";
+import { getMethod, postMethod, putMethod } from "@/lib/apiRequests";
 import Cookies from "js-cookie";
 import { Checkbox } from "../ui/checkbox";
 import { DayPicker } from "react-day-picker";
+import { toast, ToastContainer } from "react-toastify";
 
 interface props {
 	escalaId: UUID,
@@ -62,7 +63,19 @@ export function VerEscala(props: props) {
 			})
 	}, [])
 
-	// const backs = escalaData?.back.map((back) => (back.nome)).join(", ")
+	const [isUserAdmin, setUserAdmin] = useState(false)
+	const [isUserLeader, setUserLeader] = useState(false)
+	const [isUserMinistro, setUserMinistro] = useState(false)
+
+	useEffect(() => {
+		// This code now runs only on the client side, avoiding the ReferenceError
+		const userAdmin = sessionStorage.getItem("role") === "ADMIN";
+		setUserAdmin(userAdmin);
+		const userLeader = sessionStorage.getItem("role") === "LIDER";
+		setUserLeader(userLeader);
+		const userMinistro = sessionStorage.getItem("levita") === escalaData?.ministro.id;
+		setUserMinistro(userMinistro);
+	}, [escalaData?.ministro.id]);
 
 	return (
 		<Dialog>
@@ -79,18 +92,17 @@ export function VerEscala(props: props) {
 					</DialogDescription>
 					<br />
 					<p className="text-subprimary">Ministro: <a className="text-secondary">{escalaData?.ministro.nome}</a></p>
-					<p className="text-subprimary">Violão: {escalaData?.violao ? <a className="text-white"> {escalaData.violao.nome}</a> : <a className="text-zinc-50/50">Não inserido.</a>}</p>
-					<p className="text-subprimary">Teclado: {escalaData?.teclado ? <a className="text-white"> {escalaData.teclado.nome}</a> : <a className="text-zinc-50/50">Não inserido.</a>}</p>
-					<p className="text-subprimary">Bateria: {escalaData?.bateria ? <a className="text-white"> {escalaData.bateria.nome}</a> : <a className="text-zinc-50/50">Não inserido.</a>}</p>
-					<p className="text-subprimary">Baixo: {escalaData?.baixo ? <a className="text-white"> {escalaData.baixo.nome}</a> : <a className="text-zinc-50/50">Não inserido.</a>}</p>
-					<p className="text-subprimary">Guitarra: {escalaData?.guitarra ? <a className="text-white"> {escalaData.guitarra.nome}</a> : <a className="text-zinc-50/50">Não inserido.</a>}</p>
-					<p className="text-subprimary">Backs: {escalaData ? <a className="text-white"> {
-						escalaData.back.map((back) => (back.nome)).join(", ")}.</a> : <a className="text-zinc-50/50">Não inseridos.</a>}</p>
+					<p className="text-subprimary">Violão: {escalaData?.violao ? <a className="text-colortext"> {escalaData.violao.nome}</a> : <a className="text-colortext/50">Não inserido.</a>}</p>
+					<p className="text-subprimary">Teclado: {escalaData?.teclado ? <a className="text-colortext"> {escalaData.teclado.nome}</a> : <a className="text-colortext/50">Não inserido.</a>}</p>
+					<p className="text-subprimary">Bateria: {escalaData?.bateria ? <a className="text-colortext"> {escalaData.bateria.nome}</a> : <a className="text-colortext/50">Não inserido.</a>}</p>
+					<p className="text-subprimary">Baixo: {escalaData?.baixo ? <a className="text-colortext"> {escalaData.baixo.nome}</a> : <a className="text-colortext/50">Não inserido.</a>}</p>
+					<p className="text-subprimary">Guitarra: {escalaData?.guitarra ? <a className="text-colortext"> {escalaData.guitarra.nome}</a> : <a className="text-colortext/50">Não inserido.</a>}</p>
+					<p className="text-subprimary">Backs: {escalaData ? <a className="text-colortext"> {listBacks(escalaData.back)}.</a> : <a className="text-colortext/50">Não inseridos.</a>}</p>
 					<br />
 
 				</DialogHeader>
 				<Label className="text-secondary/85">Observações:</Label>
-				{escalaData?.observacoes ? <p className="text-zinc-200">{escalaData?.observacoes}</p> : <p className="text-foreground/25">Nenhuma observação.</p>}
+				{escalaData?.observacoes ? <p className="text-colortext">{escalaData?.observacoes}</p> : <p className="text-foreground/25">Nenhuma observação.</p>}
 				<br />
 
 				<Label className="text-secondary/85">Músicas:</Label>
@@ -102,16 +114,10 @@ export function VerEscala(props: props) {
 						)) : <p className="text-foreground/25">Nenhuma música inserida.</p>}
 				</Card>
 				<DialogFooter>
-					{
-						sessionStorage.getItem("role") == "ADMIN" ||
-							sessionStorage.getItem("role") == "LIDER" ||
-							sessionStorage.getItem("levita") == escalaData?.ministro.id ?
-							<>
-								<DialogAddMusicaInEscala escala={escalaData} />
-								<EditEscala isEdit={true} escala={escalaData} levitasDisponiveis={props.levitasDisponiveis} />
-							</>
-							: <></>
-					}
+					{(isUserAdmin || isUserLeader || isUserMinistro) &&
+						<DialogAddMusicaInEscala escala={escalaData} />}
+					{(isUserAdmin || isUserLeader) && <EditEscala isEdit={true}
+						escala={escalaData} levitasDisponiveis={props.levitasDisponiveis} />}
 				</DialogFooter>
 			</DialogContent>
 		</Dialog>
@@ -223,7 +229,7 @@ export function EditEscala(pp: addEditDialogProps) {
 					<Label>Violão</Label>
 					<Select onValueChange={(value) => setViolao(value)} disabled={pp.escala?.data.toString().length == 0}>
 						<SelectTrigger>
-							<SelectValue className={pp.escala?.violao ? "text-white" : "text-zinc-50/50"}
+							<SelectValue className={pp.escala?.violao ? "text-colortext" : "text-colortext/50"}
 								placeholder={pp.escala?.violao ? pp.escala.violao.nome : "Escolha um levita para tocar violão."} />
 						</SelectTrigger>
 						<SelectContent>
@@ -323,32 +329,56 @@ export function EditEscala(pp: addEditDialogProps) {
 						else {
 							setIsLoading(true)
 							pp.escala ?
-								fetch("http://localhost:1004/v1/escala", {
-									method: "PUT",
-									headers: {
-										'Content-Type': 'application/json',
-									},
-									body: JSON.stringify({
-										id: pp.escala.id,
-										titulo: titulo.length == 0 ? pp.escala.titulo : titulo,
-										data: data.length == 0 ? pp.escala.data : data,
-										especial: especial,
-										ministro: ministro == "null" ? null : ministro,
-										violao: violao == "null" ? null : violao,
-										teclado: teclado == "null" ? null : teclado,
-										bateria: bateria == "null" ? null : bateria,
-										baixo: baixo == "null" ? null : baixo,
-										guitarra: guitarra == "null" ? null : guitarra,
-										backs: backs,
-										observacoes: observacao
-									})
-								}).then((response) => {
+								putMethod<Escala>("escala", {
+									id: pp.escala.id,
+									titulo: titulo.length == 0 ? pp.escala.titulo : titulo,
+									data: data.length == 0 ? pp.escala.data : data,
+									especial: especial,
+									ministro: ministro == "null" ? null : ministro,
+									violao: violao == "null" ? null : violao,
+									teclado: teclado == "null" ? null : teclado,
+									bateria: bateria == "null" ? null : bateria,
+									baixo: baixo == "null" ? null : baixo,
+									guitarra: guitarra == "null" ? null : guitarra,
+									backs: backs,
+									observacoes: observacao
+								}).then(() => {
 									setIsLoading(false)
-									alert(response.status === 200 ? "Escala editada com sucesso!" : "Erro ao editar a escala: " + response.headers.get("error"))
-								}).then(() => console.log(pp.escala)).catch((error) => {
-									alert("Erro ao editar escala!")
-									console.error("Erro na comunicação com a api: ", error);
 								})
+									.then(() => alert("Escala editada com sucesso!"))
+									.then(() => window.location.reload())
+									.then(() => setOpen(false))
+									.catch((error) => {
+										alert("Erro ao editar escala!")
+										console.error("Erro na comunicação com a api: ", error);
+									})
+								// fetch("http://localhost:1004/v1/escala", {
+								// 	method: "PUT",
+								// 	headers: {
+								// 		'Content-Type': 'application/json',
+								// 		''
+								// 	},
+								// 	body: JSON.stringify({
+								// 		id: pp.escala.id,
+								// 		titulo: titulo.length == 0 ? pp.escala.titulo : titulo,
+								// 		data: data.length == 0 ? pp.escala.data : data,
+								// 		especial: especial,
+								// 		ministro: ministro == "null" ? null : ministro,
+								// 		violao: violao == "null" ? null : violao,
+								// 		teclado: teclado == "null" ? null : teclado,
+								// 		bateria: bateria == "null" ? null : bateria,
+								// 		baixo: baixo == "null" ? null : baixo,
+								// 		guitarra: guitarra == "null" ? null : guitarra,
+								// 		backs: backs,
+								// 		observacoes: observacao
+								// 	})
+								// }).then((response) => {
+								// 	setIsLoading(false)
+								// 	alert(response.status === 200 ? "Escala editada com sucesso!" : "Erro ao editar a escala: " + response.headers.get("error"))
+								// }).then(() => console.log(pp.escala)).catch((error) => {
+								// 	alert("Erro ao editar escala!")
+								// 	console.error("Erro na comunicação com a api: ", error);
+								// })
 								: alert("Escala não encontrada.")
 						}
 					}}>{pp.isEdit ? "Confirmar" : "Adicionar"}</Button>
@@ -362,9 +392,7 @@ export function EditEscala(pp: addEditDialogProps) {
 export function AddEscala({ disabled }: { disabled?: boolean }) {
 	const [open, setOpen] = useState(false);
 	const [isLoading, setIsLoading] = useState(false)
-	const [escala, setEscala] = useState<Escala | undefined>(undefined);
 	const [levitasDisponiveis, setLevitasDisponiveis] = useState<Levita[] | undefined>(undefined);
-	// const levitasDisponiveis = pp.levitasDisponiveis;
 	const [data, setData] = useState<string>();
 	const [especial, setEspecial] = useState(false);
 	const [titulo, setTitulo] = useState("");
@@ -418,9 +446,9 @@ export function AddEscala({ disabled }: { disabled?: boolean }) {
 					// 		<div className="size-64 border-4 border-transparent text-subprimary/40 text-2xl animate-spin flex items-center justify-center border-t-subprimary rounded-full" />
 					// 	</div>
 					// </div>
-						<div className="absolute w-full h-[85%] z-50 flex justify-center items-center">
-							<div className="h-16 w-16 border-4 border-subprimary rounded-3xl animate-spin" />
-						</div>
+					<div className="absolute w-full h-[85%] z-50 flex justify-center items-center">
+						<div className="h-16 w-16 border-4 border-subprimary rounded-3xl animate-spin" />
+					</div>
 					: <></>}
 				<DialogHeader className={isLoading ? "opacity-50 space-y-1.5" : ""} >
 					<DialogTitle>{"Criando uma Escala"}</DialogTitle>
@@ -537,7 +565,7 @@ export function AddEscala({ disabled }: { disabled?: boolean }) {
 
 					<Label>Observação:</Label>
 					<Textarea placeholder="Insira uma observação. (Ex: Dia e hora de ensaio, local de apresentação, etc.)"
-						value={observacao} onChange={(e) => setObservacao(e.target.value)} disabled={disableFields} />
+						value={observacao} onChange={(e) => setObservacao(e.target.value)} maxLength={255} disabled={disableFields} />
 					<br />
 
 					<Label>Backs:</Label>
@@ -552,7 +580,7 @@ export function AddEscala({ disabled }: { disabled?: boolean }) {
 
 				</ScrollArea>
 				<DialogFooter className={isLoading ? "opacity-50 space-y-1.5" : ""}>
-					<div className="hidden"/>
+					<div className="hidden" />
 					<Button className="hover:bg-emerald-500" disabled={isLoading || disableFields} onClick={() => {
 						if (titulo.length == 0) {
 							alert("Insira um título para a escala!")
@@ -577,6 +605,17 @@ export function AddEscala({ disabled }: { disabled?: boolean }) {
 								observacoes: observacao
 							})
 								.then(() => alert("Escala adicionada com sucesso!"))
+								.then(() =>
+									toast.success("Escala aberta com sucesso!", {
+										position: "bottom-right",
+										autoClose: 3000,
+										hideProgressBar: false,
+										closeOnClick: true,
+										pauseOnHover: true,
+										progress: undefined,
+										theme: "light",
+									})
+								)
 								.catch((error) => {
 									alert("Erro ao adicionar escala!")
 									console.error("Erro na comunicação com a api: ", error);
@@ -586,6 +625,7 @@ export function AddEscala({ disabled }: { disabled?: boolean }) {
 					<Button className="hover:bg-rose-700" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
 				</DialogFooter>
 			</DialogContent>
+
 		</Dialog >
 	)
 }
@@ -641,7 +681,7 @@ export function DialogAddMusicaInEscala(props: DialogAddMusicaInEscalaProps) {
 					<Label>Músicas selecionadas:</Label>
 					<Card className="bg-transparent grid grid-flow-row">
 						{getSelectedMusicas().map((musica) => (
-							<Button key={musica?.id} variant={"outline"} type="submit" className="p-2 rounded-lg m-2"
+							<Button key={musica?.id} variant={"outline"} type="submit" className="p-2 rounded-lg m-2 hover:bg-red-400/50"
 								onClick={() => removeSelectedMusica(musica ? musica.id : "")}>{musica?.nome}</Button>
 						))}
 					</Card>

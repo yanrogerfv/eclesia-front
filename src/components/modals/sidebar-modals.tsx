@@ -254,11 +254,10 @@ export function SidebarMyEscalas({ icon, title, style }: SidebarModalsProps) {
                         {title}
                     </DialogTitle>
                     <DialogDescription>
-                        {loading ? "Carregando..." : escalas ? "Escala carregada" : "Erro ao carregar escala"}
+                        {loading ? "Carregando..." : escalas ? "Todas as suas escalas cadastradas abaixo" : "Erro ao carregar escala"}
                     </DialogDescription>
                 </DialogHeader>
                 {/* Content aqui */}
-
                 <div className={!escalas ? "" :
                     "grid grid-cols-2 gap-4"}>
                     {Array.isArray(escalas) && escalas.map((escala) => (
@@ -270,9 +269,6 @@ export function SidebarMyEscalas({ icon, title, style }: SidebarModalsProps) {
                                 {convertDateFormat(escala.data)}
                                 <CardDescription>
                                     {escala.observacoes ?
-                                        // {escala.observacoes.length > 0
-                                        // ? escala.observacoes.length > 30
-                                        // ? escala.observacoes.substring(0, 28).trimEnd().concat("...")
                                         escala.observacoes
                                         : "Sem observações."}
                                 </CardDescription>

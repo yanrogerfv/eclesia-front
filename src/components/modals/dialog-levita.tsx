@@ -39,7 +39,7 @@ export function DialogVerLevita(props: {
                     </DialogDescription>
                     <br />
                 </DialogHeader>
-                <p className="text-zinc-300 text-center">{props.levita.descricao ? props.levita.descricao : "Nenhuma descrição inserida para este levita."}</p>
+                <p className="text-colortext text-center">{props.levita.descricao ? props.levita.descricao : "Nenhuma descrição inserida para este levita."}</p>
                 <DialogFooter>
                     <DialogEditLevita id={props.levita.id}
                         nome={props.levita.nome}
@@ -199,21 +199,17 @@ export function DialogEditLevita(levita: Levita) {
                         Alterando os dados de {levita.nome}.
                     </DialogDescription>
                     <br />
-                    <br />
                     <Label>Nome:</Label>
                     <Input type="text" placeholder="Insira o nome do Levita."
                         value={nomeLevita ? nomeLevita : undefined} onChange={(e) => setNomeLevita(e.target.value)} />
-                    <br />
                     <br />
                     <Label>Email:</Label>
                     <Input type="email" placeholder="Insira um email do Levita."
                         value={emailLevita ? emailLevita : undefined} onChange={(e) => setEmailLevita(e.target.value)} />
                     <br />
-                    <br />
                     <Label>Telefone:</Label>
                     <Input type="tel" placeholder="Insira um contato do Levita."
                         value={contatoLevita ? contatoLevita : undefined} onChange={(e) => setContatoLevita(e.target.value)} />
-                    <br />
                     <br />
                     <Label>Instrumentos:</Label>
                     {allInstrumentos?.map((instrumento) => (
@@ -231,7 +227,6 @@ export function DialogEditLevita(levita: Levita) {
                             >{instrumento.nome}</Label><br />
                         </div>
                     ))}
-                    <br />
                     <br />
                     <Label>Descrição:</Label>
                     <Textarea placeholder={levita.descricao ? levita.descricao : "Insira uma descrição do Levita."} onChange={(e) => setDescricaoLevita(e.target.value)}

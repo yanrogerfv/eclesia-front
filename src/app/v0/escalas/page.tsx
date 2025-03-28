@@ -19,6 +19,7 @@ import { deleteMethod, getMethod } from "@/lib/apiRequests";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AddEscala, VerEscala } from "@/components/modals/dialog-escala";
 import { convertDateFormat, EscalaResumida, Levita } from "@/lib/apiObjects";
+import { toast, ToastContainer } from "react-toastify";
 
 export default function Home() {
 	const [removeOverlay, setRemoveOverlay] = useState(false);
@@ -198,6 +199,8 @@ export default function Home() {
 						)}
 					</div>
 				)}
+				<ToastContainer
+				/>
 			</main>
 			<SidebarTrigger />
 			<AppSidebar lado="right" />

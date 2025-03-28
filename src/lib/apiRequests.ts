@@ -142,7 +142,7 @@ export async function postMethod<T>(url: string, body: body, setState?: React.Di
  * @param body - Fields with the parameters to be passed as a body of the request
  * @param setState - SetStateAction to update the state with the response data
  */
-export async function putMethod<T>(url: string, body: body, setState: React.Dispatch<React.SetStateAction<T | undefined>> | undefined) {
+export async function putMethod<T>(url: string, body: body, setState?: React.Dispatch<React.SetStateAction<T | undefined>> | undefined) {
 	const req = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${url}`, {
 		method: "PUT",
 		headers: {
