@@ -148,7 +148,7 @@ export default function Home() {
 								</div>
 								<SheetFooter>
 									<SheetClose asChild>
-										<Button type="submit">Save changes</Button>
+										<Button type="submit">Salvar</Button>
 									</SheetClose>
 								</SheetFooter>
 							</SheetContent>

@@ -1,11 +1,21 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Poppins, Noto_Sans_JP } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/themeProvider";
 import { Toaster } from "@/components/ui/toaster";
 // import { PermissionProvider } from "@/context/permissionContext";
 
 const inter = Inter({ subsets: ["latin"] });
+const poppins = Poppins({
+	subsets: ["latin"],
+	weight: ["400", "500", "600", "700"],
+	variable: "--font-poppins",
+});
+const notosansjp = Noto_Sans_JP({
+	subsets: ["latin"],
+	weight: ["400", "500", "600", "700"],
+	variable: "--font-notosansjp",
+});
 
 export const metadata: Metadata = {
 	icons: {
@@ -22,7 +32,7 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="pt-br" className="">
-			<body className={inter.className} suppressHydrationWarning={true}>
+			<body className={notosansjp.className} suppressHydrationWarning={true}>
 				{/* <Toaster /> */}
 				{children}
 			</body>

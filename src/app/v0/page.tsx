@@ -86,7 +86,7 @@ export default function Home() {
                                         <CarouselPrevious />
                                         <CarouselNext />
                                     </Carousel> :
-                                    <h1 className="text-zinc-200 ml-[2dvh] justify-center self-center align-middle">Nenhuma escala cadastrada para os próximos dias.</h1>
+                                    <h1 className="text-colortext ml-[2dvh] justify-center self-center align-middle">Nenhuma escala cadastrada para os próximos dias.</h1>
                             }
                             <br />
                         </Card>
@@ -123,7 +123,7 @@ export default function Home() {
                                         <CarouselPrevious />
                                         <CarouselNext />
                                     </Carousel> :
-                                    <h1 className="text-zinc-200 justify-center self-center align-middle">Nenhum levita encontrado!</h1>
+                                    <h1 className="text-colortext justify-center self-center align-middle">Nenhum levita encontrado!</h1>
                             }
                             <br />
                         </Card>

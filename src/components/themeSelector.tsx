@@ -53,7 +53,9 @@ function ThemeSelector({ className }: ThemeSelectorProps ) {
         // setSunsetMode(true);
         // setForestMode(false);
         // setLollipopMode(false);
-        clientDocument?.setAttribute("class", "sunset");
+        clientDocument?.getAttribute("class") !== "sunset" ?
+        clientDocument?.setAttribute("class", "sunset") :
+        clientDocument?.setAttribute("class", "root");
         // document.documentElement.classList.toggle("serene");
         // document.documentElement.classList.toggle("forest");
         // document.documentElement.classList.toggle("lollipop");

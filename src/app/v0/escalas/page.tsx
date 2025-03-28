@@ -50,7 +50,7 @@ export default function Home() {
 		else setFilteredEscalas(escalasData?.filter(escala => {
 			return (domingoFilter && escala.domingo) || (quartaFilter && escala.quarta) || (especialFilter && escala.especial)
 		}))
-	}, [domingoFilter, quartaFilter, especialFilter]);
+	}, [domingoFilter, quartaFilter, especialFilter, escalasData]);
 
 	return (
 		<SidebarProvider defaultOpen={false}>
