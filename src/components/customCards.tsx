@@ -1,5 +1,5 @@
 
-import { convertDateFormat, Escala, EscalaResumida, Levita } from "./apiObjects";
+import { convertDateFormat, Escala, EscalaResumida, Levita } from "@/lib/apiObjects";
 import { VerEscala } from "./modals/dialog-escala";
 import { Badge } from "./ui/badge";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card";

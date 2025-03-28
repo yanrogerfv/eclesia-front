@@ -1,4 +1,4 @@
-import { CalendarClock, CalendarDays, Home, Inbox, LogOut, UserCircle2 } from "lucide-react"
+import { CalendarClock, CalendarDays, Home, Inbox, LogOut, User2, UserCircle2 } from "lucide-react"
 import Cookies from "js-cookie"
 import {
     Sidebar,
@@ -10,23 +10,35 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
+    SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { SidebarMyAgenda, SidebarMyEscalas, SidebarNextEvents } from "./modals/sidebar-modals"
+import { SidebarAddUser, SidebarMyAgenda, SidebarMyEscalas, SidebarNextEvents } from "./modals/sidebar-modals"
 import ThemeSelector from "./themeSelector"
+import { useEffect, useState } from "react"
 
-export function AppSidebar() {
+export function AppSidebar({ lado }: { lado : "left" | "right" }) {
+
+    const [session, setSession] = useState(false)
+
+    useEffect(() => {
+        // This code now runs only on the client side, avoiding the ReferenceError
+        const userAdmin = sessionStorage.getItem("role") === "ADMIN" || sessionStorage.getItem("role") === "LIDER";
+        setSession(userAdmin);
+      }, []);
+
     return (
-        <Sidebar side="left" collapsible="icon">
+        <Sidebar side={lado} collapsible="icon">
             <SidebarContent className="h-screen flex flex-col">
                 <SidebarGroup>
                     <SidebarGroupLabel className="flex justify-between p-4">
                         Meu Perfil <UserCircle2 size={20} />
                     </SidebarGroupLabel>
-                    <SidebarGroupLabel className="flex justify-center p-2">
+                    <SidebarGroupLabel className="flex justify-center p-2 m-4">
                         <p className="text-3xl text-primary">
                             {Cookies.get("username") ? Cookies.get("username") : "Usuário"}
                         </p>
                     </SidebarGroupLabel>
+                    {/* <SidebarTrigger className="data-[sidebar=active]:bg-fuchsia-500 [&>span:last-child]:truncate data-[active=true]:bg-lime-500 [&>svg]:size-4 [&>svg]:shrink-0" /> */}
                     <SidebarGroupContent>
                         <SidebarMenu>
                             <SidebarMenuItem key={"initial_page"}>
@@ -61,12 +73,20 @@ export function AppSidebar() {
                                     />
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
+                            {session && <SidebarMenuItem key={"add_user"}>
+                                <SidebarMenuButton asChild>
+                                    <SidebarAddUser
+                                        icon={<User2 size={16} />}
+                                        title={"Adicionar Usuário"}
+                                    />
+                                </SidebarMenuButton>
+                            </SidebarMenuItem>}
                             <SidebarMenuItem key={"logout"}>
                                 <SidebarMenuButton asChild className="text-red-500 hover:text-red-600 hover:brightness-125 hover:animate-pulse">
                                     <a href="/" className="flex items-center gap-2 p-2" onClick={() => {
                                         Cookies.remove("token")
                                         Cookies.remove("username")
-                                        sessionStorage.removeItem("role")
+                                        {sessionStorage ? sessionStorage.removeItem("role") : null}
                                         setTimeout(() => {
                                             window.location.reload()
                                         }, 1000)

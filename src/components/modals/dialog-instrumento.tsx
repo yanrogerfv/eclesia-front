@@ -8,9 +8,9 @@ import { Label } from "../ui/label"
 import { Input } from "../ui/input"
 import { toast } from "sonner"
 import { UUID } from "crypto"
-import { deleteMethod, GetInstrumentos, postMethod } from "../apiRequests"
+import { deleteMethod, GetInstrumentos, postMethod } from "@/lib/apiRequests"
 import { Select, SelectTrigger, SelectItem, SelectContent, SelectGroup, SelectLabel, SelectValue } from "../ui/select"
-import { Instrumento } from "../apiObjects"
+import { Instrumento } from "@/lib/apiObjects"
 import { get } from "http"
 
 export function DialogAddInstrumento(props: { disabled: boolean, state: React.Dispatch<React.SetStateAction<Instrumento[] | undefined>> }) {

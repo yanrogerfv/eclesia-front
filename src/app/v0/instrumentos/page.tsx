@@ -1,7 +1,7 @@
 "use client"
 
-import { Instrumento } from "@/components/apiObjects";
-import { getMethod } from "@/components/apiRequests";
+import { Instrumento } from "@/lib/apiObjects";
+import { getMethod } from "@/lib/apiRequests";
 import { DialogAddInstrumento, DialogRemoveInstrumento } from "@/components/modals/dialog-instrumento";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChevronLeft } from "lucide-react";

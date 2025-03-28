@@ -25,6 +25,7 @@ const config = {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			colortext: 'hsl(var(--colortext))',
+			specialtext: 'hsl(var(--special-text))',
   			cardstartbg: 'hsl(var(--card-start-bg))',
   			primary: {
   				DEFAULT: 'hsl(var(--primary))',

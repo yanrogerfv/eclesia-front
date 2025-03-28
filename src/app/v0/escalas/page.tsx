@@ -15,10 +15,10 @@ import { Badge } from "@/components/ui/badge";
 import { useEffect, useMemo, useState } from "react";
 import { ChevronLeft, CircleMinus, LoaderCircle, X } from "lucide-react";
 import { AppSidebar } from "@/components/app-sidebar";
-import { deleteMethod, getMethod } from "@/components/apiRequests";
+import { deleteMethod, getMethod } from "@/lib/apiRequests";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AddEscala, VerEscala } from "@/components/modals/dialog-escala";
-import { convertDateFormat, EscalaResumida, Levita } from "@/components/apiObjects";
+import { convertDateFormat, EscalaResumida, Levita } from "@/lib/apiObjects";
 
 export default function Home() {
 	const [removeOverlay, setRemoveOverlay] = useState(false);
@@ -29,6 +29,8 @@ export default function Home() {
 	const [escalasData, setEscalasData] = useState<EscalaResumida[] | undefined>(undefined);
 	const [filteredEscalas, setFilteredEscalas] = useState<EscalaResumida[] | undefined>(undefined);
 	const [levitasDisponiveis, setLevitasDisponiveis] = useState<Levita[] | undefined>(undefined);
+
+	// const actualSession = useMemo(() => sessionStorage, []);
 
 	useEffect(() => {
 		if (escalasData && levitasDisponiveis) return;
@@ -51,8 +53,8 @@ export default function Home() {
 	}, [domingoFilter, quartaFilter, especialFilter]);
 
 	return (
-		<SidebarProvider>
-			<main className="max-w-6xl px-4 sm:px-8 lg:px-6 mx-auto my-6 sm:my-12">
+		<SidebarProvider defaultOpen={false}>
+			<main className="max-w-6xl w-full px-4 sm:px-8 lg:px-6 mx-auto my-6 sm:my-12">
 				<nav>
 					<div className="flex flex-wrap md:flex-nowrap justify-between items-center">
 						<div className="flex items-center">
@@ -62,8 +64,8 @@ export default function Home() {
 							<h1 className="ml-4 font-extrabold tracking-tight text-2xl sm:text-5xl">Escalas</h1>
 						</div>
 						<div className="flex w-full justify-between sm:justify-end gap-2 mt-4 sm:w-full">
-							{(sessionStorage.getItem("role") == "ADMIN" || sessionStorage.getItem("role") == "LIDER") && <AddEscala />}
-							{(sessionStorage.getItem("role") == "ADMIN" || sessionStorage.getItem("role") == "LIDER") && <Button
+							{(sessionStorage && sessionStorage.getItem("role") == "ADMIN" || sessionStorage.getItem("role") == "LIDER") && <AddEscala disabled={escalasData === undefined} />}
+							{(sessionStorage && sessionStorage.getItem("role") == "ADMIN" || sessionStorage.getItem("role") == "LIDER") && <Button
 								variant="outline"
 								disabled={escalasData === undefined}
 								className={removeOverlay ? "font-bold bg-rose-500/80 border-rose-600/90 hover:bg-rose-600/40" : "font-bold hover:bg-rose-500/40"}
@@ -81,8 +83,10 @@ export default function Home() {
 				<br />
 
 				{!filteredEscalas ? (
-					<div className="flex justify-center items-center h-40">
-						<div className="h-16 w-16 border-4 border-transparent border-t-primary rounded-full animate-spin" />
+					<div className="flex w-full items-center justify-center mt-20 z-50">
+						<div className="size-80 border-4 border-transparent text-primary/40 text-4xl animate-spin flex items-center justify-center border-t-primary rounded-full">
+							<div className="size-64 border-4 border-transparent text-subprimary/40 text-2xl animate-spin flex items-center justify-center border-t-subprimary rounded-full" />
+						</div>
 					</div>
 				) : (
 					<div>
@@ -196,7 +200,7 @@ export default function Home() {
 				)}
 			</main>
 			<SidebarTrigger />
-			<AppSidebar />
+			<AppSidebar lado="right" />
 		</SidebarProvider>
 	);
 }

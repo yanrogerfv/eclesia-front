@@ -8,13 +8,13 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import { Musica } from "../apiObjects";
+import { Musica } from "@/lib/apiObjects";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { Check, Music } from "lucide-react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
-import { CreateMusica, postMethod } from "../apiRequests";
+import { postMethod } from "@/lib/apiRequests";
 import { title } from "process";
 import { useToast } from "../ui/use-toast";
 

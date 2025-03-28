@@ -9,7 +9,7 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog"
-import { Escala, Levita, Musica, convertDateFormat } from "../apiObjects";
+import { Escala, Levita, Musica, convertDateFormat } from "@/lib/apiObjects";
 import { Button } from "../ui/button";
 import { CirclePlus, Loader2, LoaderCircle, PencilLine } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -21,9 +21,10 @@ import { Textarea } from "../ui/textarea";
 import { ScrollArea } from "../ui/scroll-area";
 import { Card } from "../ui/card";
 import Link from "next/link";
-import { getMethod, postMethod } from "../apiRequests";
+import { getMethod, postMethod } from "@/lib/apiRequests";
 import Cookies from "js-cookie";
 import { Checkbox } from "../ui/checkbox";
+import { DayPicker } from "react-day-picker";
 
 interface props {
 	escalaId: UUID,
@@ -358,7 +359,7 @@ export function EditEscala(pp: addEditDialogProps) {
 	)
 }
 
-export function AddEscala({ hide }: {hide? : boolean}) {
+export function AddEscala({ disabled }: { disabled?: boolean }) {
 	const [open, setOpen] = useState(false);
 	const [isLoading, setIsLoading] = useState(false)
 	const [escala, setEscala] = useState<Escala | undefined>(undefined);
@@ -381,10 +382,14 @@ export function AddEscala({ hide }: {hide? : boolean}) {
 
 
 	useEffect(() => {
-		if (data == undefined) return;
-		setIsLoading(true)
-		getMethod<Levita[] | undefined>(`levita/agenda?date=${data}`, setLevitasDisponiveis)
-		setIsLoading(false)
+		const fetchData = async () => {
+			if (data == undefined) return;
+			setIsLoading(true)
+			setLevitasDisponiveis(undefined)
+			await getMethod<Levita[] | undefined>(`levita/agenda?date=${data}`, setLevitasDisponiveis)
+			setIsLoading(false)
+		}
+		fetchData();
 	}, [data])
 
 
@@ -403,28 +408,32 @@ export function AddEscala({ hide }: {hide? : boolean}) {
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
-				<Button variant={"outline"} className="hover:text-emerald-500">
+				<Button variant={"outline"} className="hover:text-emerald-500" disabled={false}>
 					<CirclePlus className="mx-1 text-emerald-500" />Criar Escala</Button>
 			</DialogTrigger>
 			<DialogContent >
 				{isLoading ?
-					<div className="absolute flex items-center justify-center mt-20">
-						<div className="size-80 border-4 border-transparent text-primary/40 text-4xl animate-spin flex items-center justify-center border-t-primary rounded-full">
-							<div className="size-64 border-4 border-transparent text-subprimary/40 text-2xl animate-spin flex items-center justify-center border-t-subprimary rounded-full" />
+					// <div className="absolute w-full flex items-center justify-center mt-20 z-50">
+					// 	<div className="size-80 border-4 border-transparent text-primary/40 text-4xl animate-spin flex items-center justify-center border-t-primary rounded-full">
+					// 		<div className="size-64 border-4 border-transparent text-subprimary/40 text-2xl animate-spin flex items-center justify-center border-t-subprimary rounded-full" />
+					// 	</div>
+					// </div>
+						<div className="absolute w-full h-[85%] z-50 flex justify-center items-center">
+							<div className="h-16 w-16 border-4 border-subprimary rounded-3xl animate-spin" />
 						</div>
-					</div>
 					: <></>}
-				<DialogHeader>
+				<DialogHeader className={isLoading ? "opacity-50 space-y-1.5" : ""} >
 					<DialogTitle>{"Criando uma Escala"}</DialogTitle>
 					<DialogDescription>
 						{"Adicione uma nova escala ao planejador."}
 					</DialogDescription>
 				</DialogHeader>
-				<ScrollArea className="max-h-[47dvh]" >
+				<ScrollArea className={`max-h-[47dvh] ${isLoading ? "opacity-50 space-y-1.5" : ""}`} >
 					<Label>Título:</Label>
 					<Input type="text" placeholder="Insira um título para a Escala."
 						value={titulo} onChange={(e) => setTitulo(e.target.value)} />
 					<Label>Data:</Label>
+					{/* <DayPicker onDayClick={(day) => setData(day.toISOString())} /> */}
 					<Input type="date" value={data} onChange={(e) => setData(e.target.value)} />
 					<div className="my-2">
 						<Label>Especial:</Label>
@@ -542,7 +551,8 @@ export function AddEscala({ hide }: {hide? : boolean}) {
 					<br />
 
 				</ScrollArea>
-				<DialogFooter>
+				<DialogFooter className={isLoading ? "opacity-50 space-y-1.5" : ""}>
+					<div className="hidden"/>
 					<Button className="hover:bg-emerald-500" disabled={isLoading || disableFields} onClick={() => {
 						if (titulo.length == 0) {
 							alert("Insira um título para a escala!")
@@ -573,7 +583,7 @@ export function AddEscala({ hide }: {hide? : boolean}) {
 								})
 						}
 					}}>{"Adicionar"}</Button>
-					<Button className="hover:bg-rose-700" disabled={isLoading} onClick={() => console.log(levitasDisponiveis)}>Cancelar</Button>
+					<Button className="hover:bg-rose-700" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
 				</DialogFooter>
 			</DialogContent>
 		</Dialog >

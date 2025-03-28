@@ -2,7 +2,6 @@
 
 import { Haze, Lollipop, Moon, MoonStar, Sun, Sunrise, Trees } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Toggle } from "./ui/toggle";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 import { Separator } from "./ui/separator";
 
@@ -11,6 +10,15 @@ interface ThemeSelectorProps {
 }
 
 function ThemeSelector({ className }: ThemeSelectorProps ) {
+
+    const [clientDocument, setLocal] = useState<HTMLElement>();
+    
+    useEffect(() => {
+        // This code now runs only on the client side, avoiding the ReferenceError
+        const local = document.documentElement;
+        setLocal(local);
+    }, []);
+
     // const [sereneMode, setSereneMode] = useState(document.documentElement.classList.contains("serene") || localStorage.getItem("theme") === "serene");
     // const [sunsetMode, setSunsetMode] = useState(document.documentElement.classList.contains("sunset") || localStorage.getItem("theme") === "sunset");
     // const [forestMode, setForestMode] = useState(document.documentElement.classList.contains("forest") || localStorage.getItem("theme") === "forest");
@@ -18,54 +26,65 @@ function ThemeSelector({ className }: ThemeSelectorProps ) {
     const [sereneMode, setSereneMode] = useState(false);
     const [sunsetMode, setSunsetMode] = useState(false);
     const [forestMode, setForestMode] = useState(false);
-    const [lollipopMode, setLollipopMode] = useState(false);
+    const [lolpopMode, setLolpopMode] = useState(false);
+    
+    useEffect(() => {
+        setSereneMode(clientDocument ? clientDocument.getAttribute("theme") === "serene" : false);
+        setSunsetMode(clientDocument ? clientDocument.getAttribute("theme") === "sunset" : false);
+        setForestMode(clientDocument ? clientDocument.getAttribute("theme") === "forest" : false);
+        setLolpopMode(clientDocument ? clientDocument.getAttribute("theme") === "lollipop" : false);
+    }, [clientDocument?.getAttribute("theme")]);
 
     function handleSereneMode() {
-        setSereneMode(true);
-        setSunsetMode(false);
-        setForestMode(false);
-        setLollipopMode(false);
-        document.documentElement.classList.remove("sunset");
-        document.documentElement.classList.remove("forest");
-        document.documentElement.classList.remove("lollipop");
-        document.documentElement.classList.add("serene");
-        localStorage.setItem("theme", "serene");
+        // setSereneMode(true);
+        // setSunsetMode(false);
+        // setForestMode(false);
+        // setLollipopMode(false);
+        clientDocument?.setAttribute("class", "serene");
+        // document.documentElement.classList.toggle("sunset");
+        // document.documentElement.classList.toggle("forest");
+        // document.documentElement.classList.toggle("lollipop");
+        // document.documentElement.classList.toggle("serene");
+        // clientLocal?.setItem("theme", "serene");
     }
 
     function handleSunsetMode() {
-        setSereneMode(false);
-        setSunsetMode(true);
-        setForestMode(false);
-        setLollipopMode(false);
-        document.documentElement.classList.remove("serene");
-        document.documentElement.classList.remove("forest");
-        document.documentElement.classList.remove("lollipop");
-        document.documentElement.classList.add("sunset");
-        localStorage.setItem("theme", "sunset");
+        // setSereneMode(false);
+        // setSunsetMode(true);
+        // setForestMode(false);
+        // setLollipopMode(false);
+        clientDocument?.setAttribute("class", "sunset");
+        // document.documentElement.classList.toggle("serene");
+        // document.documentElement.classList.toggle("forest");
+        // document.documentElement.classList.toggle("lollipop");
+        // document.documentElement.classList.toggle("sunset");
+        // clientLocal?.setItem("theme", "sunset");
     }
 
     function handleForestMode() {
-        setSereneMode(false);
-        setSunsetMode(false);
-        setForestMode(true);
-        setLollipopMode(false);
-        document.documentElement.classList.remove("serene");
-        document.documentElement.classList.remove("sunset");
-        document.documentElement.classList.remove("lollipop");
-        document.documentElement.classList.add("forest");
-        localStorage.setItem("theme", "forest");
+        // setSereneMode(false);
+        // setSunsetMode(false);
+        // setForestMode(true);
+        // setLollipopMode(false);
+        clientDocument?.setAttribute("class", "forest");
+        // document.documentElement.classList.toggle("serene");
+        // document.documentElement.classList.toggle("sunset");
+        // document.documentElement.classList.toggle("lollipop");
+        // document.documentElement.classList.toggle("forest");
+        // clientLocal?.setItem("theme", "forest");
     }
 
     function handleLollipopMode() {
-        setSereneMode(false);
-        setSunsetMode(false);
-        setForestMode(false);
-        setLollipopMode(true);
-        document.documentElement.classList.remove("serene");
-        document.documentElement.classList.remove("sunset");
-        document.documentElement.classList.remove("forest");
-        document.documentElement.classList.add("lollipop");
-        localStorage.setItem("theme", "lollipop");
+        // setSereneMode(false);
+        // setSunsetMode(false);
+        // setForestMode(false);
+        // setLollipopMode(true);
+        clientDocument?.setAttribute("class", "lollipop");
+        // document.documentElement.classList.toggle("serene");
+        // document.documentElement.classList.toggle("sunset");
+        // document.documentElement.classList.toggle("forest");
+        // document.documentElement.classList.toggle("lollipop");
+        // clientLocal?.setItem("theme", "lollipop");
     }
 
     /*useEffect(() => {
@@ -103,10 +122,10 @@ function ThemeSelector({ className }: ThemeSelectorProps ) {
         //     <Moon className="ml-auto"/>
         // </div>
         <div>
-            <div className={`text-center ${className} border text-lg font-semibold text-primary`}>
+            <div className={`text-center bg-card border rounded-t-lg text-lg font-semibold text-primary`}>
                 Themes
             </div>
-            <div className={`${className} border rounded-lg p-2 flex items-center`}>
+            <div className={`bg-card border rounded-b-lg p-2 flex items-center`}>
                 {/* <Toggle className="p-0 size-10">
                 <Haze className="flex h-8 w-8"/>
             </Toggle>
@@ -120,7 +139,7 @@ function ThemeSelector({ className }: ThemeSelectorProps ) {
                                 onClick={() => handleSereneMode()} />
                         </TooltipTrigger>
                         <TooltipContent className="bg-transparent border-none p-0">
-                            <p className="text-teal-500/85 border-b border-teal-500/85">Serene</p>
+                            <p className="text-teal-500/85  border-teal-500/85">Serene</p>
                         </TooltipContent>
                     </Tooltip>
                     <Separator orientation="vertical" className="h-[3dvh] mx-1"/>
@@ -130,7 +149,7 @@ function ThemeSelector({ className }: ThemeSelectorProps ) {
                                 onClick={() => handleSunsetMode()} />
                         </TooltipTrigger>
                         <TooltipContent className="bg-transparent border-none p-0">
-                            <p className="text-orange-500/85 border-b border-orange-500/85">Sunset</p>
+                            <p className="text-orange-500/85  border-orange-500/85">Sunset</p>
                         </TooltipContent>
                     </Tooltip>
                     <Separator orientation="vertical" className="h-[3dvh] mx-1"/>
@@ -140,17 +159,17 @@ function ThemeSelector({ className }: ThemeSelectorProps ) {
                                 onClick={() => handleForestMode()} />
                         </TooltipTrigger>
                         <TooltipContent className="bg-transparent border-none p-0">
-                            <p className="text-green-500/85 border-b border-green-500/85">Forest</p>
+                            <p className="text-green-500/85  border-green-500/85">Forest</p>
                         </TooltipContent>
                     </Tooltip>
                     <Separator orientation="vertical" className="h-[3dvh] mx-1"/>
                     <Tooltip>
                         <TooltipTrigger>
-                            <Lollipop className={lollipopMode ? "size-7 mx-2 text-rose-500/85" : "size-7 mx-2 hover:text-rose-500/85"}
+                            <Lollipop className={lolpopMode ? "size-7 mx-2 text-rose-500/85" : "size-7 mx-2 hover:text-rose-500/85"}
                                 onClick={() => handleLollipopMode()} />
                         </TooltipTrigger>
                         <TooltipContent className="bg-transparent border-none p-0">
-                            <p className="text-rose-500/85 border-b border-rose-500/85">Lollipop</p>
+                            <p className="text-rose-500/85  border-rose-500/85">Lollipop</p>
                         </TooltipContent>
                     </Tooltip>
                 </TooltipProvider>

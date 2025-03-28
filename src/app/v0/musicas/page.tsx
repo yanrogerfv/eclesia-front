@@ -13,10 +13,10 @@ import { TbMusicX } from "react-icons/tb";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
-import { Musica } from "@/components/apiObjects";
+import { Musica } from "@/lib/apiObjects";
 import { DialogAddMusica } from "@/components/modals/dialog-musica";
 import { useToast } from "@/components/ui/use-toast";
-import { deleteMethod, getMethod } from "@/components/apiRequests";
+import { deleteMethod, getMethod } from "@/lib/apiRequests";
 import { toast } from "sonner";
 
 export default function Home() {

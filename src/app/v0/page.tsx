@@ -2,14 +2,14 @@
 
 import { Card, CardTitle } from "@/components/ui/card";
 import React, { useEffect, useState } from "react";
-import { EscalaResumida, Levita } from "@/components/apiObjects";
+import { EscalaResumida, Levita } from "@/lib/apiObjects";
 import { EscalaSimpleCard, LevitaSimpleCard } from "@/components/customCards";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import Cookies from "js-cookie";
-import { getMethod } from "@/components/apiRequests";
+import { getMethod } from "@/lib/apiRequests";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
@@ -26,8 +26,8 @@ export default function Home() {
 
     return (
         <SidebarProvider>
-            <AppSidebar />
-            <SidebarTrigger className="border" />
+            <AppSidebar lado="left" />
+            {/* <SidebarTrigger className="border" /> */}
             <main className="max-w-6xl mx-auto my-12 px-4 sm:px-6 lg:px-8">
                 <nav>
                     <div className="flex">

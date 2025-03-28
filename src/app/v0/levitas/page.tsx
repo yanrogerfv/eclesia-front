@@ -15,7 +15,7 @@ import { ChevronLeft, Filter, FilterX, ListFilter, UserMinus, X } from "lucide-r
 import { DialogAddLevita, DialogVerLevita } from "@/components/modals/dialog-levita";
 import { Input } from "@/components/ui/input";
 import { UUID } from "crypto";
-import { Levita, Instrumento } from "@/components/apiObjects";
+import { Levita, Instrumento } from "@/lib/apiObjects";
 import { SidebarFiltroLevita } from "@/components/sidebar";
 import { Button } from "@/components/ui/button";
 import {
@@ -32,9 +32,10 @@ import { CheckboxDemo } from "@/components/checkboxObj";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { deleteMethod, getMethod } from "@/components/apiRequests";
+import { deleteMethod, getMethod } from "@/lib/apiRequests";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 
 export default function Home() {
 
@@ -79,8 +80,8 @@ export default function Home() {
 	}
 
 	return (
-		<SidebarProvider>
-			<main className="max-w-6xl mx-auto my-12">
+		<SidebarProvider defaultOpen={false}>
+			<main className="max-w-6xl w-full mx-auto my-12">
 				{//Cabeçalho, botões para inserir e remover um levita.
 					<>
 						<div className="flex items-center gap-3 justify-between">
@@ -92,7 +93,7 @@ export default function Home() {
 							</div>
 							<div>
 								{(sessionStorage.getItem("role") == "ADMIN" || sessionStorage.getItem("role") == "LIDER") && <DialogAddLevita />}
-								{(sessionStorage.getItem("role") == "ADMIN" || sessionStorage.getItem("role") == "LIDER") && 
+								{(sessionStorage.getItem("role") == "ADMIN" || sessionStorage.getItem("role") == "LIDER") &&
 									<Button variant="outline" className={removeOverlay ? "mx-2 font-bold bg-rose-500/80 border-rose-600/90 hover:bg-rose-600/40"
 										: "mx-2 font-bold hover:bg-rose-500/40"}
 										onClick={() => setRemoveOverlay(!removeOverlay)}>
@@ -113,9 +114,9 @@ export default function Home() {
 						<Sheet>
 							<SheetTrigger asChild>
 								{filteredInstruments.length == 0 ?
-									<Filter className="w-auto text-4xl justify-center size-9 p-1 cursor-pointer outline outline-1 outline-primary/30 hover:bg-secondary/80 hover:text-black rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" /> :
+									<Filter className="w-auto text-4xl justify-center size-[2.4rem] p-1 cursor-pointer outline outline-1 outline-border hover:bg-secondary/80 hover:text-black rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" /> :
 									<FilterX onClick={() => setFilteredInstruments([])}
-										className="w-auto text-4xl justify-center size-9 p-1 cursor-pointer outline outline-1 outline-red-500/45 hover:bg-red-500 hover:text-black rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" />
+										className="w-auto text-4xl justify-center size-[2.4rem] p-1 cursor-pointer outline outline-1 outline-red-500/45 hover:bg-red-500 hover:text-black rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" />
 								}
 							</SheetTrigger>
 							<SheetContent>
@@ -168,9 +169,8 @@ export default function Home() {
 							</div>
 						) : (
 							filteredLevitas?.map(levita => (
-								// <Card key={levita.id} className={removeOverlay ? "animate-pulse" : ""}>
 								<Card key={levita.id} className={`${removeOverlay ? "animate-pulse" : ""} ${Cookies.get("username") == levita.nome ? "border-special/30 bg-special/10" : ""}`}>
-									<X className={removeOverlay ? "absolute hover:cursor-pointer bg-rose-500/80 rounded-br-xl animate-none" : "absolute invisible"} onClick={() => {
+									<X className={removeOverlay ? "absolute hover:cursor-pointer p-1 size-6 bg-rose-500/80 rounded-br-xl animate-none" : "absolute invisible"} onClick={() => {
 										setLoadingRemove(true)
 										deleteMethod(`levita/${levita.id}`)
 											.then(() => {
@@ -195,10 +195,22 @@ export default function Home() {
 										</CardDescription>
 									</CardHeader>
 									<CardContent key={levita.id} className="h-28">
-										{levita.instrumentos.map(instrumento => (
-											<Badge key={instrumento.id} variant={"outline"} className="mx-1">{instrumento.nome}</Badge>))}
-										{/* <div key={instrumento.id} className="inline-flex border-secondary/30 items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold 
-                transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 m-1">{instrumento.nome.toUpperCase()}</div>))} */}
+										<Carousel className="w-full">
+											<CarouselContent className="-ml-1 flex">
+												{levita.instrumentos.map(instrumento => (
+													<CarouselItem key={instrumento.id} className="basis-auto pl-0">
+														<Badge key={instrumento.id} variant={"outline"} className=""> {instrumento.nome} </Badge>
+													</CarouselItem>
+												))}
+											</CarouselContent>
+										</Carousel>
+										{levita.descricao ?
+											<CardDescription className="p-1 pt-4 text-subprimary">
+												{levita.descricao}
+											</CardDescription>
+											: <CardDescription className="p-1 pt-4">
+												Levita sem descrição.
+											</CardDescription>}
 									</CardContent>
 									<CardFooter className="flex justify-stretch">
 										<DialogVerLevita key={levita.id}
@@ -212,7 +224,7 @@ export default function Home() {
 				</div>
 			</main>
 			<SidebarTrigger className="border" />
-			<AppSidebar />
+			<AppSidebar lado="right" />
 		</SidebarProvider>
 	);
 }

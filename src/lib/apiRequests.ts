@@ -2,7 +2,7 @@
 
 import { UUID } from "crypto";
 import { SetStateAction, useEffect, useState } from "react";
-import { EscalaResumida, Instrumento, Musica } from "./apiObjects";
+import { EscalaResumida, Instrumento, Musica } from "@/lib/apiObjects";
 import Cookies from "js-cookie";
 
 const apiUrl = process.env.API_URL;

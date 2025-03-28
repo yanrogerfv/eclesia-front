@@ -31,8 +31,9 @@
     "dayjs": "^1.11.12",
     "embla-carousel-react": "^8.3.0",
     "js-cookie": "^3.0.5",
+    "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.396.0",
-    "next": "14.2.4",
+    "next": "^14.2.25",
     "next-themes": "^0.3.0",
     "react": "^18",
     "react-cookie": "^7.2.2",
@@ -48,6 +49,7 @@
   },
   "devDependencies": {
     "@types/js-cookie": "^3.0.6",
+    "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

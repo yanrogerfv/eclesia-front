@@ -60,6 +60,7 @@ export default function LoginPage() {
             }
             if (!response.ok) {
                 console.error("Erro ao efetuar login!")
+                alert("Erro ao efetuar login!")
             }
         } catch (error) {
             console.error("Erro na comunicação com a api: ", error);

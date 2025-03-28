@@ -1,6 +1,5 @@
 import { ReactElement, useEffect, useState } from "react";
-import { convertDateFormat, Escala, EscalaResumida, Levita } from "../apiObjects";
-import { getMethod, postMethod } from "../apiRequests";
+import { convertDateFormat, Escala, EscalaResumida, Levita } from "@/lib/apiObjects";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "../ui/dialog";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card";
 import { VerEscala } from "./dialog-escala";
@@ -9,6 +8,9 @@ import { SidebarMenuButton } from "../ui/sidebar";
 import { Calendar } from "../ui/calendar";
 import { Button } from "../ui/button";
 import { ptBR } from "date-fns/locale";
+import { Label } from "../ui/label";
+import { Input } from "../ui/input";
+import { getMethod, postMethod } from "@/lib/apiRequests";
 
 interface SidebarModalsProps {
     icon: ReactElement,
@@ -303,6 +305,89 @@ export function SidebarMyEscalas({ icon, title, style }: SidebarModalsProps) {
                 <DialogFooter>
 
                 </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    )
+}
+
+export function SidebarMyProfile({ icon, title, style }: SidebarModalsProps) {
+    return (
+        <Dialog>
+            <DialogTrigger>
+                <SidebarMenuButton>
+                    {icon}
+                    {title}
+                </SidebarMenuButton>
+            </DialogTrigger>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>
+                        {title}
+                    </DialogTitle>
+                    <DialogDescription>
+                        Aqui você pode visualizar e editar suas informações.
+                    </DialogDescription>
+                </DialogHeader>
+                {/* Content aqui */}
+            </DialogContent>
+        </Dialog>
+    )
+}
+
+export function SidebarAddUser({ icon, title, style }: SidebarModalsProps) {
+    const [isLoading, setIsLoading] = useState(true);
+    // const [toDisable, setDisabled] = useState(false);
+    const [levitas, setLevitas] = useState<Levita[] | undefined>([]);
+
+    const toDisable = isLoading || levitas == undefined || levitas.length == 0;
+
+    useEffect(() => {
+        if (levitas) return;
+        setIsLoading(true);
+        getMethod<Levita[] | undefined>(`auth/user/levita-x`, setLevitas)
+        setIsLoading(false);
+    }, [levitas])
+
+    return (
+        <Dialog>
+            <DialogTrigger className={"w-full " + toDisable ? "cursor-not-allowed": ""} disabled={toDisable}>
+                <SidebarMenuButton disabled={toDisable}>
+                    {icon}
+                    {title}
+                </SidebarMenuButton>
+            </DialogTrigger>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>
+                        {title}
+                    </DialogTitle>
+                    <DialogDescription>
+                        Aqui você pode adicionar um novo usuário.
+                    </DialogDescription>
+                </DialogHeader>
+                <Label>Usuário</Label>
+                <Input inert placeholder="Insira o usuário que será usado para login." />
+                <Label>Senha</Label>
+                <Input placeholder="Insira a senha que será usada para login." />
+
+                <Label>Selecione o Levita que deseja associar a conta:</Label>
+                <Card className="bg-transparent grid grid-cols-4">
+                    {isLoading || levitas == undefined ?
+                        <div className="flex justify-center items-center h-40">
+                            <div className="h-16 w-16 border-4 border-primary rounded-3xl animate-spin" />
+                        </div>
+                        : levitas.map((levita) => (
+                            <Button key={levita.id} variant={"outline"} type="submit"
+                                className={"p-2 rounded-lg m-2"}
+                                onClick={() => { }}>{levita.nome}</Button>
+                        ))}
+                </Card>
+
+                <DialogFooter>
+                    <Button>Adicionar</Button>
+                    <Button>Cancelar</Button>
+                </DialogFooter>
+                {/* Content aqui */}
             </DialogContent>
         </Dialog>
     )

@@ -6,7 +6,7 @@
 
 
 @layer base {
-	:root {
+	/* :root {
 		--background: 0 0% 100%;
 		--foreground: 240 10% 3.9%;
 		--card: 0 0% 100%;
@@ -37,14 +37,11 @@
 		--sidebar-accent-foreground: 240 5.9% 10%;
 		--sidebar-border: 220 13% 91%;
 		--sidebar-ring: 217.2 91.2% 59.8%;
-	}
+	} */
 
-	.theme-custom {
-		/* Name: custom color palette
-       Author: Ilias Ism
-       URL: https://gradient.page */
+	/* .theme-custom {
 
-		/* CSS: .bg-gradient { background: var(--gradient) } */
+		/* CSS: .bg-gradient { background: var(--gradient) } 
 		--gradient: #e65c00;
 		--background: 249 100% 98.16%;
 		--foreground: 249 10% 0.32%;
@@ -76,60 +73,40 @@
 		--ring: 249 100% 8%;
 
 		--radius: 0.5rem;
-	}
+	} */
 
-	.dawn {
-		/* Name: custom color palette
-         Author: Ilias Ism
-         URL: https://gradient.page */
-
-		/* CSS: .bg-gradient { background: var(--gradient) } */
-		--gradient: #e65c00;
-		--background: 25 100% 98.26%;
-		--foreground: 25 100% 45%;
-
-		--muted: 25 50% 13.5%;
-		--muted-foreground: 25 5% 41.3%;
-
-		--popover: 25 10% 91.3%;
-		--popover-foreground: 25 10% 0.65%;
-
-		--card: 25 80% 85.35%;
-		--card-foreground: 25 10% 0.65%;
-
-		--border: 25 90% 93.5%;
-		--input: 25 15% 89.52%;
-
-		--primary: 25 100% 45%;
-		--primary-foreground: 25 2% 91.3%;
-
-		--subprimary: 60 100% 78%;
-		--sub-primary-foreground: 25 2% 91.3%;
-
-		--secondary: 25 90% 56.5%;
-		--secondary-foreground: 25 7% 11.3%;
-
-		--special: 346.8 97.2% 49.8%;
-		--special-foreground: 25 7% 11.3%;
-
-		--accent: 25 50% 13.5%;
-		--accent-foreground: 25 7% 11.3%;
-
+	:root {
+		--gradient: #fff23a;
+		--background: 60 97.35% 98.44%;
+		--foreground: 60 4.699999999999999% 0.88%;
+	
+		--muted: 60 4.699999999999999% 92.2%;
+		--muted-foreground: 60 2.3499999999999996% 42.2%;
+	
+		--popover: 60 52.400000000000006% 92.2%;
+		--popover-foreground: 60 4.699999999999999% 1.1%;
+	
+		--card: 60 52.400000000000006% 92.2%;
+		--card-foreground: 60 4.699999999999999% 1.1%;
+	
+		--border: 60 9.7% 89.88%;
+		--input: 60 9.7% 89.88%;
+	
+		--primary: 47.1 64% 53.1%;
+		--primary-foreground: 60 0.94% 92.2%;
+	
+		--secondary: 60 2.3499999999999996% 96.1%;
+		--secondary-foreground: 60 3.82% 12.2%;
+	
+		--accent: 60 2.3499999999999996% 96.1%;
+		--accent-foreground: 60 3.82% 12.2%;
+	
 		--destructive: 0 84.2% 60.2%;
 		--destructive-foreground: 0 0% 98%;
-
-		--ring: 243 100% 13%;
-
+	
+		--ring: 60 47% 22%;
+	
 		--radius: 0.5rem;
-
-		--sidebar-background: 240 5.9% 10%;
-		--sidebar-foreground: 240 4.8% 95.9%;
-		--sidebar-primary: 224.3 76.3% 48%;
-		--sidebar-primary-foreground: 0 0% 100%;
-		--sidebar-accent: 240 3.7% 15.9%;
-		--sidebar-accent-foreground: 240 4.8% 95.9%;
-		--sidebar-border: 240 3.7% 15.9%;
-		--sidebar-ring: 217.2 91.2% 59.8%;
 	}
 
 	/* Dark themes below */
@@ -160,6 +137,7 @@
 
 		--special: 0 68% 60%;
 		--special-foreground: 240 5% 64.9%;
+		--special-text: 110 100% 94%;
 
 		--muted: 0 0% 15%;
 		--muted-foreground: 240 5% 64.9%;
@@ -187,11 +165,6 @@
 	}
 
 	.lollipop {
-		/* Name: custom color palette
-         Author: Ilias Ism
-         URL: https://gradient.page */
-
-		/* CSS: .bg-gradient { background: var(--gradient) } */
 		--gradient: #FF91A4;
 
 		--background: -11 45% 2.24%;
@@ -224,6 +197,7 @@
 
 		--special: 277 90% 71%;
 		--special-foreground: -11 10% 98.9%;
+		--special-text: 279 100% 94%;
 
 		--accent: -11 54% 23.400000000000002%;
 		--accent-foreground: -11 10% 98.9%;
@@ -280,6 +254,7 @@
 
 		--special: 198.4 93.2% 59.6%;
 		--special-foreground: 189 9.4% 96.7%;
+		--special-text: 226 100% 94%;
 
 		--accent: 189 94% 20.74%;
 		--accent-foreground: 189 9.4% 96.7%;
@@ -335,6 +310,7 @@
 
 		--special: 346.8 97.2% 49.8%;
 		--special-foreground: 25 10% 97.25%;
+		--special-text: 19 100% 94%;
 
 		--accent: 25 50% 13.5%;
 		--accent-foreground: 25 10% 97.25%;

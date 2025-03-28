@@ -14,9 +14,9 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Church, PencilLine, UserMinus, UserPlus } from "lucide-react"
 import { useEffect, useState } from "react"
-import { Levita, Instrumento } from "../apiObjects"
+import { Levita, Instrumento } from "@/lib/apiObjects"
 import { Checkbox } from "../ui/checkbox"
-import { GetInstrumentos, getMethod, postMethod } from "../apiRequests"
+import { GetInstrumentos, getMethod, postMethod } from "@/lib/apiRequests"
 import { Textarea } from "../ui/textarea"
 import Cookies from "js-cookie"
 
@@ -113,21 +113,17 @@ export function DialogAddLevita() {
                 <DialogHeader>
                     <DialogTitle>Adicionar Levita</DialogTitle>
                     <br />
-                    <br />
                     <Label>Nome:</Label>
                     <Input type="text" placeholder="Insira o nome do Levita."
                         value={nomeLevita} onChange={(e) => setNomeLevita(e.target.value)} />
-                    <br />
                     <br />
                     <Label>Email:</Label>
                     <Input type="email" placeholder="Insira um email do Levita."
                         value={emailLevita} onChange={(e) => setEmailLevita(e.target.value)} />
                     <br />
-                    <br />
                     <Label>Telefone:</Label>
                     <Input type="tel" placeholder="Insira um contato do Levita."
                         value={contatoLevita} onChange={(e) => setTelLevita(e.target.value)} />
-                    <br />
                     <br />
                     <Label>Instrumentos:</Label>
                     {allInstrumentos?.map((instrumento) => (
@@ -145,7 +141,6 @@ export function DialogAddLevita() {
                             >{instrumento.nome}</Label><br />
                         </div>
                     ))}
-                    <br />
                     <br />
                     <Label>Descrição:</Label>
                     <Textarea placeholder="Insira uma descrição do Levita." onChange={(e) => setDescLevita(e.target.value)} />
