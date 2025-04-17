@@ -1,5 +1,16 @@
 import { UUID } from "crypto";
-import { formatDate } from "date-fns";
+
+export interface UserDTO {
+    id: UUID,
+    username: string,
+    role: RoleDTO,
+    levita: Levita,
+}
+
+export interface RoleDTO {
+    id: number,
+    role: string,
+}
 
 export interface Levita {
     id: UUID,
@@ -72,13 +83,3 @@ export function convertDateFormat(dateString: Date | undefined) {
     }
     return String(days[date.getDay()] + " - " + (date.getDate() + 1) + '/' + (date.getMonth() + 1) + '/' + date.getFullYear())
 }
-
-
-/* export async function fetchLevitas() {
-    var levita = await (fetch('http://localhost:1004/v1/levita'));
-    if (!levita.ok)
-        throw new Error(`HTTP error! status: ${levita.status}`);
-    var data: Levita[] = await levita.json() as Levita[];
-    return data as Levita[];
-} */
-

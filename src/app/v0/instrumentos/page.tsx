@@ -15,7 +15,7 @@ export default function Home() {
 	useEffect(() => {
 		setLoading(true)
 		if (instrumentosData) return;
-		getMethod<Instrumento[] | undefined>("instrumento", setInstrumentosData)
+		getMethod<Instrumento[] | undefined>("v1/instrumento", setInstrumentosData)
 	}, [instrumentosData])
 
 	useEffect(() => {

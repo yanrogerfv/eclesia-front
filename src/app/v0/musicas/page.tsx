@@ -35,7 +35,7 @@ export default function Home() {
 			setFilteredMusicas(musicas)
 		if (musicas) return;
 		setLoading(true)
-		getMethod<Musica[] | undefined>("musicas", setMusicas)
+		getMethod<Musica[] | undefined>("v1/musicas", setMusicas)
 	}, [update, musicas])
 
 	useEffect(() => {

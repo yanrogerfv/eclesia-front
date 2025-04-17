@@ -20,8 +20,8 @@ export default function Home() {
 
     useEffect(() => {
         if (nextEscalas && levitasData) return;
-        getMethod<EscalaResumida[] | undefined>("escala/resumed", setNextEscalas)
-        getMethod<Levita[] | undefined>("levita/resumed", setLevitasData)
+        getMethod<EscalaResumida[] | undefined>("v1/escala/resumed", setNextEscalas)
+        getMethod<Levita[] | undefined>("v1/levita/resumed", setLevitasData)
     }, [])
 
     return (

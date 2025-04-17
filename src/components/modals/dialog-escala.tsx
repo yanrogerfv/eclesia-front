@@ -33,19 +33,11 @@ interface props {
 }
 
 export function VerEscala(props: props) {
-	const [escalaData, setEscalaData] = useState<Escala>()
+	const [escalaData, setEscalaData] = useState<Escala | undefined>(undefined)
 
-	// const [escalaData, setEscalaData] = useState<Escala | undefined>(undefined);
-
-	// useEffect(() => {
-	// 	if (!escalaData) return;
-	// 	getMethod<Escala>(`escala/${props.escalaId}`, setEscalaData)
-	// }, [])
-
-	// const escalaData = getMethod<Escala>(`escala/${props.escalaId}`)
 	useEffect(() => {
-		// setIsLoading(true)
-		fetch(`${process.env.NEXT_PUBLIC_API_URL}escala/${props.escalaId}`, {
+		// getMethod<Escala | undefined>(`escala/${props.escalaId}`, setEscalaData)
+		fetch(`${process.env.NEXT_PUBLIC_API_URL}v1/escala/${props.escalaId}`, {
 			method: "GET",
 			headers: {
 				'Content-Type': 'application/json',
@@ -414,7 +406,7 @@ export function AddEscala({ disabled }: { disabled?: boolean }) {
 			if (data == undefined) return;
 			setIsLoading(true)
 			setLevitasDisponiveis(undefined)
-			await getMethod<Levita[] | undefined>(`levita/agenda?date=${data}`, setLevitasDisponiveis)
+			await getMethod<Levita[] | undefined>(`v1/levita/agenda?date=${data}`, setLevitasDisponiveis)
 			setIsLoading(false)
 		}
 		fetchData();
@@ -591,7 +583,7 @@ export function AddEscala({ disabled }: { disabled?: boolean }) {
 						}
 						else {
 							setIsLoading(true)
-							postMethod<Escala | undefined>("escala", {
+							postMethod<Escala | undefined>("v1/escala", {
 								ministro: ministro,
 								titulo: titulo,
 								data: data,
@@ -642,7 +634,7 @@ export function DialogAddMusicaInEscala(props: DialogAddMusicaInEscalaProps) {
 
 	useEffect(() => {
 		if (musicas != undefined) return;
-		getMethod<Musica[] | undefined>(`musicas`, setMusicas)
+		getMethod<Musica[] | undefined>("v1/musicas", setMusicas)
 		console.log(musicas)
 	}, [musicas])
 

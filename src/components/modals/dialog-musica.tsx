@@ -57,25 +57,11 @@ export function DialogAddMusica(props: { setState: React.Dispatch<React.SetState
                                 alert("Preencha todos os campos!")
                                 setLoading(false)
                             }
-                            postMethod<Musica>("musicas", {
+                            postMethod<Musica>("v1/musicas", {
                                 nome: nomeMusica,
                                 link: linkMusica,
                                 cifra: cifraMusica
                             }, () => setOpen(false)).then(() => props.setState(undefined))
-                            // fetch("http://localhost:1004/v1/musicas", {
-                            //     method: "POST",
-                            //     headers: {
-                            //         'Content-Type': 'application/json',
-                            //     },
-                            //     body: JSON.stringify({
-                            //         nome: nomeMusica,
-                            //         link: linkMusica,
-                            //         cifra: cifraMusica
-                            //     })
-                            // })
-                                // .then((res) => res.json())
-                                // .then(() => { setOpen(false) })
-                                // .then((data) => setCreatedMusic(data))
                                 .catch((error) => {
                                     console.error("Erro na comunicação com a api: ", error);
                                 })

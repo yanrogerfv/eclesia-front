@@ -42,17 +42,7 @@ export function DialogAddInstrumento(props: { disabled: boolean, state: React.Di
                                 alert("O nome do instrumento não pode ser vazio.")
                                 setLoading(false)
                             } else {
-                                // fetch("http://localhost:1004/v1/instrumento", {
-                                //     method: "POST",
-                                //     headers: {
-                                //         'Content-Type': 'application/json',
-                                //     },
-                                //     body: JSON.stringify({
-                                //         nome: nomeInstrumento,
-                                //     })
-                                // })
-                                // .then((data) => setCreatedMusic(data))
-                                postMethod("instrumento", {
+                                postMethod("v1/instrumento", {
                                     nome: nomeInstrumento
                                 }, () => { }).then(() => {
                                     setOpen(false)

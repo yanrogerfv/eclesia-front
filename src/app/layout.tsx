@@ -32,7 +32,7 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="pt-br" className="">
-			<body className={notosansjp.className} suppressHydrationWarning={true}>
+			<body className={notosansjp.className} suppressHydrationWarning={true} >
 				{children}
 				<Toaster />
 			</body>

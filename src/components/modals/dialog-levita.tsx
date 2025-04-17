@@ -68,7 +68,7 @@ export function DialogAddLevita() {
 
     useEffect(() => {
         if (allInstrumentos) return;
-        getMethod<Instrumento[] | undefined>("instrumento", setAllInstrumentos)
+        getMethod<Instrumento[] | undefined>("v1/instrumento", setAllInstrumentos)
     }, [])
 
     function addInstrumentoInFilter(instrumento: Instrumento) {
@@ -90,7 +90,7 @@ export function DialogAddLevita() {
             alert("Selecione pelo menos um instrumento.")
             setLoading(false)
         } else {
-            postMethod("levita", {
+            postMethod("v1/levita", {
                 nome: nomeLevita,
                 email: emailLevita,
                 contato: contatoLevita,
@@ -177,7 +177,7 @@ export function DialogEditLevita(levita: Levita) {
 
     useEffect(() => {
         if (allInstrumentos) return;
-        getMethod<Instrumento[] | undefined>("instrumento", setAllInstrumentos)
+        getMethod<Instrumento[] | undefined>("v1/instrumento", setAllInstrumentos)
     }, [])
 
     return (
@@ -237,7 +237,7 @@ export function DialogEditLevita(levita: Levita) {
                 <DialogFooter className="">
                     <Button className="hover:bg-emerald-500" disabled={isLoading} type="submit" onClick={() => {
                         setLoading(true)
-                        postMethod("levita", {
+                        postMethod("v1/levita", {
                             id: levita.id,
                             nome: nomeLevita,
                             email: emailLevita,
