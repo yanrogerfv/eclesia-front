@@ -19,7 +19,7 @@ import { deleteMethod, getMethod } from "@/lib/apiRequests";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AddEscala, VerEscala } from "@/components/modals/dialog-escala";
 import { convertDateFormat, EscalaResumida, Levita } from "@/lib/apiObjects";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "sonner";
 
 export default function Home() {
 	const [removeOverlay, setRemoveOverlay] = useState(false);
@@ -30,8 +30,6 @@ export default function Home() {
 	const [escalasData, setEscalasData] = useState<EscalaResumida[] | undefined>(undefined);
 	const [filteredEscalas, setFilteredEscalas] = useState<EscalaResumida[] | undefined>(undefined);
 	const [levitasDisponiveis, setLevitasDisponiveis] = useState<Levita[] | undefined>(undefined);
-
-	// const actualSession = useMemo(() => sessionStorage, []);
 
 	useEffect(() => {
 		if (escalasData && levitasDisponiveis) return;
@@ -70,8 +68,7 @@ export default function Home() {
 								variant="outline"
 								disabled={escalasData === undefined}
 								className={removeOverlay ? "font-bold bg-rose-500/80 border-rose-600/90 hover:bg-rose-600/40" : "font-bold hover:bg-rose-500/40"}
-								onClick={() => setRemoveOverlay(!removeOverlay)}
-							>
+								onClick={() => setRemoveOverlay(!removeOverlay)}>
 								<CircleMinus className="mx-1 text-rose-500" />Excluir Escala
 							</Button>}
 						</div>
@@ -92,15 +89,12 @@ export default function Home() {
 				) : (
 					<div>
 						<div className="flex flex-col md:flex-row justify-between items-center gap-2 sm:gap-4 md:gap-6">
-							{/* <div className="flex justify-between gap-4 w-full"> */}
 							<Button variant="outline" className={"md:flex-1 w-full text-lg hover:text-foreground rounded-lg text-primary hover:bg-primary".concat(domingoFilter ? " bg-primary text-foreground" : "")}
 								onClick={() => setDomingoFilter(!domingoFilter)}>Domingos</Button>
 							<Button variant="outline" className={"md:flex-1 w-full text-lg hover:text-foreground rounded-lg text-subprimary hover:bg-secondary".concat(quartaFilter ? " bg-secondary text-foreground" : "")}
 								onClick={() => setQuartaFilter(!quartaFilter)}>Quartas</Button>
 							<Button variant="outline" className={"md:flex-1 w-full text-lg hover:text-foreground rounded-lg text-special hover:bg-special".concat(especialFilter ? " bg-special text-foreground" : "")}
 								onClick={() => setEspecialFilter(!especialFilter)}>Especiais</Button>
-							{/* <Button variant="outline" className={"md:flex-1 w-full text-lg hover:text-foreground text-subprimary hover:bg-subprimary".concat(selfFilter ? " bg-subprimary text-foreground" : "")}
-							onClick={() => setSelfFilter(!selfFilter)}>Minhas Escalas</Button> */}
 						</div>
 						<br />
 
@@ -119,31 +113,11 @@ export default function Home() {
 								"grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-8"}>
 								{Array.isArray(filteredEscalas) && filteredEscalas.map((escala) => (
 									<Card key={escala.id} className={`${removeOverlay ? "animate-pulse" : ""} ${new Date(escala.data) < new Date() ? 'opacity-60 grayscale' : ''}`}>
-										<X
-											className={
-												removeOverlay
-													? "absolute hover:cursor-pointer bg-rose-500/80 rounded-br-xl"
-													: "absolute invisible"
-											}
+										<X className={removeOverlay ? "absolute hover:cursor-pointer bg-rose-500/80 rounded-br-xl" : "absolute invisible"}
 											onClick={() => {
-												deleteMethod(`escala/${escala.id}`)
-													.then(() => alert("Escala removida com sucesso!"))
-													.catch((error: any) => alert("Erro ao remover escala: " + error))
-												// fetch(`${process.env.NEXT_PUBLIC_API_URL}escala/${escala.id}`, {
-												// 	method: "DELETE",
-												// })
-												// 	.then((response) => {
-												// 		alert(
-												// 			response.status === 200
-												// 				? "Escala removida com sucesso!"
-												// 				: "Erro ao remover a Escala: " +
-												// 				response.headers.get("error")
-												// 		);
-												// 	})
-												// 	.catch((error) => {
-												// 		alert("Erro ao remover Escala!");
-												// 		console.error("Erro na comunicação com a api: ", error);
-												// 	});
+												deleteMethod(`v1/escala/${escala.id}`)
+													.then(() => toast.success("Escala "+escala.titulo+" removida com sucesso!"))
+													.catch((error: any) => toast.error("Erro ao remover escala: " + error))
 											}}
 										/>
 										<CardHeader className="items-center lg:items-start">
@@ -160,34 +134,28 @@ export default function Home() {
 											</CardDescription>
 										</CardHeader>
 										<CardContent>
-											<p>
-												<span className="text-subprimary">Ministro:</span> <span className="text-secondary">{escala.ministro}</span>
+											<p><span className="text-subprimary">Ministro:</span> <span className="text-secondary">{escala.ministro}</span>
 											</p>
-											<p>
-												<span className="text-subprimary">Violão:</span> {escala.violao || <span className="text-secondary/40">Não inserido.</span>}
+											<p><span className="text-subprimary">Violão:</span> {escala.violao || <span className="text-secondary/40">Não inserido.</span>}
 											</p>
-											<p>
-												<span className="text-subprimary">Teclado:</span> {escala.teclado || <span className="text-secondary/40">Não inserido.</span>}
+											<p><span className="text-subprimary">Teclado:</span> {escala.teclado || <span className="text-secondary/40">Não inserido.</span>}
 											</p>
-											<p>
-												<span className="text-subprimary">Bateria:</span> {escala.bateria || <span className="text-secondary/40">Não inserido.</span>}
+											<p><span className="text-subprimary">Bateria:</span> {escala.bateria || <span className="text-secondary/40">Não inserido.</span>}
 											</p>
-											<p>
-												<span className="text-subprimary">Baixo:</span> {escala.baixo || <span className="text-secondary/40">Não inserido.</span>}
+											<p><span className="text-subprimary">Baixo:</span> {escala.baixo || <span className="text-secondary/40">Não inserido.</span>}
 											</p>
-											<p>
-												<span className="text-subprimary">Guitarra:</span> {escala.guitarra || <span className="text-secondary/40">Não inserido.</span>}
+											<p><span className="text-subprimary">Guitarra:</span> {escala.guitarra || <span className="text-secondary/40">Não inserido.</span>}
 											</p>
 										</CardContent>
 										<CardFooter className="flex items-center justify-between">
 											<div>
-												{escala.domingo ? (
+												{escala.domingo ?
 													<Badge className="bg-primary/80 hover:bg-primary/60 cursor-default">Domingo</Badge>
-												) : escala.quarta ? (
-													<Badge className="bg-secondary/80 hover:bg-secondary/60 cursor-default">Quarta</Badge>
-												) : (
-													<Badge className="bg-special/80 hover:bg-special/60 cursor-default">Especial</Badge>
-												)}
+													: escala.quarta ?
+														<Badge className="bg-secondary/80 hover:bg-secondary/60 cursor-default">Quarta</Badge>
+														:
+														<Badge className="bg-special/80 hover:bg-special/60 cursor-default">Especial</Badge>
+												}
 											</div>
 											<div>
 												<VerEscala escalaId={escala.id} levitasDisponiveis={levitasDisponiveis} />
@@ -199,8 +167,6 @@ export default function Home() {
 						)}
 					</div>
 				)}
-				<ToastContainer
-				/>
 			</main>
 			<SidebarTrigger />
 			<AppSidebar lado="right" />

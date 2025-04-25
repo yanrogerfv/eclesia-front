@@ -41,7 +41,7 @@ export function SidebarNextEvents({ icon, title, style }: SidebarModalsProps) {
 
     return (
         <Dialog>
-            <DialogTrigger className={`${!escalas ? `text-zinc-500` : ``} w-full`} disabled={!escalas}>
+            <DialogTrigger asChild className={`${!escalas ? `text-zinc-500` : ``} w-full`} disabled={!escalas}>
                 <SidebarMenuButton>
                     {icon}
                     <span>{title}</span>
@@ -162,7 +162,7 @@ export function SidebarMyAgenda({ icon, title, style }: SidebarModalsProps) {
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger className="w-full" disabled={!userDates}>
+            <DialogTrigger asChild className="w-full" disabled={!userDates}>
                 <SidebarMenuButton>
                     {icon}
                     {title}
@@ -234,7 +234,7 @@ export function SidebarMyEscalas({ icon, title, style }: SidebarModalsProps) {
 
     return (
         <Dialog>
-            <DialogTrigger className={`${!escalas ? `text-zinc-500` : ``} w-full`} disabled={!escalas}>
+            <DialogTrigger asChild className={`${!escalas ? `text-zinc-500` : ``} w-full`} disabled={!escalas}>
                 <SidebarMenuButton>
                     <span className={`${!escalas ? `hidden` : ``} ${!escalas?.some(escala => {
                         const escalaDate = new Date(escala.data);
@@ -310,7 +310,7 @@ export function SidebarMyEscalas({ icon, title, style }: SidebarModalsProps) {
 export function SidebarMyProfile({ icon, title, style }: SidebarModalsProps) {
     return (
         <Dialog>
-            <DialogTrigger>
+            <DialogTrigger asChild>
                 <SidebarMenuButton>
                     {icon}
                     {title}
@@ -341,15 +341,15 @@ export function SidebarAddUser({ icon, title, style }: SidebarModalsProps) {
     const toDisable = isLoading || levitas == undefined || levitas.length == 0;
 
     useEffect(() => {
-        if (levitas) return;
-        getMethod<Levita[] | undefined>("auth/user/levita-x", setLevitas)
-        console.log("levitas: ", levitas)
-        setIsLoading(false);
+        // if (levitas) return;
+        // getMethod<Levita[] | undefined>("auth/user/levita-x", setLevitas)
+        // console.log("levitas: ", levitas)
+        // setIsLoading(false);
     }, [levitas])
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger className={levitas == undefined ? "cursor-not-allowed w-full " : "w-full "} disabled={levitas == undefined}>
+            <DialogTrigger asChild className={levitas == undefined ? "cursor-not-allowed w-full " : "w-full "} disabled={levitas == undefined}>
                 <SidebarMenuButton disabled={levitas == undefined}>
                     {icon}
                     {title}

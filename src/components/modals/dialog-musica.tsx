@@ -11,12 +11,11 @@ import {
 import { Musica } from "@/lib/apiObjects";
 import { useState } from "react";
 import { Button } from "../ui/button";
-import { Check, Music } from "lucide-react";
+import { Music } from "lucide-react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { postMethod } from "@/lib/apiRequests";
-import { title } from "process";
-import { useToast } from "../ui/use-toast";
+import { toast } from "sonner";
 
 export function DialogAddMusica(props: { setState: React.Dispatch<React.SetStateAction<Musica[] | undefined>> }) {
     const [nomeMusica, setNomeMusica] = useState("");
@@ -24,17 +23,17 @@ export function DialogAddMusica(props: { setState: React.Dispatch<React.SetState
     const [cifraMusica, setCifraMusica] = useState("");
     const [open, setOpen] = useState(false);
     const [isLoading, setLoading] = useState(false);
-    const { toast } = useToast();
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild className="flex p-5">
-                <Button variant={"outline"} className="mx-2 font-bold" onClick={() => setLoading(false)}>
-                    <Music className="mr-2" />Adicionar Música</Button>
+                <Button variant={"outline"} className="hover:text-emerald-500" onClick={() => setLoading(false)}>
+                    <Music className="mr-2 hover:animate-bounce" />Adicionar Música</Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>Adicionar Música</DialogTitle>
+                    <DialogDescription />
                     <br />
                     <Label>Nome:</Label>
                     <Input type="text" placeholder="Insira o nome da música."
@@ -50,11 +49,11 @@ export function DialogAddMusica(props: { setState: React.Dispatch<React.SetState
 
                 </DialogHeader>
                 <DialogFooter className="">
-                    <Button className="hover:bg-emerald-500"
-                        type="submit"  disabled={isLoading} onClick={() => {
+                    <Button className="hover:bg-emerald-500" type="submit" disabled={isLoading}
+                        onClick={() => {
                             setLoading(true)
-                            if(nomeMusica === "" || linkMusica === ""){
-                                alert("Preencha todos os campos!")
+                            if (nomeMusica === "" || linkMusica === "") {
+                                toast.warning("Preencha todos os campos!")
                                 setLoading(false)
                             }
                             postMethod<Musica>("v1/musicas", {
@@ -63,9 +62,9 @@ export function DialogAddMusica(props: { setState: React.Dispatch<React.SetState
                                 cifra: cifraMusica
                             }, () => setOpen(false)).then(() => props.setState(undefined))
                                 .catch((error) => {
-                                    console.error("Erro na comunicação com a api: ", error);
+                                    toast.error("Erro na comunicação com a api: ", error);
                                 })
-                            toast({ title: "Música inserida com sucesso!" })
+                            toast.success("Música inserida com sucesso!")
                         }}>Salvar</Button>
                     <Button className="hover:bg-rose-600/80" onClick={() => setOpen(false)}>Cancelar</Button>
                 </DialogFooter>

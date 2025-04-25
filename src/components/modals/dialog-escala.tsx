@@ -25,7 +25,7 @@ import { getMethod, postMethod, putMethod } from "@/lib/apiRequests";
 import Cookies from "js-cookie";
 import { Checkbox } from "../ui/checkbox";
 import { DayPicker } from "react-day-picker";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "sonner";
 
 interface props {
 	escalaId: UUID,
@@ -444,7 +444,7 @@ export function AddEscala({ disabled }: { disabled?: boolean }) {
 					: <></>}
 				<DialogHeader className={isLoading ? "opacity-50 space-y-1.5" : ""} >
 					<DialogTitle>{"Criando uma Escala"}</DialogTitle>
-					<DialogDescription>
+					<DialogDescription className="border-b grayscale">
 						{"Adicione uma nova escala ao planejador."}
 					</DialogDescription>
 				</DialogHeader>
@@ -575,11 +575,11 @@ export function AddEscala({ disabled }: { disabled?: boolean }) {
 					<div className="hidden" />
 					<Button className="hover:bg-emerald-500" disabled={isLoading || disableFields} onClick={() => {
 						if (titulo.length == 0) {
-							alert("Insira um título para a escala!")
+							toast.info("Insira um título para a escala!")
 						} else if (!data || data.length == 0) {
-							alert("Insira uma data para a escala!")
+							toast.warning("Insira uma data para a escala!")
 						} else if (ministro.length == 0) {
-							alert("Selecione um ministro!")
+							toast.warning("Selecione um ministro!")
 						}
 						else {
 							setIsLoading(true)
@@ -595,25 +595,12 @@ export function AddEscala({ disabled }: { disabled?: boolean }) {
 								guitarra: guitarra == "null" ? null : guitarra,
 								backs: backs,
 								observacoes: observacao
+							}).catch((error) => {
+								toast.error("Erro ao adicionar escala!")
+								console.error("Erro na comunicação com a api: ", error);
 							})
-								.then(() => alert("Escala adicionada com sucesso!"))
-								.then(() =>
-									toast.success("Escala aberta com sucesso!", {
-										position: "bottom-right",
-										autoClose: 3000,
-										hideProgressBar: false,
-										closeOnClick: true,
-										pauseOnHover: true,
-										progress: undefined,
-										theme: "light",
-									})
-								)
-								.catch((error) => {
-									alert("Erro ao adicionar escala!")
-									console.error("Erro na comunicação com a api: ", error);
-								})
-						}
-					}}>{"Adicionar"}</Button>
+							setIsLoading(false)
+					}}}>{"Adicionar"}</Button>
 					<Button className="hover:bg-rose-700" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
 				</DialogFooter>
 			</DialogContent>

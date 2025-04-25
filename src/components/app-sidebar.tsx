@@ -19,10 +19,12 @@ import { useEffect, useState } from "react"
 export function AppSidebar({ lado }: { lado : "left" | "right" }) {
 
     const [isUserAdminOrLeader, setUserAdminOrLeader] = useState(false)
+    const [username, setUsername] = useState("");
 
     useEffect(() => {
         // This code now runs only on the client side, avoiding the ReferenceError
         const userAdmin = sessionStorage.getItem("role") === "ADMIN" || sessionStorage.getItem("role") === "LIDER";
+        setUsername(Cookies.get("username") || "Usuário")
         setUserAdminOrLeader(userAdmin);
       }, []);
 
@@ -35,7 +37,7 @@ export function AppSidebar({ lado }: { lado : "left" | "right" }) {
                     </SidebarGroupLabel>
                     <SidebarGroupLabel className="flex justify-center p-2 m-4">
                         <p className="text-3xl text-primary">
-                            {Cookies.get("username") ? Cookies.get("username") : "Usuário"}
+                            {username}
                         </p>
                     </SidebarGroupLabel>
                     {/* <SidebarTrigger className="data-[sidebar=active]:bg-fuchsia-500 [&>span:last-child]:truncate data-[active=true]:bg-lime-500 [&>svg]:size-4 [&>svg]:shrink-0" /> */}

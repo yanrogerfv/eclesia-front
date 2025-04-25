@@ -21,7 +21,7 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>
 
 export default function LoginPage() {
-    var expireMinutes = 15;
+    var expireMinutes = 150;
     var expireTime = new Date(new Date().getTime() + expireMinutes * 60 * 1000);
     const router = useRouter();
     const form = useForm<FormData>({
@@ -51,16 +51,15 @@ export default function LoginPage() {
                 Cookies.set("username", data.username, { expires: expireTime })
                 sessionStorage.setItem("role", resp.role)
                 sessionStorage.setItem("levita", resp.levita.id)
-                toast.promise(promise(), {
-                    loading: "Carregando...",
-                    success: "Usuário logado com sucesso!",
-                    error: "Erro ao efetuar login!"
-                })
+                toast.success("Usuário logado com sucesso!")
                 router.push("/v0")
             }
             if (!response.ok) {
-                console.error("Erro ao efetuar login!")
-                alert("Erro ao efetuar login!")
+                // const error = await response.json()
+                let resp = await response.json();
+                toast.error("Erro ao fazer login: " + resp.error[0])
+                // toast.error("Erro ao fazer login: ")
+                console.log(response)
             }
         } catch (error) {
             console.error("Erro na comunicação com a api: ", error);

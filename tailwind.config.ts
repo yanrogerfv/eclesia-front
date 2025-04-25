@@ -31,6 +31,7 @@ const config = {
   			ring: 'hsl(var(--ring))',
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
+			tablebg: 'hsl(var(--table-bg))',
   			colortext: 'hsl(var(--colortext))',
 			specialtext: 'hsl(var(--special-text))',
   			cardstartbg: 'hsl(var(--card-start-bg))',

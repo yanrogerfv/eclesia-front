@@ -1,79 +1,9 @@
-"use client"
 
-import { UUID } from "crypto";
-import { SetStateAction, useEffect, useState } from "react";
-import { EscalaResumida, Instrumento, Musica } from "@/lib/apiObjects";
+
 import Cookies from "js-cookie";
+import { toast } from "sonner";
 
-const apiUrl = process.env.API_URL;
-
-export function DeleteLevita(levitaId: UUID) {
-	useEffect(() => {
-		fetch(apiUrl + "levita/" + levitaId.toString(), {
-			method: "DELETE"
-		}).catch((error) => {
-			console.error("Erro na comunicação com a api: ", error);
-		})
-	}, [])
-}
-
-export function DeleteEscala(escalaId: UUID) {
-	useEffect(() => {
-		fetch(apiUrl + "escala/".concat(escalaId.toString()), {
-			method: "DELETE"
-		}).catch((error) => {
-			console.error("Erro na comunicação com a api: ", error);
-		})
-	}, [])
-}
-
-export function CreateMusica(nomeMusica: string, linkMusica: string, cifraMusica: string) {
-	// const [createdMusic, setCreatedMusic] = useState<Musica>()
-	useEffect(() => {
-		fetch("http://localhost:1004/v1/musicas", {
-			method: "POST",
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				nome: nomeMusica,
-				link: linkMusica,
-				cifra: cifraMusica
-			})
-		}).then((res) => res.json())
-			// .then((data) => setCreatedMusic(data))
-			.catch((error) => {
-				console.error("Erro na comunicação com a api: ", error);
-			})
-	}, [])
-	// return createdMusic;
-}
-export function DeleteMusica(musicaId: UUID) {
-	useEffect(() => {
-		fetch(apiUrl + "musicas/".concat(musicaId.toString()), {
-			method: "DELETE"
-		}).catch((error) => {
-			console.error("Erro na comunicação com a api: ", error);
-		})
-	}, [])
-}
-
-export function GetInstrumentos() {
-	const [instrumentosBase, setInstrumentosBase] = useState<Instrumento[]>([])
-
-	useEffect(() => {
-		fetch("http://localhost:1004/v1/instrumento")
-			.then((res) => res.json())
-			.then((data) => {
-				setInstrumentosBase(data)
-			})
-			.catch((error) => {
-				console.error("Erro na comunicação com a api: ", error)
-				setInstrumentosBase([]);
-			})
-	}, [instrumentosBase])
-	return instrumentosBase;
-}
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 /**
  * Function to perform a GET request to the API
@@ -84,17 +14,21 @@ export function GetInstrumentos() {
  * @param setState - SetStateAction to update the state with the response data
  */
 export async function getMethod<T>(url: string, setState: React.Dispatch<React.SetStateAction<T>>) {
-	const req = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${url}`, {
+	const req = await fetch(`${apiUrl}${url}`, {
 		method: "GET",
 		headers: {
 			"Content-Type": "application/json",
 			"Authorization": `Bearer ${Cookies.get("token")}`
 		}
 	}).catch((error) => {
-		console.error("Erro na comunicação com a api: ", error);
+		if (error instanceof TypeError) {
+		} else {
+			console.error("Erro na comunicação com a api DENTRO DO CATCH AAAAA: ", error);
+		}
 	});
-	if (req?.status !== 200) {
-		console.error(`Erro na comunicação com a api: ${req?.status}`);
+	if (req?.status !== 200 && req?.status) {
+		console.error(`Erro na comunicação com a api: ${req}`);
+		// console.error(`Erro na comunicação com a api: ${req?.status}`);
 	}
 	const data = await req?.json();
 	setState(data);
@@ -110,22 +44,22 @@ export async function getMethod<T>(url: string, setState: React.Dispatch<React.S
  * @param setState - SetStateAction to update the state with the response data
  */
 export async function postMethod<T>(url: string, body: body, setState?: React.Dispatch<React.SetStateAction<T>>) {
-	const req = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${url}`, {
+	const req = await fetch(`${apiUrl}${url}`, {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
 			"Authorization": `Bearer ${Cookies.get("token")}`
 		},
 		body: JSON.stringify(body)
-	}).catch((error) => {
-		console.error("Erro na comunicação com a api: ", error);
-	});
+	})
 	if (req) {
-		const status = req.status;
-		if (status !== 200) {
-			console.error(`Erro na comunicação com a api: ${status}`);
-		}
+		const isOk = req.ok;
 		const data = await req.json();
+		if (!isOk) {
+			data.error.forEach((error: string) => {
+				toast.error(error);
+			})
+		}
 		if (setState)
 			setState(data);
 	}
@@ -143,7 +77,7 @@ export async function postMethod<T>(url: string, body: body, setState?: React.Di
  * @param setState - SetStateAction to update the state with the response data
  */
 export async function putMethod<T>(url: string, body: body, setState?: React.Dispatch<React.SetStateAction<T | undefined>> | undefined) {
-	const req = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${url}`, {
+	const req = await fetch(`${apiUrl}${url}`, {
 		method: "PUT",
 		headers: {
 			"Content-Type": "application/json",
@@ -172,7 +106,7 @@ export async function putMethod<T>(url: string, body: body, setState?: React.Dis
  * @param url - Request URL
  */
 export async function deleteMethod<T>(url: string) {
-	const req = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${url}`, {
+	const req = await fetch(`${apiUrl}${url}`, {
 		method: "DELETE",
 		headers: {
 			"Authorization": `Bearer ${Cookies.get("token")}`
@@ -185,6 +119,5 @@ export async function deleteMethod<T>(url: string) {
 		if (status !== 200) {
 			console.error(`Erro na comunicação com a api: ${status}`);
 		}
-		// const data = await req.json();
 	}
 } 

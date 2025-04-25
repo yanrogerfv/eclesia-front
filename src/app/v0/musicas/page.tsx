@@ -75,14 +75,14 @@ export default function Home() {
 			<br />
 
 			{isLoading ? (
-				<div className="col-span-4 h-full flex items-center justify-center mt-20">
+				<div className="col-span-4 h-full w-full flex items-center justify-center mt-20">
 					<div className="size-80 border-4 border-transparent text-primary/40 text-4xl animate-spin flex items-center justify-center border-t-primary rounded-full">
 						<div className="size-64 border-4 border-transparent text-subprimary/40 text-2xl animate-spin flex items-center justify-center border-t-subprimary rounded-full" />
 					</div>
 				</div>
 			) : (
-				<Card className="flex p-3">
-					<Table className="bg-black/70 rounded-xl">
+				<Card className="flex p-3 w-full">
+					<Table className="bg-tablebg rounded-xl">
 						{/* <TableCaption>Listagem das músicas cadastradas.</TableCaption> */}
 						<TableHeader>
 							<TableRow>
