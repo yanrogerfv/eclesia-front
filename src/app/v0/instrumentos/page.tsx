@@ -11,6 +11,13 @@ import { useEffect, useState } from "react";
 export default function Home() {
 	const [isLoading, setLoading] = useState(true)
 	const [instrumentosData, setInstrumentosData] = useState<Instrumento[] | undefined>(undefined)
+	const [isLeader, setLeader] = useState(false)
+
+	useEffect(() => {
+		if (sessionStorage.getItem("role") == "LIDER" || sessionStorage.getItem("role") == "ADMIN") {
+			setLeader(true)
+		}
+	}, [])
 
 	useEffect(() => {
 		setLoading(true)
@@ -33,10 +40,8 @@ export default function Home() {
 						<h1 className="mx-5 font-extrabold tracking-tight text-5xl">Instrumentos</h1>
 					</div>
 					<div className="flex">
-						{(sessionStorage.getItem("role") == "ADMIN" || sessionStorage.getItem("role") == "LIDER") && 
-							<DialogAddInstrumento disabled={isLoading} state={setInstrumentosData} />}
-						{(sessionStorage.getItem("role") == "ADMIN" || sessionStorage.getItem("role") == "LIDER") && 
-							<DialogRemoveInstrumento allInstrumentos={instrumentosData ? instrumentosData : undefined} state={setInstrumentosData}/>}
+						{isLeader && <DialogAddInstrumento disabled={isLoading} state={setInstrumentosData} />}
+						{isLeader && <DialogRemoveInstrumento allInstrumentos={instrumentosData ? instrumentosData : undefined} state={setInstrumentosData}/>}
 					</div>
 				</div>
 				<br />

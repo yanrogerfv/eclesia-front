@@ -31,6 +31,14 @@ export default function Home() {
 	const [filteredEscalas, setFilteredEscalas] = useState<EscalaResumida[] | undefined>(undefined);
 	const [levitasDisponiveis, setLevitasDisponiveis] = useState<Levita[] | undefined>(undefined);
 
+	const [isLeader, setLeader] = useState(false)
+
+	useEffect(() => {
+		if (sessionStorage.getItem("role") == "LIDER" || sessionStorage.getItem("role") == "ADMIN") {
+			setLeader(true)
+		}
+	}, [])
+
 	useEffect(() => {
 		if (escalasData && levitasDisponiveis) return;
 		getMethod<EscalaResumida[] | undefined>("v1/escala/resumed", setEscalasData);
@@ -63,8 +71,8 @@ export default function Home() {
 							<h1 className="ml-4 font-extrabold tracking-tight text-2xl sm:text-5xl">Escalas</h1>
 						</div>
 						<div className="flex w-full justify-between sm:justify-end gap-2 mt-4 sm:w-full">
-							{(sessionStorage && sessionStorage.getItem("role") == "ADMIN" || sessionStorage.getItem("role") == "LIDER") && <AddEscala disabled={escalasData === undefined} />}
-							{(sessionStorage && sessionStorage.getItem("role") == "ADMIN" || sessionStorage.getItem("role") == "LIDER") && <Button
+							{isLeader && <AddEscala disabled={escalasData === undefined} />}
+							{isLeader && <Button
 								variant="outline"
 								disabled={escalasData === undefined}
 								className={removeOverlay ? "font-bold bg-rose-500/80 border-rose-600/90 hover:bg-rose-600/40" : "font-bold hover:bg-rose-500/40"}
@@ -116,7 +124,7 @@ export default function Home() {
 										<X className={removeOverlay ? "absolute hover:cursor-pointer bg-rose-500/80 rounded-br-xl" : "absolute invisible"}
 											onClick={() => {
 												deleteMethod(`v1/escala/${escala.id}`)
-													.then(() => toast.success("Escala "+escala.titulo+" removida com sucesso!"))
+													.then(() => toast.success("Escala " + escala.titulo + " removida com sucesso!"))
 													.catch((error: any) => toast.error("Erro ao remover escala: " + error))
 											}}
 										/>

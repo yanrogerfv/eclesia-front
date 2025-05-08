@@ -25,6 +25,13 @@ export default function Home() {
 	const [isLoading, setLoading] = useState(true)
 	const [searchItem, setSearchItem] = useState("");
 	const [update, setUpdate] = useState(false)
+	const [isLeader, setLeader] = useState(false)
+
+	useEffect(() => {
+		if (sessionStorage.getItem("role") == "LIDER" || sessionStorage.getItem("role") == "ADMIN") {
+			setLeader(true)
+		}
+	}, [])
 
 	useEffect(() => {
 		if (!filteredMusicas)
