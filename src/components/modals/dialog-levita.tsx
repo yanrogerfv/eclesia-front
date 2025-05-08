@@ -19,6 +19,7 @@ import { Checkbox } from "../ui/checkbox";
 import { getMethod, postMethod } from "@/lib/apiRequests";
 import { Textarea } from "../ui/textarea";
 import Cookies from "js-cookie";
+import { toast } from "sonner";
 
 export function DialogVerLevita(props: {
     levita: Levita,
@@ -34,10 +35,9 @@ export function DialogVerLevita(props: {
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle className="text-primary">{props.levita.nome}</DialogTitle>
-                    <DialogDescription>
-                        <p className="flex border-b">{props.levita.instrumentos.map(i => i.nome).join(" - ")}</p>
+                    <DialogDescription className="flex border-b">
+                        {props.levita.instrumentos.map(i => i.nome).join(" - ")}
                     </DialogDescription>
-                    <br />
                 </DialogHeader>
                 <p className="text-colortext text-center">{props.levita.descricao ? props.levita.descricao : "Nenhuma descrição inserida para este levita."}</p>
                 <DialogFooter>
@@ -248,10 +248,17 @@ export function DialogEditLevita(levita: Levita) {
                             contato: contatoLevita,
                             descricao: descricaoLevita,
                             instrumentos: instrumentosLevita.map((instrumento) => instrumento.id)
-                        }, () => {
-                            setLoading(false)
-                            setOpen(false)
+                        }).catch((error) => {
+                            console.error("Erro na comunicação com a api: ", error);
+                            toast.error("Erro ao editar Levita.")
+                        }).finally(() => {
+                            toast.success("Levita editado com sucesso!")
+                            new Promise(resolve => setTimeout(resolve, 2500)).then(() => {
+                                setOpen(false)
+                                window.location.reload()
+                            })
                         })
+                        setLoading(false)
                     }}>Salvar</Button>
                     <Button className="hover:bg-rose-600/80" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
                 </DialogFooter>

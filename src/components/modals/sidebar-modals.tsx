@@ -52,8 +52,8 @@ export function SidebarNextEvents({ icon, title, style }: SidebarModalsProps) {
                     <DialogTitle>
                         {title}
                     </DialogTitle>
-                    <DialogDescription>
-                        {loading ? "Carregando..." : escalas ? "Escala carregada" : "Erro ao carregar escala"}
+                    <DialogDescription className="border-b-2 border-black/25">
+                        {loading ? "Carregando..." : escalas ? "Escalas programadas para os próximos eventos especiais!" : "Erro ao carregar escalas"}
                     </DialogDescription>
                 </DialogHeader>
                 {/* Content aqui */}
@@ -66,19 +66,13 @@ export function SidebarNextEvents({ icon, title, style }: SidebarModalsProps) {
                                 <CardTitle className={escala.domingo ? "text-primary" : escala.quarta ? "text-secondary" : "text-special"}>
                                     {escala.titulo}
                                 </CardTitle>
-                                {convertDateFormat(escala.data)}
                                 <CardDescription>
-                                    {escala.observacoes ?
-                                        // {escala.observacoes.length > 0
-                                        // ? escala.observacoes.length > 30
-                                        // ? escala.observacoes.substring(0, 28).trimEnd().concat("...")
-                                        escala.observacoes
-                                        : "Sem observações."}
+                                    {convertDateFormat(escala.data)}
                                 </CardDescription>
                             </CardHeader>
                             <CardContent>
                                 <p>
-                                    <span className="text-subprimary">Ministro:</span> <span className="text-secondary">{escala.ministro}</span>
+                                    <span className="text-special">Ministro:</span> <span className="text-primary">{escala.ministro}</span>
                                 </p>
                                 <p>
                                     <span className="text-subprimary">Violão:</span> {escala.violao ? escala.violao : <span className="text-secondary/40">Não inserido.</span>}
@@ -196,11 +190,11 @@ export function SidebarMyAgenda({ icon, title, style }: SidebarModalsProps) {
                         </CardHeader>
                         <CardContent className="justify-center">
                             <p className="flex justify-center text-center">
-                                Selecione ao lado as datas que você não estará disponível para ser escalado,
-                                seja por viagens, aniversários, compromissos, etc.
+                                Selecione ao lado as datas que você não estará disponível,
+                                seja por viagens, aniversários ou outros compromissos.
                             </p>
                             <p className="mt-2 flex justify-center text-center text-sm text-red-300">
-                                Datas que você já foi escalado não podem ser removidas.
+                                Datas em que você já está em uma escala não podem ser removidas.
                             </p>
                         </CardContent>
                         <CardFooter className="flex justify-center bottom-0">
@@ -259,9 +253,19 @@ export function SidebarMyEscalas({ icon, title, style }: SidebarModalsProps) {
                     </DialogDescription>
                 </DialogHeader>
                 {/* Content aqui */}
-                <div className={!escalas ? "" :
+                <div className={!escalas || escalas.length === 0 ? "" :
                     "grid grid-cols-2 gap-4"}>
-                    {Array.isArray(escalas) && escalas.map((escala) => (
+                    {loading || !escalas ? (
+                        <div className="flex justify-center items-center h-40">
+                            <div className="h-16 w-16 border-4 border-primary rounded-3xl animate-spin" />
+                        </div>
+                    ) : escalas.length === 0 ? (
+                        <Card className="text-center">
+                            <p className="p-6 sm:p-10 text-lg sm:text-2xl text-zinc-400/80">
+                                Você não está em nenhuma escala no momento.
+                            </p>
+                        </Card>
+                    ) : Array.isArray(escalas) && escalas.map((escala) => (
                         <Card key={escala.id} className={`col-span-1 ${new Date(escala.data) < new Date() ? 'opacity-60 grayscale' : ''}`}>
                             <CardHeader className="items-center lg:items-start">
                                 <CardTitle className={escala.domingo ? "text-primary" : escala.quarta ? "text-secondary" : "text-special"}>
@@ -364,7 +368,7 @@ export function SidebarAddUser({ icon, title, style }: SidebarModalsProps) {
                         Aqui você pode adicionar um novo usuário.
                     </DialogDescription>
                 </DialogHeader>
-                <br/>
+                <br />
                 <Label>Usuário</Label>
                 <Input inert placeholder="Insira o usuário que será usado para login." />
                 <Label>Senha</Label>
@@ -384,7 +388,7 @@ export function SidebarAddUser({ icon, title, style }: SidebarModalsProps) {
                         <Label htmlFor="admin">Admin</Label>
                     </div>
                 </RadioGroup>
-                <br/>
+                <br />
 
                 <Label>Selecione o Levita que deseja associar a conta:</Label>
                 <Card className="bg-transparent grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1">
@@ -395,7 +399,7 @@ export function SidebarAddUser({ icon, title, style }: SidebarModalsProps) {
                         : levitas.map((levita) => (
                             <Button key={levita.id} variant={"outline"} type="submit"
                                 className={`p-2 rounded-lg m-2 ${levitaToAdd?.id == levita.id ? "bg-primary/80" : ""}`}
-                                onClick={() => setLevitaToAdd(levita)}>{levita.nome.split(" ").length > 1 ? 
+                                onClick={() => setLevitaToAdd(levita)}>{levita.nome.split(" ").length > 1 ?
                                     levita.nome.split(" ")[0].concat(" ").concat(levita.nome.split(" ")[1].charAt(0)).concat(".") : levita.nome}</Button>
                         ))}
                 </Card>

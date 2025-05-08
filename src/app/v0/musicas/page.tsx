@@ -81,8 +81,8 @@ export default function Home() {
 					</div>
 				</div>
 			) : (
-				<Card className="flex p-3 w-full">
-					<Table className="bg-tablebg rounded-xl">
+				<Card className="flex p-3 w-full max-h-[42rem] scrollbar-hidden">
+					<Table className="bg-tablebg rounded-xl h-full">
 						{/* <TableCaption>Listagem das músicas cadastradas.</TableCaption> */}
 						<TableHeader>
 							<TableRow>

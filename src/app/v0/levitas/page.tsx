@@ -48,6 +48,13 @@ export default function Home() {
 	const [reload, setReload] = useState(false)
 	const [filteredInstruments, setFilteredInstruments] = useState<Instrumento[]>([])
 	const [filteredLevitas, setFilteredLevita] = useState<Levita[] | undefined>(undefined)
+	const [leader, setLeader] = useState(false)
+
+	useEffect(() => {
+		if (sessionStorage.getItem("role") == "LIDER" || sessionStorage.getItem("role") == "ADMIN") {
+			setLeader(true)
+		}
+	}, [])
 
 	useEffect(() => {
 		if (!filteredLevitas)
@@ -92,8 +99,8 @@ export default function Home() {
 								<h1 className="mx-5 font-extrabold tracking-tight text-5xl">Levitas</h1>
 							</div>
 							<div>
-								{(sessionStorage.getItem("role") == "ADMIN" || sessionStorage.getItem("role") == "LIDER") && <DialogAddLevita />}
-								{(sessionStorage.getItem("role") == "ADMIN" || sessionStorage.getItem("role") == "LIDER") &&
+								{leader && <DialogAddLevita />}
+								{leader &&
 									<Button variant="outline" className={removeOverlay ? "mx-2 font-bold bg-rose-500/80 border-rose-600/90 hover:bg-rose-600/40"
 										: "mx-2 font-bold hover:bg-rose-500/40"}
 										onClick={() => setRemoveOverlay(!removeOverlay)}>

@@ -83,7 +83,7 @@ export function VerEscala(props: props) {
 						{convertDateFormat(escalaData ? escalaData.data : undefined)}
 					</DialogDescription>
 					<br />
-					<p className="text-subprimary">Ministro: <a className="text-secondary">{escalaData?.ministro.nome}</a></p>
+					<p className="text-special">Ministro: <a className="text-secondary">{escalaData?.ministro.nome}</a></p>
 					<p className="text-subprimary">Violão: {escalaData?.violao ? <a className="text-colortext"> {escalaData.violao.nome}</a> : <a className="text-colortext/50">Não inserido.</a>}</p>
 					<p className="text-subprimary">Teclado: {escalaData?.teclado ? <a className="text-colortext"> {escalaData.teclado.nome}</a> : <a className="text-colortext/50">Não inserido.</a>}</p>
 					<p className="text-subprimary">Bateria: {escalaData?.bateria ? <a className="text-colortext"> {escalaData.bateria.nome}</a> : <a className="text-colortext/50">Não inserido.</a>}</p>
@@ -428,7 +428,7 @@ export function AddEscala({ disabled }: { disabled?: boolean }) {
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
-				<Button variant={"outline"} className="hover:text-emerald-500" disabled={false}>
+				<Button variant={"outline"} className="hover:text-emerald-500" disabled={disabled}>
 					<CirclePlus className="mx-1 text-emerald-500" />Criar Escala</Button>
 			</DialogTrigger>
 			<DialogContent >
@@ -455,9 +455,9 @@ export function AddEscala({ disabled }: { disabled?: boolean }) {
 					<Label>Data:</Label>
 					{/* <DayPicker onDayClick={(day) => setData(day.toISOString())} /> */}
 					<Input type="date" value={data} onChange={(e) => setData(e.target.value)} />
-					<div className="my-2">
+					<div className="flex items-center justify-start gap-2 my-4">
 						<Label>Especial:</Label>
-						<Checkbox className="mx-2" onClick={() => setEspecial(!especial)} />
+						<Checkbox className="" onClick={() => setEspecial(!especial)} />
 					</div>
 
 					<Label>Ministro</Label>
@@ -600,7 +600,8 @@ export function AddEscala({ disabled }: { disabled?: boolean }) {
 								console.error("Erro na comunicação com a api: ", error);
 							})
 							setIsLoading(false)
-					}}}>{"Adicionar"}</Button>
+						}
+					}}>{"Adicionar"}</Button>
 					<Button className="hover:bg-rose-700" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
 				</DialogFooter>
 			</DialogContent>
@@ -622,7 +623,6 @@ export function DialogAddMusicaInEscala(props: DialogAddMusicaInEscalaProps) {
 	useEffect(() => {
 		if (musicas != undefined) return;
 		getMethod<Musica[] | undefined>("v1/musicas", setMusicas)
-		console.log(musicas)
 	}, [musicas])
 
 	function getSelectedMusicas() {
@@ -644,29 +644,32 @@ export function DialogAddMusicaInEscala(props: DialogAddMusicaInEscalaProps) {
 			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>Adicionar Música</DialogTitle>
-					<br />
-					<Label>Músicas para adicionar:</Label>
-					<Select onValueChange={(value) => addSelectedMusica(value)} disabled={!musicas}>
-						<SelectTrigger>
-							<SelectValue placeholder={"Selecione músicas."} />
-						</SelectTrigger>
-						<SelectContent>
-							{musicas?.filter((musica) => !selectedMusicas.includes(musica.id)).map((musica) => (
-								<SelectItem value={musica.id} key={musica.id} onSelect={() => addSelectedMusica(musica.id)}>{musica.nome}</SelectItem>
-							))}
-						</SelectContent>
-					</Select>
-					<br />
-					<Label>Músicas selecionadas:</Label>
-					<Card className="bg-transparent grid grid-flow-row">
-						{getSelectedMusicas().map((musica) => (
-							<Button key={musica?.id} variant={"outline"} type="submit" className="p-2 rounded-lg m-2 hover:bg-red-400/50"
-								onClick={() => removeSelectedMusica(musica ? musica.id : "")}>{musica?.nome}</Button>
-						))}
-					</Card>
-					<br />
-
+					<DialogDescription className="border-b grayscale">
+						Selecione as músicas que deseja adicionar a escala {props.escala?.titulo}.
+					</DialogDescription>
 				</DialogHeader>
+				<br/>
+				<Label>Músicas para adicionar:</Label>
+				<Select onValueChange={(value) => addSelectedMusica(value)} disabled={!musicas}>
+					<SelectTrigger>
+						<SelectValue placeholder={"Selecione músicas."} />
+					</SelectTrigger>
+					<SelectContent>
+						{musicas?.filter((musica) => !selectedMusicas.includes(musica.id)).map((musica) => (
+							<SelectItem value={musica.id} key={musica.id} onSelect={() => addSelectedMusica(musica.id)}>{musica.nome}</SelectItem>
+						))}
+					</SelectContent>
+				</Select>
+				<br />
+				<Label>Músicas selecionadas:</Label>
+				<Card className="bg-transparent grid grid-flow-row">
+					{getSelectedMusicas().map((musica) => (
+						<Button key={musica?.id} variant={"outline"} type="submit" className="p-2 rounded-lg m-2 hover:bg-red-400/50"
+							onClick={() => removeSelectedMusica(musica ? musica.id : "")}>{musica?.nome}</Button>
+					))}
+				</Card>
+				<br />
+
 				<DialogFooter className="">
 					<Button className="hover:bg-emerald-500"
 						type="submit" disabled={isLoading} onClick={() => {
