@@ -8,14 +8,13 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { ChevronLeft, CircleMinus, ListFilter, ListFilterIcon } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import { TbMusicX } from "react-icons/tb";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 import { Musica } from "@/lib/apiObjects";
 import { DialogAddMusica } from "@/components/modals/dialog-musica";
-import { useToast } from "@/components/ui/use-toast";
 import { deleteMethod, getMethod } from "@/lib/apiRequests";
 import { toast } from "sonner";
 
@@ -26,9 +25,6 @@ export default function Home() {
 	const [isLoading, setLoading] = useState(true)
 	const [searchItem, setSearchItem] = useState("");
 	const [update, setUpdate] = useState(false)
-	// const { toast } = useToast();
-
-	const promise = () => new Promise((resolve) => setTimeout(() => resolve({ name: "Sonner" }), 3000))
 
 	useEffect(() => {
 		if (!filteredMusicas)
@@ -100,14 +96,9 @@ export default function Home() {
 									<TableCell><Link href={musica.link} target="_blank">{musica.link}</Link></TableCell>
 									<TableCell><TbMusicX className="justify-end size-5 hover:cursor-pointer hover:text-red-500/90"
 										onClick={() => {
-											// deleteMethod(`musicas/${musica.id}`)
-											// toast.promise(promise(), {
-											// 	loading: "Carregando...",
-											// 	success: "Usuário logado com sucesso!",
-											// 	error: "Erro ao efetuar login!"
-											// })
 											deleteMethod(`musicas/${musica.id}`)
 												.then(() => {
+													toast.success("Música excluída com sucesso!")
 													setLoading(true)
 													setFilteredMusicas(undefined)
 													setMusicas(undefined)
