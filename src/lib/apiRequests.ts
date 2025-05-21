@@ -43,7 +43,7 @@ export async function getMethod<T>(url: string, setState: React.Dispatch<React.S
  * @param body - Fields with the parameters to be passed as a body of the request
  * @param setState - SetStateAction to update the state with the response data
  */
-export async function postMethod<T>(url: string, body: body, setState?: React.Dispatch<React.SetStateAction<T>>) {
+export async function postMethod<T>(url: string, body: body, setState?: React.Dispatch<React.SetStateAction<T>>, errorMessage?: string) {
 	const req = await fetch(`${apiUrl}${url}`, {
 		method: "POST",
 		headers: {
@@ -57,7 +57,7 @@ export async function postMethod<T>(url: string, body: body, setState?: React.Di
 		const data = await req.json();
 		if (!isOk) {
 			data.error.forEach((error: string) => {
-				toast.error(error);
+				toast.error(errorMessage ? `${errorMessage}: ${error}` : error);
 			})
 		}
 		if (setState)
