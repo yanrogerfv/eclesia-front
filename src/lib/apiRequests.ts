@@ -23,12 +23,13 @@ export async function getMethod<T>(url: string, setState: React.Dispatch<React.S
 	}).catch((error) => {
 		if (error instanceof TypeError) {
 		} else {
-			console.error("Erro na comunicação com a api DENTRO DO CATCH AAAAA: ", error);
+			console.error("Erro na comunicação com a api: ", error);
+			toast.error("Erro na comunicação com a api: ", error);
 		}
 	});
 	if (req?.status !== 200 && req?.status) {
 		console.error(`Erro na comunicação com a api: ${req}`);
-		// console.error(`Erro na comunicação com a api: ${req?.status}`);
+		toast.error(`Erro na comunicação com a api: ${req}`);
 	}
 	const data = await req?.json();
 	setState(data);
@@ -86,10 +87,12 @@ export async function putMethod<T>(url: string, body: body, setState?: React.Dis
 		body: JSON.stringify(body)
 	}).catch((error) => {
 		console.error("Erro na comunicação com a api: ", error);
+		toast.error("Erro na comunicação com a api: ", error);
 	});
 	if (req) {
 		const status = req.status;
 		if (status !== 200) {
+			toast.error(`Erro na comunicação com a api: ${status}`);
 			console.error(`Erro na comunicação com a api: ${status}`);
 		}
 		const data = await req.json();
@@ -113,11 +116,13 @@ export async function deleteMethod<T>(url: string) {
 		},
 	}).catch((error) => {
 		console.error("Erro na comunicação com a api: ", error);
+		toast.error("Erro na comunicação com a api: ", error);
 	});
 	if (req) {
 		const status = req.status;
 		if (status !== 200) {
 			console.error(`Erro na comunicação com a api: ${status}`);
+			toast.error(`Erro na comunicação com a api: ${status}`);
 		}
 	}
 } 

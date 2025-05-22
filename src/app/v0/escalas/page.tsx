@@ -27,6 +27,7 @@ export default function Home() {
 	const [quartaFilter, setQuartaFilter] = useState(false);
 	const [especialFilter, setEspecialFilter] = useState(false);
 
+	const [isLoading, setIsLoading] = useState(true);
 	const [escalasData, setEscalasData] = useState<EscalaResumida[] | undefined>(undefined);
 	const [filteredEscalas, setFilteredEscalas] = useState<EscalaResumida[] | undefined>(undefined);
 	const [levitasDisponiveis, setLevitasDisponiveis] = useState<Levita[] | undefined>(undefined);
@@ -49,6 +50,7 @@ export default function Home() {
 	useEffect(() => {
 		if (!escalasData) return;
 		setFilteredEscalas(escalasData);
+		setIsLoading(false);
 	}, [escalasData]);
 
 	useEffect(() => {
@@ -61,48 +63,41 @@ export default function Home() {
 
 	return (
 		<SidebarProvider defaultOpen={false}>
-			<main className="max-w-6xl w-full px-4 sm:px-8 lg:px-6 mx-auto my-6 sm:my-12">
-				<nav>
-					<div className="flex flex-wrap md:flex-nowrap justify-between items-center">
-						<div className="flex items-center">
-							<Link href="/v0" className="w-auto text-2xl sm:text-4xl flex items-center p-2 cursor-pointer outline outline-1 outline-primary/50 hover:bg-secondary hover:text-black rounded-lg">
-								<ChevronLeft className="h-6 w-6 sm:h-8 sm:w-8" />
-							</Link>
-							<h1 className="ml-4 font-extrabold tracking-tight text-2xl sm:text-5xl">Escalas</h1>
+			<>
+				<main className="max-w-6xl w-full px-4 sm:px-8 lg:px-6 mx-auto my-6 sm:my-12">
+					<nav>
+						<div className="flex flex-wrap md:flex-nowrap justify-between items-center">
+							<div className="flex items-center">
+								<Link href="/v0" className="w-auto text-2xl sm:text-4xl flex items-center p-2 cursor-pointer outline outline-1 outline-primary/50 hover:bg-secondary hover:text-black rounded-lg">
+									<ChevronLeft className="h-6 w-6 sm:h-8 sm:w-8" />
+								</Link>
+								<h1 className="ml-4 font-extrabold tracking-tight text-2xl sm:text-5xl">Escalas</h1>
+							</div>
+							<div className="flex w-full justify-between sm:justify-end gap-2 mt-4 sm:w-full">
+								{isLeader && <AddEscala disabled={escalasData === undefined} setEscalas={setEscalasData} />}
+								{isLeader && <Button
+									variant="outline"
+									disabled={escalasData === undefined}
+									className={removeOverlay ? "font-bold bg-rose-500/80 border-rose-600/90 hover:bg-rose-600/40" : "font-bold hover:bg-rose-500/40"}
+									onClick={() => setRemoveOverlay(!removeOverlay)}>
+									<CircleMinus className="mx-1 text-rose-500" />Excluir Escala
+								</Button>}
+							</div>
 						</div>
-						<div className="flex w-full justify-between sm:justify-end gap-2 mt-4 sm:w-full">
-							{isLeader && <AddEscala disabled={escalasData === undefined} />}
-							{isLeader && <Button
-								variant="outline"
-								disabled={escalasData === undefined}
-								className={removeOverlay ? "font-bold bg-rose-500/80 border-rose-600/90 hover:bg-rose-600/40" : "font-bold hover:bg-rose-500/40"}
-								onClick={() => setRemoveOverlay(!removeOverlay)}>
-								<CircleMinus className="mx-1 text-rose-500" />Excluir Escala
-							</Button>}
-						</div>
-					</div>
+						<br />
+						<h2 className="border-b text-sm sm:text-base text-neutral-700 tracking-tight">
+							{!filteredEscalas ? "Carregando Escalas..." : "Visualizando Escalas"}
+						</h2>
+					</nav>
 					<br />
-					<h2 className="border-b text-sm sm:text-base text-neutral-700 tracking-tight">
-						{!filteredEscalas ? "Carregando Escalas..." : "Visualizando Escalas"}
-					</h2>
-				</nav>
-				<br />
-
-				{!filteredEscalas ? (
-					<div className="flex w-full items-center justify-center mt-20 z-50">
-						<div className="size-80 border-4 border-transparent text-primary/40 text-4xl animate-spin flex items-center justify-center border-t-primary rounded-full">
-							<div className="size-64 border-4 border-transparent text-subprimary/40 text-2xl animate-spin flex items-center justify-center border-t-subprimary rounded-full" />
-						</div>
-					</div>
-				) : (
 					<div>
 						<div className="flex flex-col md:flex-row justify-between items-center gap-2 sm:gap-4 md:gap-6">
 							<Button variant="outline" className={"md:flex-1 w-full text-lg hover:text-foreground rounded-lg text-primary hover:bg-primary".concat(domingoFilter ? " bg-primary text-foreground" : "")}
-								onClick={() => setDomingoFilter(!domingoFilter)}>Domingos</Button>
+								onClick={() => setDomingoFilter(!domingoFilter)} disabled={isLoading}>Domingos</Button>
 							<Button variant="outline" className={"md:flex-1 w-full text-lg hover:text-foreground rounded-lg text-subprimary hover:bg-secondary".concat(quartaFilter ? " bg-secondary text-foreground" : "")}
-								onClick={() => setQuartaFilter(!quartaFilter)}>Quartas</Button>
+								onClick={() => setQuartaFilter(!quartaFilter)} disabled={isLoading}>Quartas</Button>
 							<Button variant="outline" className={"md:flex-1 w-full text-lg hover:text-foreground rounded-lg text-special hover:bg-special".concat(especialFilter ? " bg-special text-foreground" : "")}
-								onClick={() => setEspecialFilter(!especialFilter)}>Especiais</Button>
+								onClick={() => setEspecialFilter(!especialFilter)} disabled={isLoading}>Especiais</Button>
 						</div>
 						<br />
 
@@ -117,15 +112,26 @@ export default function Home() {
 								</p>
 							</Card>
 						) : (
-							<div className={Array.isArray(filteredEscalas) && filteredEscalas.length === 0 ? "" :
-								"grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-8"}>
-								{Array.isArray(filteredEscalas) && filteredEscalas.map((escala) => (
+							<div className={isLoading ? "grid grid-cols-1" : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-8"}>
+								{isLoading ? (
+
+										<div className="flex items-center justify-center z-50">
+											<div className="size-80 border-4 border-transparent text-primary/40 text-4xl animate-spin flex items-center justify-center border-t-primary rounded-full">
+												<div className="size-64 border-4 border-transparent text-subprimary/40 text-2xl animate-spin flex items-center justify-center border-t-subprimary rounded-full" />
+											</div>
+										</div>
+								) : Array.isArray(filteredEscalas) && filteredEscalas.map((escala) => (
 									<Card key={escala.id} className={`${removeOverlay ? "animate-pulse" : ""} ${new Date(escala.data) < new Date() ? 'opacity-60 grayscale' : ''}`}>
 										<X className={removeOverlay ? "absolute hover:cursor-pointer bg-rose-500/80 rounded-br-xl" : "absolute invisible"}
 											onClick={() => {
+												setIsLoading(true);
 												deleteMethod(`v1/escala/${escala.id}`)
-													.then(() => toast.success("Escala " + escala.titulo + " removida com sucesso!"))
 													.catch((error: any) => toast.error("Erro ao remover escala: " + error))
+													.then(() => toast.success("Escala " + escala.titulo + " removida com sucesso!"))
+													.then(() => {
+														setEscalasData(undefined);
+														setRemoveOverlay(false);
+													})
 											}}
 										/>
 										<CardHeader className="items-center lg:items-start">
@@ -134,7 +140,7 @@ export default function Home() {
 											</CardTitle>
 											{convertDateFormat(escala.data)}
 											<CardDescription>
-												{escala.observacoes.length > 0
+												{escala.observacoes && escala.observacoes.length > 0
 													? escala.observacoes.length > 30
 														? escala.observacoes.substring(0, 28).trimEnd().concat("...")
 														: escala.observacoes
@@ -174,8 +180,8 @@ export default function Home() {
 							</div>
 						)}
 					</div>
-				)}
-			</main>
+				</main>
+			</>
 			<SidebarTrigger />
 			<AppSidebar lado="right" />
 		</SidebarProvider>

@@ -33,7 +33,7 @@ export function AppSidebar({ lado }: { lado : "left" | "right" }) {
             <SidebarContent className="h-screen flex flex-col">
                 <SidebarGroup>
                     <SidebarGroupLabel className="flex justify-between p-4">
-                        Meu Perfil <UserCircle2 size={20} />
+                        Eclesia <UserCircle2 size={20} />
                     </SidebarGroupLabel>
                     <SidebarGroupLabel className="flex justify-center p-2 m-4">
                         <p className="text-3xl text-primary">

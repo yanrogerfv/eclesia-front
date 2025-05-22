@@ -1,5 +1,5 @@
 import { ReactElement, useEffect, useState } from "react";
-import { convertDateFormat, Escala, EscalaResumida, Levita, UserDTO } from "@/lib/apiObjects";
+import { convertDateFormat, Escala, EscalaResumida, Levita, RoleDTO, UserDTO } from "@/lib/apiObjects";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "../ui/dialog";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card";
 import { VerEscala } from "./dialog-escala";
@@ -11,7 +11,8 @@ import { ptBR } from "date-fns/locale";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { getMethod, postMethod } from "@/lib/apiRequests";
-import { RadioGroup } from "@radix-ui/react-menubar";
+import { toast } from "sonner";
+import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 
 interface SidebarModalsProps {
     icon: ReactElement,
@@ -150,7 +151,7 @@ export function SidebarMyAgenda({ icon, title, style }: SidebarModalsProps) {
             setDates
         ).then(() => {
             setOpen(false)
-            alert("Agenda atualizada com sucesso!")
+            toast.info("Agenda atualizada com sucesso!")
         })
     }
 
@@ -339,22 +340,27 @@ export function SidebarAddUser({ icon, title, style }: SidebarModalsProps) {
     const [isLoading, setIsLoading] = useState(true);
     // const [toDisable, setDisabled] = useState(false);
     const [levitas, setLevitas] = useState<Levita[] | undefined>(undefined);
+    const [roles, setRoles] = useState<RoleDTO[] | undefined>(undefined);
     const [levitaToAdd, setLevitaToAdd] = useState<Levita | undefined>(undefined);
     const [open, setOpen] = useState(false);
+
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [selectedRole, setSelectedRole] = useState("levita");	
 
     const toDisable = isLoading || levitas == undefined || levitas.length == 0;
 
     useEffect(() => {
-        // if (levitas) return;
-        // getMethod<Levita[] | undefined>("auth/user/levita-x", setLevitas)
-        // console.log("levitas: ", levitas)
-        // setIsLoading(false);
+        if (levitas && roles) return;
+        getMethod<Levita[] | undefined>("auth/user/levita-x", setLevitas)
+        getMethod<RoleDTO[] | undefined>("auth/role", setRoles)
+        setIsLoading(false);
     }, [levitas])
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild className={levitas == undefined ? "cursor-not-allowed w-full " : "w-full "} disabled={levitas == undefined}>
-                <SidebarMenuButton disabled={levitas == undefined}>
+            <DialogTrigger asChild className={"w-full "} disabled={!levitas}>
+                <SidebarMenuButton>
                     {icon}
                     {title}
                 </SidebarMenuButton>
@@ -370,23 +376,32 @@ export function SidebarAddUser({ icon, title, style }: SidebarModalsProps) {
                 </DialogHeader>
                 <br />
                 <Label>Usuário</Label>
-                <Input inert placeholder="Insira o usuário que será usado para login." />
+                <Input onChange={(e) => setUsername(e.target.value)} value={username} type="text"
+                    placeholder="Insira o usuário que será usado para login." />
                 <Label>Senha</Label>
-                <Input placeholder="Insira a senha que será usada para login." />
+                <Input onChange={(e) => setPassword(e.target.value)} value={password} type="text"
+                    placeholder="Insira a senha que será usada para login." />
                 <Label>Cargo</Label>
-                <RadioGroup defaultValue="levita" className="flex gap-4">
-                    <div className="flex items-center space-x-2">
-                        <Input type="radio" disabled={toDisable} id="levita" value="levita" />
+                <RadioGroup onValueChange={(value) => setSelectedRole(value)} className="flex gap-4">
+                    {roles?.map((role) => (
+                        <div className="flex items-center space-x-2" key={role.id}>
+                            <RadioGroupItem id={role.id} value={role.id} disabled={toDisable} />
+                            <Label htmlFor={role.role}>{role.role}</Label>
+                        </div>
+                    ))}
+
+                    {/* <div className="flex items-center space-x-2">
+                        <RadioGroupItem id="levita" value="levita" />
                         <Label htmlFor="levita">Levita</Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                        <Input type="radio" disabled={toDisable} id="lider" value="lider" />
+                        <RadioGroupItem id="lider" value="lider" />
                         <Label htmlFor="lider">Líder</Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                        <Input type="radio" disabled={toDisable} id="admin" value="admin" />
+                        <RadioGroupItem id="admin" value="admin" />
                         <Label htmlFor="admin">Admin</Label>
-                    </div>
+                    </div> */}
                 </RadioGroup>
                 <br />
 
@@ -399,7 +414,8 @@ export function SidebarAddUser({ icon, title, style }: SidebarModalsProps) {
                         : levitas.map((levita) => (
                             <Button key={levita.id} variant={"outline"} type="submit"
                                 className={`p-2 rounded-lg m-2 ${levitaToAdd?.id == levita.id ? "bg-primary/80" : ""}`}
-                                onClick={() => setLevitaToAdd(levita)}>{levita.nome.split(" ").length > 1 ?
+                                onClick={() => setLevitaToAdd(levita)}>
+                                    {levita.nome.split(" ").length > 1 ?
                                     levita.nome.split(" ")[0].concat(" ").concat(levita.nome.split(" ")[1].charAt(0)).concat(".") : levita.nome}</Button>
                         ))}
                 </Card>
@@ -407,14 +423,15 @@ export function SidebarAddUser({ icon, title, style }: SidebarModalsProps) {
                 <DialogFooter>
                     <Button onClick={() => {
                         postMethod<UserDTO>("auth/user", {
-                            username: "levita",
-                            password: "",
-                            role: "",
-                            levita: levitaToAdd?.id
+                            username: username,
+                            passcode: password,
+                            role: selectedRole,
+                            levitaId: levitaToAdd?.id
                         }, () => { }).then(() => {
                             setOpen(false)
-                            alert("Usuário adicionado com sucesso!")
+                            toast.success("Usuário adicionado com sucesso!")
                         }).catch((error) => {
+                            toast.error("Erro na comunicação com a api: ", error);
                             console.error("Erro na comunicação com a api: ", error);
                         })
                     }}>Adicionar</Button>

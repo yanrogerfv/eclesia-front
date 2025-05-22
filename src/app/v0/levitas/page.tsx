@@ -99,10 +99,10 @@ export default function Home() {
 								<h1 className="mx-5 font-extrabold tracking-tight text-5xl">Levitas</h1>
 							</div>
 							<div>
-								{isLeader && <DialogAddLevita />}
+								{isLeader && <DialogAddLevita disable={isLoading} setLevitas={setLevitas}/>}
 								{isLeader &&
 									<Button variant="outline" className={removeOverlay ? "mx-2 font-bold bg-rose-500/80 border-rose-600/90 hover:bg-rose-600/40"
-										: "mx-2 font-bold hover:bg-rose-500/40"}
+										: "mx-2 font-bold hover:bg-rose-500/40"} disabled={isLoading}
 										onClick={() => setRemoveOverlay(!removeOverlay)}>
 										<UserMinus className="mr-2" />Remover Levita</Button>}
 							</div>
@@ -222,7 +222,8 @@ export default function Home() {
 									<CardFooter className="flex justify-stretch">
 										<DialogVerLevita key={levita.id}
 											levita={levita}
-											disabled={removeOverlay} />
+											disabled={removeOverlay} 
+											setLevitas={setLevitas}/>
 										{/* <BadgeDisponivel disp={levita.disponivel} chav={levita.id.toString()} /> */}
 									</CardFooter>
 								</Card>

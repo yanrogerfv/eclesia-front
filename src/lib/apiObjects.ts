@@ -8,7 +8,7 @@ export interface UserDTO {
 }
 
 export interface RoleDTO {
-    id: number,
+    id: UUID,
     role: string,
 }
 

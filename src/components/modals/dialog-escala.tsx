@@ -9,7 +9,7 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog"
-import { Escala, Levita, Musica, convertDateFormat } from "@/lib/apiObjects";
+import { Escala, EscalaResumida, Levita, Musica, convertDateFormat } from "@/lib/apiObjects";
 import { Button } from "../ui/button";
 import { CirclePlus, Loader2, LoaderCircle, PencilLine } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -34,26 +34,18 @@ interface props {
 
 export function VerEscala(props: props) {
 	const [escalaData, setEscalaData] = useState<Escala | undefined>(undefined)
+	const [escalaMusicas, setEscalaMusicas] = useState<Musica[] | undefined>(undefined)
 
 	useEffect(() => {
-		// getMethod<Escala | undefined>(`escala/${props.escalaId}`, setEscalaData)
-		fetch(`${process.env.NEXT_PUBLIC_API_URL}v1/escala/${props.escalaId}`, {
-			method: "GET",
-			headers: {
-				'Content-Type': 'application/json',
-				'Authorization': 'Bearer ' + Cookies.get("token")
-			}
-		})
-			.then((res) => res.json())
-			.then((data) => {
-				// setIsLoading(false)
-				setEscalaData(data)
-			})
-			.catch((error) => {
-				console.error("Erro na comunicação com a api: ", error)
-				setEscalaData(undefined);
-			})
-	}, [])
+		if (escalaData && escalaMusicas) return;
+		getMethod<Escala | undefined>(`v1/escala/${props.escalaId}`, setEscalaData)
+	}, [escalaData, props.escalaId])
+
+	useEffect(() => {
+		if (escalaMusicas) return;
+		getMethod<Musica[] | undefined>(`v1/escala/musicas/${props.escalaId}`, setEscalaMusicas)
+		console.log("called", escalaMusicas)
+	}, [escalaMusicas])
 
 	const [isUserAdmin, setUserAdmin] = useState(false)
 	const [isUserLeader, setUserLeader] = useState(false)
@@ -75,6 +67,11 @@ export function VerEscala(props: props) {
 				<Button variant={"outline"} disabled={(!escalaData)} className="flex items-center rounded-md justify-center">Ver Escala</Button>
 			</DialogTrigger>
 			<DialogContent>
+				{!escalaData ?
+                    <div className="absolute w-full h-[85%] bg-black/50 z-50 flex justify-center items-center">
+                        <div className="h-16 w-16 border-4 border-subprimary rounded-3xl animate-spin" />
+                    </div>
+                : <></>}
 				<DialogHeader>
 					<DialogTitle className={"text-2xl " + (escalaData?.domingo ? "text-primary/80" :
 						escalaData?.quarta ? "text-secondary/80" : "text-special"
@@ -99,16 +96,18 @@ export function VerEscala(props: props) {
 
 				<Label className="text-secondary/85">Músicas:</Label>
 				<Card className="bg-transparent grid grid-flow-row p-2">
-					{escalaData?.musicas ?
-						escalaData.musicas.map((musica) => (
-							<Button key={musica.id} variant={"outline"} className="p-2 rounded-lg m-2">
-								<Link href={musica.link} target="_blank">{musica.nome}</Link></Button>
-						)) : <p className="text-foreground/25">Nenhuma música inserida.</p>}
+					{escalaMusicas ? escalaMusicas.length > 0 ?
+						escalaMusicas.map((musica) => (
+							<Button key={musica.id} variant={"outline"} className="rounded-lg m-2">
+								<Link key={musica.id} href={musica.link} target="_blank" className="w-full">
+									{musica.nome}</Link></Button>
+						)) : <p className="text-foreground/25">Nenhuma música inserida.</p>
+					: <p className="text-foreground/25">Carregando músicas...</p>}
 				</Card>
 				<DialogFooter>
 					{(isUserAdmin || isUserLeader || isUserMinistro) &&
-						<DialogAddMusicaInEscala escala={escalaData} />}
-					{(isUserAdmin || isUserLeader) && <EditEscala isEdit={true}
+						<DialogAddMusicaInEscala escala={escalaData} setMusicas={setEscalaMusicas}/>}
+					{(isUserAdmin || isUserLeader) && <EditEscala isEdit={true} setEscala={setEscalaData}
 						escala={escalaData} levitasDisponiveis={props.levitasDisponiveis} />}
 				</DialogFooter>
 			</DialogContent>
@@ -129,6 +128,7 @@ interface addEditDialogProps {
 	isEdit: boolean,
 	escala?: Escala | undefined,
 	levitasDisponiveis: Levita[] | undefined;
+	setEscala?: React.Dispatch<React.SetStateAction<Escala | undefined>>
 }
 
 export function EditEscala(pp: addEditDialogProps) {
@@ -147,15 +147,8 @@ export function EditEscala(pp: addEditDialogProps) {
 	const [backs, setBacks] = useState<String[]>(pp.escala?.back.map((back) => back.id) || []);
 	const [observacao, setObservacao] = useState(pp.escala?.observacoes || "");
 
-	// useEffect(() => {
-	//     setLevitasDisponiveis(pp.levitasDisponiveis.filter((levita) => 
-	//         levita.id != baixo && levita.id != bateria && levita.id != guitarra && levita.id != teclado && levita.id != violao
-	//     ))
-	// }, [baixo, bateria, guitarra, teclado, violao])
-
 	function filterByInstrumento(instrumentoId: number) {
 		return levitasDisponiveis && levitasDisponiveis.filter((levita) => levita.instrumentos.some((instrumento) => instrumento.id == instrumentoId))
-		// return levitasDisponiveis.filter((levita) => levita.instrumentos.some((instrumento) => instrumento.id == instrumentoId))
 	}
 
 	function addBack(levitaId: String) {
@@ -164,18 +157,6 @@ export function EditEscala(pp: addEditDialogProps) {
 	function removeBack(levitaId: String) {
 		setBacks(backs.filter((back) => back != levitaId))
 	}
-
-
-	// useEffect(() => {
-	//     fetch("http://localhost:1004/v1/levita/resumed")
-	//         .then((res) => res.json()).then((data) => {
-	//             set (false)
-	//             setLevitasDisponiveis(data)
-	//         }).catch((error) => {
-	//             console.error("Erro na comunicação com a api: ", error)
-	//             setLevitasDisponiveis([])
-	//         })
-	// })
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
@@ -187,6 +168,11 @@ export function EditEscala(pp: addEditDialogProps) {
 				}
 			</DialogTrigger>
 			<DialogContent >
+				{isLoading ?
+                    <div className="absolute w-full h-[85%] bg-black/50 z-50 flex justify-center items-center">
+                        <div className="h-16 w-16 border-4 border-subprimary rounded-3xl animate-spin" />
+                    </div>
+                : <></>}
 				<DialogHeader>
 					<DialogTitle>{pp.isEdit ? "Editando uma Escala" : "Criando uma Escala"}</DialogTitle>
 					<DialogDescription>
@@ -312,16 +298,16 @@ export function EditEscala(pp: addEditDialogProps) {
 				<DialogFooter>
 					<Button className="hover:bg-emerald-500" disabled={isLoading} onClick={() => {
 						if (titulo.length == 0) {
-							alert("Insira um título para a escala!")
+							toast.warning("Insira um título para a escala!")
 						} else if (data.length == 0) {
-							alert("Insira uma data para a escala!")
+							toast.warning("Insira uma data para a escala!")
 						} else if (ministro.length == 0) {
-							alert("Selecione um ministro!")
+							toast.warning("Selecione um ministro!")
 						}
 						else {
 							setIsLoading(true)
 							pp.escala ?
-								putMethod<Escala>("escala", {
+								putMethod<Escala>("v1/escala", {
 									id: pp.escala.id,
 									titulo: titulo.length == 0 ? pp.escala.titulo : titulo,
 									data: data.length == 0 ? pp.escala.data : data,
@@ -334,44 +320,16 @@ export function EditEscala(pp: addEditDialogProps) {
 									guitarra: guitarra == "null" ? null : guitarra,
 									backs: backs,
 									observacoes: observacao
-								}).then(() => {
-									setIsLoading(false)
 								})
-									.then(() => alert("Escala editada com sucesso!"))
-									.then(() => window.location.reload())
-									.then(() => setOpen(false))
-									.catch((error) => {
-										alert("Erro ao editar escala!")
-										console.error("Erro na comunicação com a api: ", error);
-									})
-								// fetch("http://localhost:1004/v1/escala", {
-								// 	method: "PUT",
-								// 	headers: {
-								// 		'Content-Type': 'application/json',
-								// 		''
-								// 	},
-								// 	body: JSON.stringify({
-								// 		id: pp.escala.id,
-								// 		titulo: titulo.length == 0 ? pp.escala.titulo : titulo,
-								// 		data: data.length == 0 ? pp.escala.data : data,
-								// 		especial: especial,
-								// 		ministro: ministro == "null" ? null : ministro,
-								// 		violao: violao == "null" ? null : violao,
-								// 		teclado: teclado == "null" ? null : teclado,
-								// 		bateria: bateria == "null" ? null : bateria,
-								// 		baixo: baixo == "null" ? null : baixo,
-								// 		guitarra: guitarra == "null" ? null : guitarra,
-								// 		backs: backs,
-								// 		observacoes: observacao
-								// 	})
-								// }).then((response) => {
-								// 	setIsLoading(false)
-								// 	alert(response.status === 200 ? "Escala editada com sucesso!" : "Erro ao editar a escala: " + response.headers.get("error"))
-								// }).then(() => console.log(pp.escala)).catch((error) => {
-								// 	alert("Erro ao editar escala!")
-								// 	console.error("Erro na comunicação com a api: ", error);
-								// })
-								: alert("Escala não encontrada.")
+								.then(() => setIsLoading(false))
+								.then(() => toast.success("Escala editada com sucesso!"))
+								.then(() => pp.setEscala && pp.setEscala(undefined))
+								.then(() => setOpen(false))
+								.catch((error) => {
+									toast.error("Erro ao editar escala!")
+									console.error("Erro na comunicação com a api: ", error);
+								})
+								: toast.error("Escala não encontrada.")
 						}
 					}}>{pp.isEdit ? "Confirmar" : "Adicionar"}</Button>
 					<Button className="hover:bg-rose-700" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
@@ -381,7 +339,11 @@ export function EditEscala(pp: addEditDialogProps) {
 	)
 }
 
-export function AddEscala({ disabled }: { disabled?: boolean }) {
+interface DialogAddEscalaProps {
+	disabled?: boolean
+	setEscalas?: React.Dispatch<React.SetStateAction<EscalaResumida[] | undefined>>
+}
+export function AddEscala(props: DialogAddEscalaProps) {
 	const [open, setOpen] = useState(false);
 	const [isLoading, setIsLoading] = useState(false)
 	const [levitasDisponiveis, setLevitasDisponiveis] = useState<Levita[] | undefined>(undefined);
@@ -428,16 +390,11 @@ export function AddEscala({ disabled }: { disabled?: boolean }) {
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
-				<Button variant={"outline"} className="hover:text-emerald-500" disabled={disabled}>
+				<Button variant={"outline"} className="hover:text-emerald-500" disabled={props.disabled}>
 					<CirclePlus className="mx-1 text-emerald-500" />Criar Escala</Button>
 			</DialogTrigger>
 			<DialogContent >
 				{isLoading ?
-					// <div className="absolute w-full flex items-center justify-center mt-20 z-50">
-					// 	<div className="size-80 border-4 border-transparent text-primary/40 text-4xl animate-spin flex items-center justify-center border-t-primary rounded-full">
-					// 		<div className="size-64 border-4 border-transparent text-subprimary/40 text-2xl animate-spin flex items-center justify-center border-t-subprimary rounded-full" />
-					// 	</div>
-					// </div>
 					<div className="absolute w-full h-[85%] z-50 flex justify-center items-center">
 						<div className="h-16 w-16 border-4 border-subprimary rounded-3xl animate-spin" />
 					</div>
@@ -575,7 +532,7 @@ export function AddEscala({ disabled }: { disabled?: boolean }) {
 					<div className="hidden" />
 					<Button className="hover:bg-emerald-500" disabled={isLoading || disableFields} onClick={() => {
 						if (titulo.length == 0) {
-							toast.info("Insira um título para a escala!")
+							toast.warning("Insira um título para a escala!")
 						} else if (!data || data.length == 0) {
 							toast.warning("Insira uma data para a escala!")
 						} else if (ministro.length == 0) {
@@ -598,8 +555,14 @@ export function AddEscala({ disabled }: { disabled?: boolean }) {
 							}).catch((error) => {
 								toast.error("Erro ao adicionar escala!")
 								console.error("Erro na comunicação com a api: ", error);
+							}).then(() => {
+								toast.success("Escala adicionada com sucesso!")
+								if (props.setEscalas) {
+									props.setEscalas(undefined)
+								}
+								setIsLoading(false)
+								setOpen(false)
 							})
-							setIsLoading(false)
 						}
 					}}>{"Adicionar"}</Button>
 					<Button className="hover:bg-rose-700" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
@@ -611,17 +574,18 @@ export function AddEscala({ disabled }: { disabled?: boolean }) {
 }
 
 interface DialogAddMusicaInEscalaProps {
-	escala: Escala | undefined
+	escala: Escala | undefined,
+	setMusicas?: React.Dispatch<React.SetStateAction<Musica[] | undefined>>
 }
 export function DialogAddMusicaInEscala(props: DialogAddMusicaInEscalaProps) {
 	// const [musicas, setMusicas] = useState<Musica[]>();
-	const [selectedMusicas, setSelectedMusicas] = useState<String[]>([]);
+	const [selectedMusicas, setSelectedMusicas] = useState<String[]>(props.escala?.musicas.map((musica) => musica.id) || []);
 	const [open, setOpen] = useState(false);
 	const [isLoading, setLoading] = useState(false);
 	const [musicas, setMusicas] = useState<Musica[] | undefined>(undefined);
 
 	useEffect(() => {
-		if (musicas != undefined) return;
+		if (musicas) return;
 		getMethod<Musica[] | undefined>("v1/musicas", setMusicas)
 	}, [musicas])
 
@@ -633,6 +597,7 @@ export function DialogAddMusicaInEscala(props: DialogAddMusicaInEscalaProps) {
 	}
 	function removeSelectedMusica(musicaId: String) {
 		setSelectedMusicas(selectedMusicas.filter((musica) => musica != musicaId))
+		console.log(selectedMusicas)
 	}
 
 	return (
@@ -642,13 +607,18 @@ export function DialogAddMusicaInEscala(props: DialogAddMusicaInEscalaProps) {
 					<CirclePlus className="mx-1 text-emerald-500" />Adicionar Música</Button>
 			</DialogTrigger>
 			<DialogContent>
+				{isLoading ?
+					<div className="absolute w-full h-[85%] z-50 flex justify-center items-center">
+						<div className="h-16 w-16 border-4 border-subprimary rounded-3xl animate-spin" />
+					</div>
+					: <></>}
 				<DialogHeader>
 					<DialogTitle>Adicionar Música</DialogTitle>
 					<DialogDescription className="border-b grayscale">
 						Selecione as músicas que deseja adicionar a escala {props.escala?.titulo}.
 					</DialogDescription>
 				</DialogHeader>
-				<br/>
+				<br />
 				<Label>Músicas para adicionar:</Label>
 				<Select onValueChange={(value) => addSelectedMusica(value)} disabled={!musicas}>
 					<SelectTrigger>
@@ -675,23 +645,12 @@ export function DialogAddMusicaInEscala(props: DialogAddMusicaInEscalaProps) {
 						type="submit" disabled={isLoading} onClick={() => {
 							console.log(selectedMusicas)
 							setLoading(true)
-							// postMethod<Musica[]>(`escala/musicas/${props.escalaId}`, { musicasIds: selectedMusicas }, setMusicas)
-							fetch(`${process.env.NEXT_PUBLIC_API_URL}escala/musicas/${props.escala?.id}`, {
-								method: "POST",
-								headers: {
-									'Content-Type': 'application/json',
-								},
-								body: JSON.stringify({
-									musicasIds: selectedMusicas
-								})
-							})
-								.then((res) => res.json())
-								.then((res) => res.status === 200 ? alert("Músicas adicionadas com sucesso!") : alert("Erro ao adicionar músicas: " + res.headers.get("error")))
-								.then(() => { setOpen(false) })
-								// .then((data) => setCreatedMusic(data))
-								.catch((error) => {
-									console.error("Erro na comunicação com a api: ", error);
-								})
+							putMethod(`v1/escala/musicas/${props.escala?.id}`, { musicasIds: selectedMusicas })
+								.catch((error) => toast.error("Erro ao adicionar músicas!", error))
+								.then(() => toast.success("Músicas adicionadas com sucesso!"))
+								.then(() => props.setMusicas && props.setMusicas(undefined))
+								.then(() => setLoading(false))
+								.then(() => setOpen(false))
 							setLoading(false)
 						}}>Salvar</Button>
 					<Button className="hover:bg-rose-600/80" onClick={() => setOpen(false)}>Cancelar</Button>

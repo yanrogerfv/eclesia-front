@@ -23,7 +23,8 @@ import { toast } from "sonner";
 
 export function DialogVerLevita(props: {
     levita: Levita,
-    disabled: boolean
+    disabled: boolean,
+    setLevitas?: React.Dispatch<React.SetStateAction<Levita[] | undefined>>
 }
 ) {
     return (
@@ -41,21 +42,18 @@ export function DialogVerLevita(props: {
                 </DialogHeader>
                 <p className="text-colortext text-center">{props.levita.descricao ? props.levita.descricao : "Nenhuma descrição inserida para este levita."}</p>
                 <DialogFooter>
-                    <DialogEditLevita id={props.levita.id}
-                        nome={props.levita.nome}
-                        email={props.levita.email}
-                        contato={props.levita.contato}
-                        descricao={props.levita.descricao}
-                        instrumentos={props.levita.instrumentos}
-                        agenda={props.levita.agenda}
-                    />
+                    <DialogEditLevita levita={props.levita} setLevitas={props.setLevitas} />
                 </DialogFooter>
             </DialogContent>
         </Dialog>
     )
 }
 
-export function DialogAddLevita() {
+interface DialogAddLevitaProps {
+    disable?: boolean,
+    setLevitas?: React.Dispatch<React.SetStateAction<Levita[] | undefined>>
+}
+export function DialogAddLevita(props: DialogAddLevitaProps) {
     const [open, setOpen] = useState(false);
     const [isLoading, setLoading] = useState(false);
     const [allInstrumentos, setAllInstrumentos] = useState<Instrumento[] | undefined>(undefined);
@@ -81,13 +79,13 @@ export function DialogAddLevita() {
     const handleSubmitLevita = () => {
         setLoading(true)
         if (nomeLevita === "") {
-            alert("Insira o nome do Levita.")
+            toast.warning("Insira o nome do Levita.")
             setLoading(false)
         } else if (emailLevita === "" && contatoLevita === "") {
-            alert("Insira um email e/ou contato do Levita.")
+            toast.warning("Insira um email e/ou contato do Levita.")
             setLoading(false)
         } else if (instrumentosLevita.length === 0) {
-            alert("Selecione pelo menos um instrumento.")
+            toast.warning("Selecione pelo menos um instrumento.")
             setLoading(false)
         } else {
             postMethod("v1/levita", {
@@ -96,20 +94,27 @@ export function DialogAddLevita() {
                 contato: contatoLevita,
                 descricao: descricaoLevita,
                 instrumentos: instrumentosLevita.map((instrumento) => instrumento.id)
-            }, () => { }).finally(() => {
+            }).finally(() => {
+                toast.success("Levita adicionado com sucesso!")
+                setLoading(false)
+                props.setLevitas && props.setLevitas(undefined)
                 setOpen(false)
-                window.location.reload()
             })
         }
     }
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild className="p-5">
+            <DialogTrigger asChild className="p-5" disabled={props.disable}>
                 <Button variant={"outline"} className="mx-2 font-bold hover:text-emerald-500" onClick={() => setLoading(false)}>
                     <UserPlus className="mr-2" />Adicionar Levita</Button>
             </DialogTrigger>
             <DialogContent>
+                {isLoading ?
+                    <div className="absolute w-full h-[85%] z-50 flex justify-center items-center">
+                        <div className="h-16 w-16 border-4 border-subprimary rounded-3xl animate-spin" />
+                    </div>
+                    : <></>}
                 <DialogHeader>
                     <DialogTitle>
                         Adicionar Levita
@@ -118,19 +123,15 @@ export function DialogAddLevita() {
                         Preencha os campos abaixo para adicionar um novo Levita.
                     </DialogDescription>
                 </DialogHeader>
-                <br />
                 <Label>Nome:</Label>
                 <Input type="text" placeholder="Insira o nome do Levita."
                     value={nomeLevita} onChange={(e) => setNomeLevita(e.target.value)} />
-                <br />
                 <Label>Email:</Label>
                 <Input type="email" placeholder="Insira um email do Levita."
                     value={emailLevita} onChange={(e) => setEmailLevita(e.target.value)} />
-                <br />
                 <Label>Telefone:</Label>
                 <Input type="tel" placeholder="Insira um contato do Levita."
                     value={contatoLevita} onChange={(e) => setTelLevita(e.target.value)} />
-                <br />
                 <Label>Instrumentos:</Label>
                 {allInstrumentos?.map((instrumento) => (
                     <div key={instrumento.id} className="flex items-center space-x-2">
@@ -143,13 +144,11 @@ export function DialogAddLevita() {
                         }} />
                         <Label htmlFor={instrumento.nome}
                             className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                        >{instrumento.nome}</Label><br />
+                        >{instrumento.nome}</Label>
                     </div>
                 ))}
-                <br />
                 <Label>Descrição:</Label>
                 <Textarea placeholder="Insira uma descrição do Levita." onChange={(e) => setDescLevita(e.target.value)} />
-
 
                 <DialogFooter className="">
                     <Button className="hover:bg-emerald-500" disabled={isLoading} type="submit" onClick={() => {
@@ -162,7 +161,12 @@ export function DialogAddLevita() {
     )
 }
 
-export function DialogEditLevita(levita: Levita) {
+interface DialogEditLevitaProps {
+    levita: Levita
+    setLevitas?: React.Dispatch<React.SetStateAction<Levita[] | undefined>>
+}
+export function DialogEditLevita(props: DialogEditLevitaProps) {
+    const { levita } = props;
     const [open, setOpen] = useState(false);
     const [isLoading, setLoading] = useState(false);
     const [allInstrumentos, setAllInstrumentos] = useState<Instrumento[] | undefined>(undefined);
@@ -197,6 +201,11 @@ export function DialogEditLevita(levita: Levita) {
                     }} />
             </DialogTrigger>
             <DialogContent>
+                {isLoading ?
+                    <div className="absolute w-full h-[85%] z-50 flex justify-center items-center">
+                        <div className="h-16 w-16 border-4 border-subprimary rounded-3xl animate-spin" />
+                    </div>
+                : <></>}
                 <DialogHeader>
                     <DialogTitle>Editar Levita</DialogTitle>
                     <DialogDescription>
@@ -253,12 +262,10 @@ export function DialogEditLevita(levita: Levita) {
                             toast.error("Erro ao editar Levita.")
                         }).finally(() => {
                             toast.success("Levita editado com sucesso!")
-                            new Promise(resolve => setTimeout(resolve, 2500)).then(() => {
-                                setOpen(false)
-                                window.location.reload()
-                            })
+                            setLoading(false)
+                            props.setLevitas && props.setLevitas(undefined)
+                            setOpen(false)
                         })
-                        setLoading(false)
                     }}>Salvar</Button>
                     <Button className="hover:bg-rose-600/80" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
                 </DialogFooter>

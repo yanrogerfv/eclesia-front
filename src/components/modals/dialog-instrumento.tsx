@@ -23,6 +23,11 @@ export function DialogAddInstrumento(props: { disabled: boolean, state: React.Di
                     <CirclePlus />Adicionar Instrumento</Button>
             </DialogTrigger>
             <DialogContent>
+                {isLoading ?
+                    <div className="absolute w-full h-[85%] z-50 flex justify-center items-center">
+                        <div className="h-16 w-16 border-4 border-subprimary rounded-3xl animate-spin" />
+                    </div>
+                : <></>}
                 <DialogHeader>
                     <DialogTitle>Adicionar Instrumento</DialogTitle>
                     <br />
@@ -70,6 +75,11 @@ export function DialogRemoveInstrumento( props: { allInstrumentos: Instrumento[]
                     <CircleMinus />Remover Instrumento</Button>
             </DialogTrigger>
             <DialogContent>
+                {isLoading ?
+                    <div className="absolute w-full h-[85%] z-50 flex justify-center items-center">
+                        <div className="h-16 w-16 border-4 border-subprimary rounded-3xl animate-spin" />
+                    </div>
+                : <></>}
                 <DialogHeader>
                     <DialogTitle>Remover Instrumento</DialogTitle>
                 </DialogHeader>
@@ -91,7 +101,7 @@ export function DialogRemoveInstrumento( props: { allInstrumentos: Instrumento[]
                         type="submit" disabled={isLoading} onClick={() => {
                             setLoading(true)
                             console.log(selectedInstrumento)
-                            deleteMethod(`instrumento/${selectedInstrumento}`)
+                            deleteMethod(`v1/instrumento/${selectedInstrumento}`)
                                 .then(() => {
                                     setOpen(false)
                                     setLoading(false)
