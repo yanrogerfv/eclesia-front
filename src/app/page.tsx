@@ -1,7 +1,6 @@
 "use client"
 
 import ThemeSelector from "@/components/themeSelector";
-import { ToastSimple } from "@/components/toastSimple";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
