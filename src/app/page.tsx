@@ -59,7 +59,7 @@ export default function LandingPage() {
                                             <p>Nome: <a className="text-subprimary cursor-default hover:brightness-125">Yan Roger Fogaça Vieira</a></p>
                                             Email: <Link target="_blank" href="https://mail.google.com/mail/u/0/?fs=1&to=yanrogerfv@gmail.com&su=Eclesia%20Software&tf=cm" className="text-subprimary hover:underline">
                                                 yanrogerfv@gmail.com</Link><br />
-                                            Github: <Link target="_blank" href="https://github.com/yan-roger-fv" className="text-subprimary hover:underline">
+                                            Github: <Link target="_blank" href="https://github.com/yanrogerfv" className="text-subprimary hover:underline">
                                                 @yan-roger-fv</Link>
                                         </p>
                                     </div>
