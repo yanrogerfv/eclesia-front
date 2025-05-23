@@ -1,4 +1,4 @@
-import { CalendarClock, CalendarDays, Home, Inbox, LogOut, User2, UserCircle2 } from "lucide-react"
+import { CalendarClock, CalendarDays, Home, Inbox, LogOut, User2, UserCircle2, UserRoundCog, UserRoundPlus } from "lucide-react"
 import Cookies from "js-cookie"
 import {
     Sidebar,
@@ -12,11 +12,11 @@ import {
     SidebarMenuItem,
     SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { SidebarAddUser, SidebarMyAgenda, SidebarMyEscalas, SidebarNextEvents } from "./modals/sidebar-modals"
+import { SidebarAddUser, SidebarMyAgenda, SidebarMyEscalas, SidebarMyProfile, SidebarNextEvents } from "./modals/sidebar-modals"
 import ThemeSelector from "./themeSelector"
 import { useEffect, useState } from "react"
 
-export function AppSidebar({ lado }: { lado : "left" | "right" }) {
+export function AppSidebar({ lado }: { lado: "left" | "right" }) {
 
     const [isUserAdminOrLeader, setUserAdminOrLeader] = useState(false)
     const [username, setUsername] = useState("");
@@ -26,7 +26,7 @@ export function AppSidebar({ lado }: { lado : "left" | "right" }) {
         const userAdmin = sessionStorage.getItem("role") === "ADMIN" || sessionStorage.getItem("role") === "LIDER";
         setUsername(Cookies.get("username") || "Usuário")
         setUserAdminOrLeader(userAdmin);
-      }, []);
+    }, []);
 
     return (
         <Sidebar side={lado} collapsible="icon">
@@ -75,20 +75,36 @@ export function AppSidebar({ lado }: { lado : "left" | "right" }) {
                                     />
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
+                            <SidebarMenuItem key={"my_profile"}>
+                                <SidebarMenuButton asChild>
+                                    <SidebarMyProfile
+                                        icon={<User2 size={16} />}
+                                        title={"Meu Perfil"}
+                                    />
+                                </SidebarMenuButton>
+                            </SidebarMenuItem>
+                            {/* {isUserAdminOrLeader && <SidebarMenuItem key={"users"}>
+                                <SidebarMenuButton asChild>
+                                    <a href="/users" className="flex items-center gap-2 p-2 hover:bg-primary/10 rounded-lg">
+                                        <UserRoundCog size={16} />
+                                        <span>Usuários</span>
+                                    </a>
+                                </SidebarMenuButton>
+                            </SidebarMenuItem>} */}
                             {isUserAdminOrLeader && <SidebarMenuItem key={"add_user"}>
                                 <SidebarMenuButton asChild>
                                     <SidebarAddUser
-                                        icon={<User2 size={16} />}
+                                        icon={<UserRoundPlus size={16} />}
                                         title={"Adicionar Usuário"}
                                     />
                                 </SidebarMenuButton>
                             </SidebarMenuItem>}
                             <SidebarMenuItem key={"logout"}>
-                                <SidebarMenuButton asChild className="text-red-500 hover:text-red-600 hover:brightness-125 hover:animate-pulse">
+                                <SidebarMenuButton asChild className="text-red-500 hover:text-red-600 hover:brightness-105 hover:animate-pulse">
                                     <a href="/" className="flex items-center gap-2 p-2" onClick={() => {
                                         Cookies.remove("token")
                                         Cookies.remove("username")
-                                        {sessionStorage ? sessionStorage.removeItem("role") : null}
+                                        { sessionStorage ? sessionStorage.removeItem("role") : null }
                                         setTimeout(() => {
                                             window.location.reload()
                                         }, 1000)
@@ -102,8 +118,9 @@ export function AppSidebar({ lado }: { lado : "left" | "right" }) {
                     </SidebarGroupContent>
                 </SidebarGroup>
                 <SidebarFooter className="mt-auto flex justify-center items-center ">
-                    <ThemeSelector className="bg-zinc-700/10 w-full overflow-hidden 
-                    group-data-[collapsible=icon]:!hidden"/>
+                    <SidebarMenuButton className="flex items-center justify-center h-fit gap-2 p-2 hover:bg-primary/10 rounded-lg group">
+                        <ThemeSelector className="bg-zinc-700/10 w-full" />
+                    </SidebarMenuButton>
                 </SidebarFooter>
             </SidebarContent>
         </Sidebar>

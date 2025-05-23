@@ -359,7 +359,7 @@ export function SidebarAddUser({ icon, title, style }: SidebarModalsProps) {
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild className={"w-full "} disabled={!levitas}>
+            <DialogTrigger asChild className={"w-full text-indigo-400 hover:text-indigo-400"} disabled={!levitas}>
                 <SidebarMenuButton>
                     {icon}
                     {title}
@@ -389,19 +389,6 @@ export function SidebarAddUser({ icon, title, style }: SidebarModalsProps) {
                             <Label htmlFor={role.role}>{role.role}</Label>
                         </div>
                     ))}
-
-                    {/* <div className="flex items-center space-x-2">
-                        <RadioGroupItem id="levita" value="levita" />
-                        <Label htmlFor="levita">Levita</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                        <RadioGroupItem id="lider" value="lider" />
-                        <Label htmlFor="lider">Líder</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                        <RadioGroupItem id="admin" value="admin" />
-                        <Label htmlFor="admin">Admin</Label>
-                    </div> */}
                 </RadioGroup>
                 <br />
 
@@ -437,7 +424,6 @@ export function SidebarAddUser({ icon, title, style }: SidebarModalsProps) {
                     }}>Adicionar</Button>
                     <Button onClick={() => console.log("levita: ", levitaToAdd)}>Cancelar</Button>
                 </DialogFooter>
-                {/* Content aqui */}
             </DialogContent>
         </Dialog>
     )
