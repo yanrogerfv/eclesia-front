@@ -59,14 +59,20 @@ export default function Home() {
 	useEffect(() => {
 		if (!filteredLevitas)
 			setFilteredLevita(levitas)
-		if (levitas && instrumentos) return;
+		if (levitas) return;
 		getMethod<Levita[] | undefined>("v1/levita/resumed", setLevitas);
-		getMethod<Instrumento[] | undefined>("v1/instrumento", setInstrumentos);
-	}, [levitas, instrumentos])
+	}, [levitas])
 
 	useEffect(() => {
-		if (levitas && instrumentos)
+		if (instrumentos) return;
+		getMethod<Instrumento[] | undefined>("v1/instrumento", setInstrumentos);
+	}, [instrumentos])
+
+	useEffect(() => {
+		if (levitas && instrumentos){
 			setIsLoading(false)
+			return;
+		}
 	}, [levitas, instrumentos])
 
 	useEffect(() => {

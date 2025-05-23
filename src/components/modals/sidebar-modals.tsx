@@ -10,9 +10,13 @@ import { Button } from "../ui/button";
 import { ptBR } from "date-fns/locale";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
-import { getMethod, postMethod } from "@/lib/apiRequests";
+import { getMethod, postMethod, putMethod } from "@/lib/apiRequests";
 import { toast } from "sonner";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
+import { ScrollArea } from "../ui/scroll-area";
+import { DialogEditLevita } from "./dialog-levita";
+import { PencilLine } from "lucide-react";
+import { TooltipProvider, TooltipTrigger, Tooltip, TooltipContent } from "../ui/tooltip";
 
 interface SidebarModalsProps {
     icon: ReactElement,
@@ -313,8 +317,24 @@ export function SidebarMyEscalas({ icon, title, style }: SidebarModalsProps) {
 }
 
 export function SidebarMyProfile({ icon, title, style }: SidebarModalsProps) {
+
+    const [open, setOpen] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [self, setSelf] = useState<UserDTO | undefined>(undefined);
+    const [currentLevita, setCurrentLevita] = useState<Levita | undefined>();
+
+    const [username, setUsername] = useState(self?.username ?? "");
+    const [password, setPassword] = useState("");
+
+    useEffect(() => {
+        if (self && currentLevita) return;
+        getMethod<Levita | undefined>(`v1/levita/${sessionStorage.getItem("levita")}`, setCurrentLevita)
+        getMethod<UserDTO | undefined>(`auth/user/active`, setSelf)
+        setLoading(false);
+    }, [self, currentLevita])
+
     return (
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <SidebarMenuButton>
                     {icon}
@@ -331,6 +351,81 @@ export function SidebarMyProfile({ icon, title, style }: SidebarModalsProps) {
                     </DialogDescription>
                 </DialogHeader>
                 {/* Content aqui */}
+                <Label>Usuário:</Label>
+                <Input onChange={(e) => setUsername(e.target.value)} value={username} type="text" placeholder="Insira seu usuário" />
+                {/* <Label>Data de Nascimento:</Label> 
+                 <Input type="text" placeholder="Insira sua data de nascimento" value={self?.dataNascimento}/> */}
+                <Label>Senha:</Label>
+                <Input onChange={(e) => setPassword(e.target.value)} value={password} type="password" placeholder="••••••••" />
+
+                <Card>
+                    <CardHeader>
+                        <CardTitle>
+                            Levita:
+                        </CardTitle>
+                        <CardDescription className="mb-0">
+                            As suas informações como levita
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <p className="mb-1"><span className="text-subprimary">Nome:</span>{" " + currentLevita?.nome}</p>
+                        <p className="mb-1"><span className="text-subprimary">Telefone:</span>{` ${currentLevita?.contato ?? "Nenhum telefone inserido."}`}</p>
+                        <p className="mb-1"><span className="text-subprimary">Email:</span>{` ${currentLevita?.email ?? "Nenhum email inserido."}`}</p>
+                        <p className="mb-1"><span className="text-subprimary">Descrição:</span>{` ${currentLevita?.descricao ?? "Nenhuma descrição inserida."}`}</p>
+                        <p><span className="text-subprimary">Instrumentos:</span> <span>
+                            {currentLevita?.instrumentos.map((instrumento) => (
+                                <Badge key={instrumento.id} variant={"outline"} className="gap-1">{instrumento.nome}</Badge>
+                            ))}
+                        </span></p>
+                    </CardContent>
+                </Card>
+                <DialogFooter>
+                    <div className="flex flex-wrap justify-between w-full">
+                        <div>
+                            {currentLevita ?
+                                <DialogEditLevita levita={currentLevita} />
+                                :
+                                <TooltipProvider delayDuration={250}>
+                                    <Tooltip>
+                                        <TooltipTrigger>
+                                            <PencilLine className="outline rounded-lg p-1 size-auto outline-1 outline-secondary/25 hover:bg-destructive/50 cursor-pointer" />
+                                        </TooltipTrigger>
+                                        <TooltipContent className="bg-transparent border-none p-0">
+                                            <p className="text-primary/80">Editar Levita.</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
+                            }
+                        </div>
+                        <div className="flex gap-2">
+                            <Button className="hover:bg-emerald-500" onClick={() => {
+                                if (password.length < 8) {
+                                    toast.error("A senha deve ter pelo menos 8 caracteres.");
+                                } if (username.length < 3) {
+                                    toast.error("O nome de usuário deve ter pelo menos 3 caracteres.");
+                                } if (currentLevita?.id == undefined) {
+                                    toast.error("Selecione um levita para continuar.");
+                                } if (self?.id == undefined || self?.role.id == undefined) {
+                                    toast.error("Erro ao carregar informações do usuário.");
+                                }
+                                putMethod<UserDTO>("auth/user", {
+                                    id: self?.id,
+                                    role: self?.role.id,
+                                    username: username,
+                                    passcode: password,
+                                    levitaId: currentLevita?.id
+                                }, () => { }).then(() => {
+                                    setOpen(false)
+                                    toast.success("Usuário editado com sucesso!")
+                                }).catch((error) => {
+                                    toast.error("Erro na comunicação com a api: ", error);
+                                    console.error("Erro na comunicação com a api: ", error);
+                                })
+                            }}>Salvar</Button>
+                            <Button className="hover:bg-rose-600/80" onClick={() => setOpen(false)}>Cancelar</Button>
+                        </div>
+                    </div>
+                </DialogFooter>
             </DialogContent>
         </Dialog>
     )
@@ -338,22 +433,19 @@ export function SidebarMyProfile({ icon, title, style }: SidebarModalsProps) {
 
 export function SidebarAddUser({ icon, title, style }: SidebarModalsProps) {
     const [isLoading, setIsLoading] = useState(true);
-    // const [toDisable, setDisabled] = useState(false);
     const [levitas, setLevitas] = useState<Levita[] | undefined>(undefined);
-    const [roles, setRoles] = useState<RoleDTO[] | undefined>(undefined);
+    // const [roles, setRoles] = useState<RoleDTO[] | undefined>(undefined);
     const [levitaToAdd, setLevitaToAdd] = useState<Levita | undefined>(undefined);
     const [open, setOpen] = useState(false);
 
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [selectedRole, setSelectedRole] = useState("levita");	
-
-    const toDisable = isLoading || levitas == undefined || levitas.length == 0;
+    // const [selectedRole, setSelectedRole] = useState("levita");
 
     useEffect(() => {
-        if (levitas && roles) return;
+        if (levitas) return;
         getMethod<Levita[] | undefined>("auth/user/levita-x", setLevitas)
-        getMethod<RoleDTO[] | undefined>("auth/role", setRoles)
+        // getMethod<RoleDTO[] | undefined>("auth/role", setRoles)
         setIsLoading(false);
     }, [levitas])
 
@@ -370,49 +462,51 @@ export function SidebarAddUser({ icon, title, style }: SidebarModalsProps) {
                     <DialogTitle>
                         {title}
                     </DialogTitle>
-                    <DialogDescription>
+                    <DialogDescription className="border-b border-primary/25 grayscale">
                         Aqui você pode adicionar um novo usuário.
                     </DialogDescription>
                 </DialogHeader>
-                <br />
-                <Label>Usuário</Label>
+                <Label>Usuário:</Label>
                 <Input onChange={(e) => setUsername(e.target.value)} value={username} type="text"
                     placeholder="Insira o usuário que será usado para login." />
-                <Label>Senha</Label>
+                <Label>Senha:</Label>
                 <Input onChange={(e) => setPassword(e.target.value)} value={password} type="text"
-                    placeholder="Insira a senha que será usada para login." />
-                <Label>Cargo</Label>
-                <RadioGroup onValueChange={(value) => setSelectedRole(value)} className="flex gap-4">
+                    placeholder="Insira a senha que será usada para login." className="mb-4" />
+                {/* <Label>Cargo:</Label>
+                <RadioGroup onValueChange={(value) => setSelectedRole(value)} className="flex gap-4 mb-2 justify-between mx-4">
                     {roles?.map((role) => (
                         <div className="flex items-center space-x-2" key={role.id}>
                             <RadioGroupItem id={role.id} value={role.id} disabled={toDisable} />
                             <Label htmlFor={role.role}>{role.role}</Label>
                         </div>
                     ))}
-                </RadioGroup>
-                <br />
+                </RadioGroup> */}
 
-                <Label>Selecione o Levita que deseja associar a conta:</Label>
-                <Card className="bg-transparent grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1">
-                    {isLoading || levitas == undefined ?
-                        <div className="flex justify-center items-center h-40">
-                            <div className="h-16 w-16 border-4 border-primary rounded-3xl animate-spin" />
-                        </div>
-                        : levitas.map((levita) => (
-                            <Button key={levita.id} variant={"outline"} type="submit"
-                                className={`p-2 rounded-lg m-2 ${levitaToAdd?.id == levita.id ? "bg-primary/80" : ""}`}
-                                onClick={() => setLevitaToAdd(levita)}>
+                <Label>Selecione o Levita que deseja associar ao login:</Label>
+                <ScrollArea className="md:h-[35vh] w-full">
+                    <Card className="bg-transparent grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1">
+                        {isLoading || levitas == undefined ?
+                            <div className="flex justify-center items-center h-40">
+                                <div className="h-16 w-16 border-4 border-primary rounded-3xl animate-spin" />
+                            </div>
+                            :
+
+                            levitas.map((levita) => (
+                                <Button key={levita.id} variant={"outline"} type="submit"
+                                    className={`p-2 rounded-lg m-2 ${levitaToAdd?.id == levita.id ? "bg-primary/80" : ""}`}
+                                    onClick={() => setLevitaToAdd(levita)}>
                                     {levita.nome.split(" ").length > 1 ?
-                                    levita.nome.split(" ")[0].concat(" ").concat(levita.nome.split(" ")[1].charAt(0)).concat(".") : levita.nome}</Button>
-                        ))}
-                </Card>
+                                        levita.nome.split(" ")[0].concat(" ").concat(levita.nome.split(" ")[1].charAt(0)).concat(".") : levita.nome}</Button>
+                            ))
+                        }
+                    </Card>
+                </ScrollArea>
 
                 <DialogFooter>
                     <Button onClick={() => {
                         postMethod<UserDTO>("auth/user", {
                             username: username,
                             passcode: password,
-                            role: selectedRole,
                             levitaId: levitaToAdd?.id
                         }, () => { }).then(() => {
                             setOpen(false)
@@ -422,7 +516,7 @@ export function SidebarAddUser({ icon, title, style }: SidebarModalsProps) {
                             console.error("Erro na comunicação com a api: ", error);
                         })
                     }}>Adicionar</Button>
-                    <Button onClick={() => console.log("levita: ", levitaToAdd)}>Cancelar</Button>
+                    <Button onClick={() => setOpen(false)}>Cancelar</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

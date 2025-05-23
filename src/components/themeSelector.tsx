@@ -108,7 +108,7 @@ function ThemeSelector({ className }: ThemeSelectorProps) {
                 </div>
                 <div className="group-data-[collapsible=icon]:hidden">
                     <div className={`text-center bg-card border rounded-t-lg text-lg font-semibold text-primary`}>
-                        Themes
+                        Temas
                     </div>
                     <div className={`bg-card border rounded-b-lg p-2 flex items-center`}>
                         <TooltipProvider delayDuration={250}>

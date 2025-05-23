@@ -24,12 +24,12 @@ export async function getMethod<T>(url: string, setState: React.Dispatch<React.S
 		if (error instanceof TypeError) {
 		} else {
 			console.error("Erro na comunicação com a api: ", error);
-			toast.error("Erro na comunicação com a api: ", error);
+			toast.error("Erro na comunicação com a api: ", error.error);
 		}
 	});
 	if (req?.status !== 200 && req?.status) {
 		console.error(`Erro na comunicação com a api: ${req}`);
-		toast.error(`Erro na comunicação com a api: ${req}`);
+		toast.error(`Erro na comunicação com a api: ${req.status}`);
 	}
 	const data = await req?.json();
 	setState(data);
