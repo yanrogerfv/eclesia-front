@@ -76,9 +76,8 @@ export default function LandingPage() {
                                             <Link className="text-specialtext hover:underline" target="_blank" href={"https://github.com/JoaoVitorSD"}>João Vitor Depollo</Link>, meu tutor,
                                             <Link className="text-specialtext hover:underline" target="_blank" href={"https://github.com/gregorystevao19"}> Grégory Stevão</Link>,
                                             <Link className="text-specialtext hover:underline" target="_blank" href={"https://github.com/Souzaa1"}> Pedro Antônio</Link> e
-                                            <Link className="text-specialtext hover:underline" target="_blank" href={"https://github.com/SamuelAMT"}> Samuel Tavares</Link>, pelas dicas,
-                                            <a className="text-specialtext hover:brightness-125"> Gabriel Barros </a> pela avaliação, e
-                                            <a className="text-specialtext hover:brightness-125"> Ailton Neves</a> pela oportunidade!
+                                            <Link className="text-specialtext hover:underline" target="_blank" href={"https://github.com/SamuelAMT"}> Samuel Tavares</Link>, pelas dicas, e
+                                            <a className="text-specialtext hover:brightness-125"> Isabella Cassilhas e Gabriel Barros </a> pela avaliação!
                                         </p>
                                     </div>
                                 </PopoverContent>
