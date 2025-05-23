@@ -60,7 +60,7 @@ export default function LandingPage() {
                                             Email: <Link target="_blank" href="https://mail.google.com/mail/u/0/?fs=1&to=yanrogerfv@gmail.com&su=Eclesia%20Software&tf=cm" className="text-subprimary hover:underline">
                                                 yanrogerfv@gmail.com</Link><br />
                                             Github: <Link target="_blank" href="https://github.com/yanrogerfv" className="text-subprimary hover:underline">
-                                                @yan-roger-fv</Link>
+                                                @yanrogerfv</Link>
                                         </p>
                                     </div>
                                 </PopoverContent>
