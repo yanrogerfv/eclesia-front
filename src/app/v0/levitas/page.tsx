@@ -182,7 +182,7 @@ export default function Home() {
 							</div>
 						) : (
 							filteredLevitas?.map(levita => (
-								<Card key={levita.id} className={`${removeOverlay ? "animate-pulse" : ""} ${Cookies.get("username") == levita.nome ? "border-special/30 bg-special/10" : ""}`}>
+								<Card key={levita.id} className={`${removeOverlay ? "animate-pulse" : ""} ${Cookies.get("levitaname") == levita.nome ? "border-special/30 bg-special/10" : ""}`}>
 									<X className={removeOverlay ? "absolute hover:cursor-pointer p-1 size-6 bg-rose-500/80 rounded-br-xl animate-none" : "absolute invisible"} onClick={() => {
 										setLoadingRemove(true)
 										deleteMethod(`levita/${levita.id}`)

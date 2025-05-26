@@ -49,6 +49,7 @@ export default function LoginPage() {
                 Cookies.set("token", resp.token, { expires: expireTime })
                 // setPermission(resp.role);
                 Cookies.set("username", data.username, { expires: expireTime })
+                Cookies.set("levitaname", resp.levita.name, { expires: expireTime })
                 sessionStorage.setItem("role", resp.role)
                 sessionStorage.setItem("levita", resp.levita.id)
                 toast.success("Usuário logado com sucesso!")

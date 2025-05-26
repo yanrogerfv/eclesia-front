@@ -10,13 +10,14 @@ import { Button } from "../ui/button";
 import { ptBR } from "date-fns/locale";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
-import { getMethod, postMethod, putMethod } from "@/lib/apiRequests";
+import { deleteMethod, getMethod, postMethod, putMethod } from "@/lib/apiRequests";
 import { toast } from "sonner";
-import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { ScrollArea } from "../ui/scroll-area";
-import { DialogEditLevita } from "./dialog-levita";
-import { PencilLine } from "lucide-react";
+import { DialogEditLevita, DialogVerLevita } from "./dialog-levita";
+import { PencilLine, Trash, Trash2 } from "lucide-react";
 import { TooltipProvider, TooltipTrigger, Tooltip, TooltipContent } from "../ui/tooltip";
+import Cookies from "js-cookie";
+
 
 interface SidebarModalsProps {
     icon: ReactElement,
@@ -451,7 +452,7 @@ export function SidebarAddUser({ icon, title, style }: SidebarModalsProps) {
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild className={"w-full text-indigo-400 hover:text-indigo-400"} disabled={!levitas}>
+            <DialogTrigger asChild className={"w-full text-green-600 hover:text-green-600"} disabled={!levitas}>
                 <SidebarMenuButton>
                     {icon}
                     {title}
@@ -522,3 +523,142 @@ export function SidebarAddUser({ icon, title, style }: SidebarModalsProps) {
         </Dialog>
     )
 }
+
+export function SidebarManageUsers({ icon, title, style }: SidebarModalsProps) {
+    const [open, setOpen] = useState(false);
+    const [users, setUsers] = useState<UserDTO[] | undefined>(undefined);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        if (users) return;
+        getMethod<UserDTO[] | undefined>("auth/user", setUsers)
+        setLoading(false);
+    }, [users])
+
+    return (
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild className="w-full text-indigo-400 hover:text-indigo-400" disabled={!users}>
+                <SidebarMenuButton>
+                    {icon}
+                    {title}
+                </SidebarMenuButton>
+            </DialogTrigger>
+            <DialogContent className="max-h-[70vh] max-w-[40vw] overflow-y-auto ">
+                <DialogHeader>
+                    <DialogTitle>
+                        {title}
+                    </DialogTitle>
+                    <DialogDescription>
+                        Gerencie os usuários do sistema.
+                    </DialogDescription>
+                </DialogHeader>
+                {/* Content aqui */}
+                <div className={!users ? "" : "grid grid-cols-3 gap-4"}>
+                    {loading || !users ? (
+                        <div className="flex justify-center items-center h-40">
+                            <div className="h-16 w-16 border-4 border-primary rounded-3xl animate-spin" />
+                        </div>
+                    ) : users.length === 0 ? (
+                        <Card className="text-center">
+                            <p className="p-6 sm:p-10 text-lg sm:text-2xl text-zinc-400/80">
+                                Nenhum usuário cadastrado no momento.
+                            </p>
+                        </Card>
+                    ) : Array.isArray(users) && users.map((user) => (
+                        <Card key={user.id} className={`${Cookies.get("username") == user.username ? "border-special/30 bg-special/10 " : ""} col-span-1`}>
+                            <CardHeader className="items-center lg:items-start">
+                                <CardTitle className={Cookies.get("username") == user.username ? "text-special" : ""}>{user.username}</CardTitle>
+                                <CardDescription>{user.role.role}</CardDescription>
+                            </CardHeader>
+                            {/* <CardContent>
+                                {user.levita ?
+                                    <>
+                                        <p><span className="text-subprimary">Levita:</span> {user.levita.nome}</p>
+                                        <p><span className="text-subprimary">Email:</span> {user.levita.email ?? "Nenhum email inserido."}</p>
+                                        <p><span className="text-subprimary">Telefone:</span> {user.levita.contato ?? "Nenhum telefone inserido."}</p>
+                                        <p><span className="text-subprimary">Descrição:</span> {user.levita.descricao ?? "Nenhuma descrição inserida."}</p>
+                                        <p><span className="text-subprimary">Instrumentos:</span> <span>
+                                            {user.levita.instrumentos.map((instrumento) => (
+                                                <Badge key={instrumento.id} variant={"outline"} className="gap-1">{instrumento.nome}</Badge>
+                                            ))}
+                                        </span></p>
+                                    </>
+                                    :
+                                    <p className="text-secondary">Nenhum levita associado.</p>
+                                }
+                            </CardContent> */}
+                            <CardFooter className="flex items-center justify-between">
+                                <div>
+                                    {user.levita ?
+                                        <DialogVerLevita levita={user.levita} disabled={false} />
+                                        : <Button variant="outline" disabled className="text-secondary/50">Nenhum levita associado</Button>
+                                    }
+                                </div>
+                                <div>
+                                    {<ConfirmationModal
+                                        onConfirm={() => {
+                                            // deleteMethod(`auth/user/${user.id}`).then(() => {
+                                            //     setUsers(users?.filter(u => u.id !== user.id));
+                                            //     toast.success("Usuário removido com sucesso!");
+                                            // }).catch((error) => {
+                                            //     toast.error("Erro ao remover usuário: ", error);
+                                            //     console.error("Erro ao remover usuário: ", error);
+                                            // })
+                                        }}
+                                        title={`Remover usuário: ${user.username}`}
+                                        trigger={
+                                            <Button variant="destructive">
+                                                <Trash2 size={16} />
+                                            </Button>
+                                        }
+                                    />}
+                                </div>
+                            </CardFooter>
+                        </Card>
+                    ))}
+                </div>
+                <DialogFooter>
+                    <Button variant={"outline"} onClick={() => setOpen(false)}>Fechar</Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    )
+}
+
+function ConfirmationModal({ onConfirm, title, description, trigger, postConfirm }: {
+    onConfirm: () => void;
+    postConfirm?: () => void;
+    title: string;
+    description?: string;
+    trigger?: ReactElement;
+}) {
+    const [isOpen, setOpen] = useState(false);
+    return (
+        <Dialog open={isOpen} onOpenChange={() => setOpen(!isOpen)}>
+            <DialogTrigger asChild>
+                {trigger ? trigger
+                    : <Button variant="destructive" className="text-red-500 hover:text-red-600 hover:brightness-105 hover:animate-pulse">
+                        Trigger
+                    </Button>
+                }
+            </DialogTrigger>
+            <DialogContent className="max-w-md">
+                <DialogHeader>
+                    <DialogTitle>{title}</DialogTitle>
+                    <DialogDescription>{description}</DialogDescription>
+                </DialogHeader>
+                <p className="text-red-500 font-semibold text-center">
+                    Você tem certeza que deseja remover este usuário? Esta ação não pode ser desfeita.
+                </p>
+                <DialogFooter>
+                    <Button variant="outline" onClick={() => setOpen(false)}>Cancelar</Button>
+                    <Button variant="destructive" className="hover:animate-pulse" onClick={() => {
+                        onConfirm();
+                        if (postConfirm) postConfirm();
+                        setOpen(false);
+                    }}>Confirmar</Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    );
+}   

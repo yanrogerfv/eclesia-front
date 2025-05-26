@@ -12,7 +12,7 @@ import {
     SidebarMenuItem,
     SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { SidebarAddUser, SidebarMyAgenda, SidebarMyEscalas, SidebarMyProfile, SidebarNextEvents } from "./modals/sidebar-modals"
+import { SidebarAddUser, SidebarManageUsers, SidebarMyAgenda, SidebarMyEscalas, SidebarMyProfile, SidebarNextEvents } from "./modals/sidebar-modals"
 import ThemeSelector from "./themeSelector"
 import { useEffect, useState } from "react"
 
@@ -83,19 +83,19 @@ export function AppSidebar({ lado }: { lado: "left" | "right" }) {
                                     />
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
-                            {/* {isUserAdminOrLeader && <SidebarMenuItem key={"users"}>
-                                <SidebarMenuButton asChild>
-                                    <a href="/users" className="flex items-center gap-2 p-2 hover:bg-primary/10 rounded-lg">
-                                        <UserRoundCog size={16} />
-                                        <span>Usuários</span>
-                                    </a>
-                                </SidebarMenuButton>
-                            </SidebarMenuItem>} */}
                             {isUserAdminOrLeader && <SidebarMenuItem key={"add_user"}>
                                 <SidebarMenuButton asChild>
                                     <SidebarAddUser
                                         icon={<UserRoundPlus size={16} />}
                                         title={"Adicionar Usuário"}
+                                    />
+                                </SidebarMenuButton>
+                            </SidebarMenuItem>}
+                            {isUserAdminOrLeader && <SidebarMenuItem key={"users"}>
+                                <SidebarMenuButton asChild>
+                                    <SidebarManageUsers style="flex items-center gap-2 p-2 hover:bg-primary/10 rounded-lg"
+                                        icon={<UserRoundCog size={16} />}
+                                        title={"Controle de Usuários"}
                                     />
                                 </SidebarMenuButton>
                             </SidebarMenuItem>}
