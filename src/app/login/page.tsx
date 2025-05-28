@@ -11,6 +11,7 @@ import { z } from "zod";
 import Cookies from "js-cookie";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
+import { DialogFooter } from "@/components/ui/dialog";
 // import { usePermission } from "@/context/permissionContext";
 
 const formSchema = z.object({
@@ -60,7 +61,7 @@ export default function LoginPage() {
                 let resp = await response.json();
                 toast.error("Erro ao fazer login: " + resp.error[0])
                 // toast.error("Erro ao fazer login: ")
-                console.log(response)
+                // console.log(response)
             }
         } catch (error) {
             console.error("Erro na comunicação com a api: ", error);
@@ -170,6 +171,14 @@ export default function LoginPage() {
                                 </Button>
                             </div>
                             <div className="flex justify-center">
+                                {/* patchMethod<UserDTO>(`auth/user/${user.id}`, () => {
+                                        setUsers(users?.map(u => u.id === user.id ? { ...u, username: user.username, role: user.role } : u));
+                                        toast.success("Usuário editado com sucesso!");
+                                                }
+                                                ).catch((error) => {
+                                            toast.error("Erro ao editar usuário: ", error);
+                                        console.error("Erro ao editar usuário: ", error);
+                                                }) */}
                                 <a href="https://mail.google.com/mail/u/0/?fs=1&to=yanrogerfv@gmail.com&su=Esqueci%20Minha%20Senha%20-%20Eclesia%20Software&tf=cm"
                                     className="text-sm text-zinc-400/80 hover:text-zinc-200/80">Esqueci minha senha</a>
                             </div>

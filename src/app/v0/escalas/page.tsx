@@ -35,7 +35,7 @@ export default function Home() {
 	const [isLeader, setLeader] = useState(false)
 
 	useEffect(() => {
-		if (sessionStorage.getItem("role") == "LIDER" || sessionStorage.getItem("role") == "ADMIN") {
+		if (sessionStorage.getItem("role") == "Líder" || sessionStorage.getItem("role") == "ADMIN") {
 			setLeader(true)
 		}
 	}, [])

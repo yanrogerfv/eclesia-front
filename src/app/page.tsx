@@ -48,7 +48,7 @@ export default function LandingPage() {
                     </div>
                     <div className="flex text-center justify-center pb-5 pt-10 sm:pt-20">
                         <Card className="w-[90%] sm:w-[80svh] outline outline-1 items-center outline-primary flex justify-between px-3 py-1 bg-cardstartbg/80">
-                            <p className="text-xs sm:text-sm text-colortext pl-2">v0.0.1a</p>
+                            <p className="text-xs sm:text-sm text-colortext pl-2">v0.1.0</p>
                             <Popover>
                                 <PopoverTrigger asChild>
                                     <Button variant="link">@yanfv</Button>

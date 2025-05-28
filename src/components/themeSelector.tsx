@@ -98,7 +98,7 @@ function ThemeSelector({ className }: ThemeSelectorProps) {
         //     <Moon className="ml-auto"/>
         // </div>
             <div>
-                <div className="border rounded-xl p-1 group-data-[collapsible=icon]:block hidden text-primary">
+                <div className="border rounded-xl p-1 group-data-[collapsible=icon]:block hidden text-primary hover:bg-primary/10">
                     { sereneMode ? <MoonStar/>
                     : sunsetMode ? <Haze/>
                     : forestMode ? <Trees/>

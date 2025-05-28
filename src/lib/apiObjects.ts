@@ -72,8 +72,15 @@ export function convertDateFormat(dateString: Date | undefined) {
     // return dateString ? formatDate(dateString, "dd/MM/yyyy") : ""
     // return formatDate(new Date(), "dd/MM/yyyy")
     if (dateString == undefined) return "";
+    
+    const realDate = dateString.toString().split('-')
+    
     const date = new Date(dateString);
     const days = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
+
+    const weekday = days[date.getDay()];
+    return String(weekday + " - " + realDate[2] + '/' + realDate[1] + '/' + realDate[0]);
+
     if (date.getDate() == 28 && date.getMonth() == 1 && date.getFullYear() % 4 != 0) {
         return String(days[date.getDay()] + " - " + '01/03/' + date.getFullYear())
     } else if (date.getDate() == 29 && date.getMonth() == 1 && date.getFullYear() % 4 == 0) {

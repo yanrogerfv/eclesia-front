@@ -48,10 +48,10 @@ export default function Home() {
 	const [reload, setReload] = useState(false)
 	const [filteredInstruments, setFilteredInstruments] = useState<Instrumento[]>([])
 	const [filteredLevitas, setFilteredLevita] = useState<Levita[] | undefined>(undefined)
-	const [isLeader, setLeader] = useState(false)
+	const [isAdminOrLeader, setLeader] = useState(false)
 
 	useEffect(() => {
-		if (sessionStorage.getItem("role") == "LIDER" || sessionStorage.getItem("role") == "ADMIN") {
+		if (sessionStorage.getItem("role") == "Líder" || sessionStorage.getItem("role") == "ADMIN") {
 			setLeader(true)
 		}
 	}, [])
@@ -105,8 +105,8 @@ export default function Home() {
 								<h1 className="mx-5 font-extrabold tracking-tight text-5xl">Levitas</h1>
 							</div>
 							<div>
-								{isLeader && <DialogAddLevita disable={isLoading} setLevitas={setLevitas}/>}
-								{isLeader &&
+								{isAdminOrLeader && <DialogAddLevita disable={isLoading} setLevitas={setLevitas}/>}
+								{isAdminOrLeader &&
 									<Button variant="outline" className={removeOverlay ? "mx-2 font-bold bg-rose-500/80 border-rose-600/90 hover:bg-rose-600/40"
 										: "mx-2 font-bold hover:bg-rose-500/40"} disabled={isLoading}
 										onClick={() => setRemoveOverlay(!removeOverlay)}>
@@ -185,7 +185,7 @@ export default function Home() {
 								<Card key={levita.id} className={`${removeOverlay ? "animate-pulse" : ""} ${Cookies.get("levitaname") == levita.nome ? "border-special/30 bg-special/10" : ""}`}>
 									<X className={removeOverlay ? "absolute hover:cursor-pointer p-1 size-6 bg-rose-500/80 rounded-br-xl animate-none" : "absolute invisible"} onClick={() => {
 										setLoadingRemove(true)
-										deleteMethod(`levita/${levita.id}`)
+										deleteMethod(`v1/levita/${levita.id}`)
 											.then(() => {
 												setLoadingRemove(false)
 												setReload(!reload)

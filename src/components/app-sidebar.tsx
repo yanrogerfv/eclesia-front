@@ -18,14 +18,17 @@ import { useEffect, useState } from "react"
 
 export function AppSidebar({ lado }: { lado: "left" | "right" }) {
 
-    const [isUserAdminOrLeader, setUserAdminOrLeader] = useState(false)
+    const [isUserLeader, setUserLeader] = useState(false)
+    const [isUserAdmin, setUserAdmin] = useState(false)
     const [username, setUsername] = useState("");
 
     useEffect(() => {
         // This code now runs only on the client side, avoiding the ReferenceError
-        const userAdmin = sessionStorage.getItem("role") === "ADMIN" || sessionStorage.getItem("role") === "LIDER";
+        const userLeader = sessionStorage.getItem("role") === "Líder";
+        const userAdmin = sessionStorage.getItem("role") === "ADMIN";
         setUsername(Cookies.get("username") || "Usuário")
-        setUserAdminOrLeader(userAdmin);
+        setUserAdmin(userAdmin);
+        setUserLeader(userLeader);
     }, []);
 
     return (
@@ -83,7 +86,7 @@ export function AppSidebar({ lado }: { lado: "left" | "right" }) {
                                     />
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
-                            {isUserAdminOrLeader && <SidebarMenuItem key={"add_user"}>
+                            {(isUserAdmin || isUserLeader) && <SidebarMenuItem key={"add_user"}>
                                 <SidebarMenuButton asChild>
                                     <SidebarAddUser
                                         icon={<UserRoundPlus size={16} />}
@@ -91,11 +94,11 @@ export function AppSidebar({ lado }: { lado: "left" | "right" }) {
                                     />
                                 </SidebarMenuButton>
                             </SidebarMenuItem>}
-                            {isUserAdminOrLeader && <SidebarMenuItem key={"users"}>
+                            {isUserAdmin && <SidebarMenuItem key={"users"}>
                                 <SidebarMenuButton asChild>
                                     <SidebarManageUsers style="flex items-center gap-2 p-2 hover:bg-primary/10 rounded-lg"
                                         icon={<UserRoundCog size={16} />}
-                                        title={"Controle de Usuários"}
+                                        title={"Gestão de Usuários"}
                                     />
                                 </SidebarMenuButton>
                             </SidebarMenuItem>}
@@ -118,9 +121,9 @@ export function AppSidebar({ lado }: { lado: "left" | "right" }) {
                     </SidebarGroupContent>
                 </SidebarGroup>
                 <SidebarFooter className="mt-auto flex justify-center items-center ">
-                    <SidebarMenuButton className="flex items-center justify-center h-fit gap-2 p-2 hover:bg-primary/10 rounded-lg group">
+                    {/* <SidebarMenuButton className="flex items-center justify-center h-fit gap-2 p-2 hover:bg-primary/10 rounded-lg group"> */}
                         <ThemeSelector className="bg-zinc-700/10 w-full" />
-                    </SidebarMenuButton>
+                    {/* </SidebarMenuButton> */}
                 </SidebarFooter>
             </SidebarContent>
         </Sidebar>

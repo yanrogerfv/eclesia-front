@@ -103,7 +103,7 @@ export default function Home() {
 									<TableCell><Link href={musica.link} target="_blank">{musica.link}</Link></TableCell>
 									<TableCell><TbMusicX className="justify-end size-5 hover:cursor-pointer hover:text-red-500/90"
 										onClick={() => {
-											deleteMethod(`musicas/${musica.id}`)
+											deleteMethod(`v1/musicas/${musica.id}`)
 												.then(() => {
 													toast.success("Música excluída com sucesso!")
 													setLoading(true)

@@ -10,11 +10,11 @@ import { Button } from "../ui/button";
 import { ptBR } from "date-fns/locale";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
-import { deleteMethod, getMethod, postMethod, putMethod } from "@/lib/apiRequests";
+import { deleteMethod, getMethod, patchMethod, postMethod, putMethod } from "@/lib/apiRequests";
 import { toast } from "sonner";
 import { ScrollArea } from "../ui/scroll-area";
 import { DialogEditLevita, DialogVerLevita } from "./dialog-levita";
-import { PencilLine, Trash, Trash2 } from "lucide-react";
+import { PencilLine, RefreshCcw, RefreshCw, Trash, Trash2 } from "lucide-react";
 import { TooltipProvider, TooltipTrigger, Tooltip, TooltipContent } from "../ui/tooltip";
 import Cookies from "js-cookie";
 
@@ -595,23 +595,34 @@ export function SidebarManageUsers({ icon, title, style }: SidebarModalsProps) {
                                     }
                                 </div>
                                 <div>
-                                    {<ConfirmationModal
-                                        onConfirm={() => {
-                                            // deleteMethod(`auth/user/${user.id}`).then(() => {
-                                            //     setUsers(users?.filter(u => u.id !== user.id));
-                                            //     toast.success("Usuário removido com sucesso!");
-                                            // }).catch((error) => {
-                                            //     toast.error("Erro ao remover usuário: ", error);
-                                            //     console.error("Erro ao remover usuário: ", error);
-                                            // })
-                                        }}
-                                        title={`Remover usuário: ${user.username}`}
-                                        trigger={
-                                            <Button variant="destructive">
-                                                <Trash2 size={16} />
-                                            </Button>
-                                        }
-                                    />}
+                                    {Cookies.get("username") != user.username ?
+                                        <ConfirmationModal
+                                            onConfirm={() => {
+                                                deleteMethod(`auth/user/${user.id}`)
+                                                .catch((error) => {
+                                                    toast.error("Erro ao remover usuário: ", error);
+                                                    console.error("Erro ao remover usuário: ", error);
+                                                })
+                                                .then(() => {
+                                                    toast.success("Usuário removido com sucesso!");
+                                                    setUsers(users?.filter(u => u.id !== user.id));
+                                                })
+                                            }}
+                                            title={`Remover usuário: ${user.username}`}
+                                            trigger={
+                                                <Button variant={"destructive"}>
+                                                    <Trash2 size={16} />
+                                                </Button>
+                                            }
+                                            message={
+                                                <p className="text-red-500 font-semibold text-center">
+                                                    Você tem certeza que deseja remover este usuário? Esta ação não pode ser desfeita.
+                                                </p>
+                                            }
+                                        />
+                                        : <Button variant={"destructive"} className="grayscale border">
+                                            <Trash2 size={16} />
+                                        </Button>}
                                 </div>
                             </CardFooter>
                         </Card>
@@ -625,11 +636,12 @@ export function SidebarManageUsers({ icon, title, style }: SidebarModalsProps) {
     )
 }
 
-function ConfirmationModal({ onConfirm, title, description, trigger, postConfirm }: {
+function ConfirmationModal({ onConfirm, title, description, message, trigger, postConfirm }: {
     onConfirm: () => void;
     postConfirm?: () => void;
     title: string;
     description?: string;
+    message?: string | ReactElement;
     trigger?: ReactElement;
 }) {
     const [isOpen, setOpen] = useState(false);
@@ -637,7 +649,7 @@ function ConfirmationModal({ onConfirm, title, description, trigger, postConfirm
         <Dialog open={isOpen} onOpenChange={() => setOpen(!isOpen)}>
             <DialogTrigger asChild>
                 {trigger ? trigger
-                    : <Button variant="destructive" className="text-red-500 hover:text-red-600 hover:brightness-105 hover:animate-pulse">
+                    : <Button>
                         Trigger
                     </Button>
                 }
@@ -647,12 +659,14 @@ function ConfirmationModal({ onConfirm, title, description, trigger, postConfirm
                     <DialogTitle>{title}</DialogTitle>
                     <DialogDescription>{description}</DialogDescription>
                 </DialogHeader>
-                <p className="text-red-500 font-semibold text-center">
-                    Você tem certeza que deseja remover este usuário? Esta ação não pode ser desfeita.
-                </p>
+                {message && typeof message !== "string" ? message
+                    : <p className="font-semibold text-center">
+                        {typeof message === "string" ? message
+                            : "Você tem certeza que deseja continuar?"}
+                    </p>}
                 <DialogFooter>
                     <Button variant="outline" onClick={() => setOpen(false)}>Cancelar</Button>
-                    <Button variant="destructive" className="hover:animate-pulse" onClick={() => {
+                    <Button className="hover:animate-pulse" onClick={() => {
                         onConfirm();
                         if (postConfirm) postConfirm();
                         setOpen(false);

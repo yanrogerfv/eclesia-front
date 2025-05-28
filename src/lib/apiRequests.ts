@@ -69,6 +69,48 @@ export async function postMethod<T>(url: string, body: body, setState?: React.Di
 }
 
 /**
+ * Function to perform a PATCH request to the API
+ * @function 
+ * 
+ * 
+ * @param url - Request URL
+ * @param body - Fields with the parameters to be passed as a body of the request
+ * @param setState - SetStateAction to update the state with the response data
+ * */
+export async function patchMethod<T>(url: string, body?: body, setState?: React.Dispatch<React.SetStateAction<T | undefined>> | undefined) {
+
+	const reqHeaders = body ? {
+		method: "PATCH",
+		headers: {
+			"Content-Type": "application/json",
+			"Authorization": `Bearer ${Cookies.get("token")}`
+		},
+		body: JSON.stringify(body)
+	} : {
+		method: "PATCH",
+		headers: {
+			"Content-Type": "application/json",
+			"Authorization": `Bearer ${Cookies.get("token")}`
+		}
+	}
+	const req = await fetch(`${apiUrl}${url}`, reqHeaders).catch((error) => {
+		console.error("Erro na comunicação com a api: ", error);
+		toast.error("Erro na comunicação com a api: ", error);
+	}
+	);
+	if (req) {
+		const status = req.status;
+		if (status !== 200) {
+			toast.error(`Erro na comunicação com a api: ${status}`);
+			console.error(`Erro na comunicação com a api: ${status}`);
+		}
+		const data = await req.json();
+		if (setState)
+			setState(data);
+	}
+}
+
+/**
  * Function to perform a PUT request to the API
  * @function 
  * 

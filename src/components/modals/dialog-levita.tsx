@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { PencilLine, UserPlus } from "lucide-react";
+import { Church, PencilLine, UserPlus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Levita, Instrumento } from "@/lib/apiObjects";
 import { Checkbox } from "../ui/checkbox";
@@ -27,6 +27,17 @@ export function DialogVerLevita(props: {
     setLevitas?: React.Dispatch<React.SetStateAction<Levita[] | undefined>>
 }
 ) {
+
+    const [levitaId, setLevitaId] = useState<string | null>();
+    const [isUserAdmin, setIsUserAdmin] = useState(false);
+
+    useEffect(() => {
+        // This code now runs only on the client side, avoiding the ReferenceError
+        const userAdmin = sessionStorage.getItem("role") === "ADMIN" ;
+        setIsUserAdmin(userAdmin);
+        setLevitaId(sessionStorage.getItem("levita"));
+    }, []);
+
     return (
         <Dialog>
             <DialogTrigger asChild key={props.levita.nome} className="p-5">
@@ -42,7 +53,11 @@ export function DialogVerLevita(props: {
                 </DialogHeader>
                 <p className="text-colortext text-center">{props.levita.descricao ? props.levita.descricao : "Nenhuma descrição inserida para este levita."}</p>
                 <DialogFooter>
-                    <DialogEditLevita levita={props.levita} setLevitas={props.setLevitas} />
+                    {
+                        levitaId === props.levita.id || isUserAdmin ?
+                            <DialogEditLevita levita={props.levita} setLevitas={props.setLevitas} />
+                            : <Church size={20}/>
+                    }
                 </DialogFooter>
             </DialogContent>
         </Dialog>
@@ -205,7 +220,7 @@ export function DialogEditLevita(props: DialogEditLevitaProps) {
                     <div className="absolute w-full h-[85%] z-50 flex justify-center items-center">
                         <div className="h-16 w-16 border-4 border-subprimary rounded-3xl animate-spin" />
                     </div>
-                : <></>}
+                    : <></>}
                 <DialogHeader>
                     <DialogTitle>Editar Levita</DialogTitle>
                     <DialogDescription>
@@ -243,7 +258,7 @@ export function DialogEditLevita(props: DialogEditLevitaProps) {
                     <br />
                     <Label>Descrição:</Label>
                     <Textarea placeholder={levita.descricao ? levita.descricao : "Insira uma descrição do Levita."} onChange={(e) => setDescricaoLevita(e.target.value)}
-                        value={descricaoLevita} />
+                        value={descricaoLevita || undefined} />
 
 
                 </DialogHeader>

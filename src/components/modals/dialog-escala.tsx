@@ -44,7 +44,6 @@ export function VerEscala(props: props) {
 	useEffect(() => {
 		if (escalaMusicas) return;
 		getMethod<Musica[] | undefined>(`v1/escala/musicas/${props.escalaId}`, setEscalaMusicas)
-		console.log("called", escalaMusicas)
 	}, [escalaMusicas])
 
 	const [isUserAdmin, setUserAdmin] = useState(false)
@@ -55,7 +54,7 @@ export function VerEscala(props: props) {
 		// This code now runs only on the client side, avoiding the ReferenceError
 		const userAdmin = sessionStorage.getItem("role") === "ADMIN";
 		setUserAdmin(userAdmin);
-		const userLeader = sessionStorage.getItem("role") === "LIDER";
+		const userLeader = sessionStorage.getItem("role") === "Líder";
 		setUserLeader(userLeader);
 		const userMinistro = sessionStorage.getItem("levita") === escalaData?.ministro.id;
 		setUserMinistro(userMinistro);
@@ -579,7 +578,7 @@ interface DialogAddMusicaInEscalaProps {
 }
 export function DialogAddMusicaInEscala(props: DialogAddMusicaInEscalaProps) {
 	// const [musicas, setMusicas] = useState<Musica[]>();
-	const [selectedMusicas, setSelectedMusicas] = useState<String[]>(props.escala?.musicas.map((musica) => musica.id) || []);
+	const [selectedMusicas, setSelectedMusicas] = useState<String[]>(props.escala?.musicas?.map((musica) => musica.id) || []);
 	const [open, setOpen] = useState(false);
 	const [isLoading, setLoading] = useState(false);
 	const [musicas, setMusicas] = useState<Musica[] | undefined>(undefined);
@@ -597,7 +596,6 @@ export function DialogAddMusicaInEscala(props: DialogAddMusicaInEscalaProps) {
 	}
 	function removeSelectedMusica(musicaId: String) {
 		setSelectedMusicas(selectedMusicas.filter((musica) => musica != musicaId))
-		console.log(selectedMusicas)
 	}
 
 	return (
@@ -643,7 +641,6 @@ export function DialogAddMusicaInEscala(props: DialogAddMusicaInEscalaProps) {
 				<DialogFooter className="">
 					<Button className="hover:bg-emerald-500"
 						type="submit" disabled={isLoading} onClick={() => {
-							console.log(selectedMusicas)
 							setLoading(true)
 							putMethod(`v1/escala/musicas/${props.escala?.id}`, { musicasIds: selectedMusicas })
 								.catch((error) => toast.error("Erro ao adicionar músicas!", error))

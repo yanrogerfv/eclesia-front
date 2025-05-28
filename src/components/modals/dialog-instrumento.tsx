@@ -100,7 +100,6 @@ export function DialogRemoveInstrumento( props: { allInstrumentos: Instrumento[]
                     <Button className="hover:bg-emerald-500"
                         type="submit" disabled={isLoading} onClick={() => {
                             setLoading(true)
-                            console.log(selectedInstrumento)
                             deleteMethod(`v1/instrumento/${selectedInstrumento}`)
                                 .then(() => {
                                     setOpen(false)
