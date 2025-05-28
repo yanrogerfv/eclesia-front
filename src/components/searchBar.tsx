@@ -2,7 +2,7 @@
 
 import { ChangeEventHandler, useEffect, useMemo, useState } from "react";
 import { Input } from "./ui/input";
-import { Levita } from "./apiObjects";
+import { Levita } from "@/lib/apiObjects";
 
 interface props{
   disabled: boolean;

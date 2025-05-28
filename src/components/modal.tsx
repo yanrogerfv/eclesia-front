@@ -5,7 +5,7 @@ import { Button } from "./ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card";
 import { useState } from "react";
 import { Badge } from "./ui/badge";
-import { Escala } from "./apiObjects";
+import { Escala } from "@/lib/apiObjects";
 
 interface props {
     escala: Escala

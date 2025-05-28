@@ -3,17 +3,15 @@
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Button } from "../ui/button"
 import { CircleMinus, CirclePlus } from "lucide-react"
-import { useState } from "react"
+import React, { useState } from "react"
 import { Label } from "../ui/label"
 import { Input } from "../ui/input"
 import { toast } from "sonner"
-import { UUID } from "crypto"
-import { GetInstrumentos } from "../apiRequests"
+import { deleteMethod, postMethod } from "@/lib/apiRequests"
 import { Select, SelectTrigger, SelectItem, SelectContent, SelectGroup, SelectLabel, SelectValue } from "../ui/select"
-import { Instrumento } from "../apiObjects"
-import { get } from "http"
+import { Instrumento } from "@/lib/apiObjects"
 
-export function DialogAddInstrumento() {
+export function DialogAddInstrumento(props: { disabled: boolean, state: React.Dispatch<React.SetStateAction<Instrumento[] | undefined>> }) {
     const [nomeInstrumento, setNomeInstrumento] = useState("")
     const [isLoading, setLoading] = useState(false);
     const [open, setOpen] = useState(false);
@@ -21,10 +19,15 @@ export function DialogAddInstrumento() {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant={"outline"} className="mx-2 hover:text-emerald-500">
+                <Button variant={"outline"} disabled={props.disabled} className="mx-2 hover:text-emerald-500">
                     <CirclePlus />Adicionar Instrumento</Button>
             </DialogTrigger>
             <DialogContent>
+                {isLoading ?
+                    <div className="absolute w-full h-[85%] z-50 flex justify-center items-center">
+                        <div className="h-16 w-16 border-4 border-subprimary rounded-3xl animate-spin" />
+                    </div>
+                : <></>}
                 <DialogHeader>
                     <DialogTitle>Adicionar Instrumento</DialogTitle>
                     <br />
@@ -38,24 +41,20 @@ export function DialogAddInstrumento() {
                     <Button className="hover:bg-emerald-500"
                         type="submit" disabled={isLoading} onClick={() => {
                             setLoading(true)
-                            fetch("http://localhost:1004/v1/instrumento", {
-                                method: "POST",
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify({
-                                    nome: nomeInstrumento,
-                                })
-                            })
-                                .then((res) => res.json())
-                                .then(() => {
+                            if (nomeInstrumento === "") {
+                                alert("O nome do instrumento não pode ser vazio.")
+                                setLoading(false)
+                            } else {
+                                postMethod("v1/instrumento", {
+                                    nome: nomeInstrumento
+                                }, () => { }).then(() => {
                                     setOpen(false)
                                     setLoading(false)
-                                })
-                                // .then((data) => setCreatedMusic(data))
-                                .catch((error) => {
+                                    props.state(undefined)
+                                }).catch((error) => {
                                     console.error("Erro na comunicação com a api: ", error);
                                 })
+                            }
                         }}>Salvar</Button>
                     <Button className="hover:bg-rose-600/80" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
                 </DialogFooter>
@@ -64,19 +63,23 @@ export function DialogAddInstrumento() {
     )
 }
 
-export function DialogRemoveInstrumento() {
+export function DialogRemoveInstrumento( props: { allInstrumentos: Instrumento[] | undefined, state: React.Dispatch<React.SetStateAction<Instrumento[] | undefined>> }) {
     const [isLoading, setLoading] = useState(false);
     const [open, setOpen] = useState(false);
-    const allInstrumentos = GetInstrumentos();
     const [selectedInstrumento, setSelectedInstrumento] = useState<any>(null);
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant={"outline"} className="mx-2 hover:bg-rose-500/40" >
+                <Button variant={"outline"} disabled={!props.allInstrumentos} className="mx-2 hover:bg-rose-500/40" >
                     <CircleMinus />Remover Instrumento</Button>
             </DialogTrigger>
             <DialogContent>
+                {isLoading ?
+                    <div className="absolute w-full h-[85%] z-50 flex justify-center items-center">
+                        <div className="h-16 w-16 border-4 border-subprimary rounded-3xl animate-spin" />
+                    </div>
+                : <></>}
                 <DialogHeader>
                     <DialogTitle>Remover Instrumento</DialogTitle>
                 </DialogHeader>
@@ -84,10 +87,10 @@ export function DialogRemoveInstrumento() {
                     <SelectTrigger>
                         <SelectValue placeholder="Escolha o instrumento a ser removido." />
                     </SelectTrigger>
-                    <SelectContent onChange={(e) => {setSelectedInstrumento(e.target)}}>
+                    <SelectContent onChange={(e) => { setSelectedInstrumento(e.target) }}>
                         <SelectGroup>
                             <SelectLabel>Instrumentos</SelectLabel>
-                            {allInstrumentos.map((instrumento) => (
+                            {props.allInstrumentos?.map((instrumento) => (
                                 <SelectItem key={instrumento.id} value={instrumento.id.toString()} onSelect={() => setSelectedInstrumento(instrumento.id)}>{instrumento.nome}</SelectItem>
                             ))}
                         </SelectGroup>
@@ -97,13 +100,11 @@ export function DialogRemoveInstrumento() {
                     <Button className="hover:bg-emerald-500"
                         type="submit" disabled={isLoading} onClick={() => {
                             setLoading(true)
-                            console.log(selectedInstrumento)
-                            fetch(`http://localhost:1004/v1/instrumento/${selectedInstrumento}`, {
-                                method: "DELETE",
-                            })
+                            deleteMethod(`v1/instrumento/${selectedInstrumento}`)
                                 .then(() => {
                                     setOpen(false)
                                     setLoading(false)
+                                    props.state(undefined)
                                 })
                                 .catch((error) => {
                                     console.error("Erro na comunicação com a api: ", error);

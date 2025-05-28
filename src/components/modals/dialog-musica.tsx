@@ -8,33 +8,32 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import { Musica } from "../apiObjects";
+import { Musica } from "@/lib/apiObjects";
 import { useState } from "react";
 import { Button } from "../ui/button";
-import { Check, Music } from "lucide-react";
+import { Music } from "lucide-react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
-import { CreateMusica } from "../apiRequests";
-import { toast, useToast } from "../ui/use-toast";
-import { title } from "process";
+import { postMethod } from "@/lib/apiRequests";
+import { toast } from "sonner";
 
-export function DialogAddMusica() {
+export function DialogAddMusica(props: { setState: React.Dispatch<React.SetStateAction<Musica[] | undefined>> }) {
     const [nomeMusica, setNomeMusica] = useState("");
     const [linkMusica, setLinkMusica] = useState("");
     const [cifraMusica, setCifraMusica] = useState("");
     const [open, setOpen] = useState(false);
     const [isLoading, setLoading] = useState(false);
 
-
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild className="flex p-5">
-                <Button variant={"outfill"} className="mx-2 font-bold" onClick={() => setLoading(false)}>
-                    <Music className="mr-2" />Adicionar Música</Button>
+                <Button variant={"outline"} className="hover:text-emerald-500" onClick={() => setLoading(false)}>
+                    <Music className="mr-2 hover:animate-bounce" />Adicionar Música</Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>Adicionar Música</DialogTitle>
+                    <DialogDescription />
                     <br />
                     <Label>Nome:</Label>
                     <Input type="text" placeholder="Insira o nome da música."
@@ -50,27 +49,22 @@ export function DialogAddMusica() {
 
                 </DialogHeader>
                 <DialogFooter className="">
-                    <Button className="hover:bg-emerald-500"
-                        type="submit"  disabled={isLoading} onClick={() => {
+                    <Button className="hover:bg-emerald-500" type="submit" disabled={isLoading}
+                        onClick={() => {
                             setLoading(true)
-                            fetch("http://localhost:1004/v1/musicas", {
-                                method: "POST",
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify({
-                                    nome: nomeMusica,
-                                    link: linkMusica,
-                                    cifra: cifraMusica
-                                })
-                            })
-                                .then((res) => res.json())
-                                .then(() => { setOpen(false) })
-                                // .then((data) => setCreatedMusic(data))
+                            if (nomeMusica === "" || linkMusica === "") {
+                                toast.warning("Preencha todos os campos!")
+                                setLoading(false)
+                            }
+                            postMethod<Musica>("v1/musicas", {
+                                nome: nomeMusica,
+                                link: linkMusica,
+                                cifra: cifraMusica
+                            }, () => setOpen(false)).then(() => props.setState(undefined))
                                 .catch((error) => {
-                                    console.error("Erro na comunicação com a api: ", error);
+                                    toast.error("Erro na comunicação com a api: ", error);
                                 })
-                            toast({ title: "Música inserida com sucesso!" })
+                            toast.success("Música inserida com sucesso!")
                         }}>Salvar</Button>
                     <Button className="hover:bg-rose-600/80" onClick={() => setOpen(false)}>Cancelar</Button>
                 </DialogFooter>

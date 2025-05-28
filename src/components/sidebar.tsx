@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/sheet"
 import { ListFilter } from "lucide-react"
 import { CheckboxDemo } from "./checkboxObj"
-import { Instrumento } from "./apiObjects"
+import { Instrumento } from "@/lib/apiObjects"
 
 interface props {
     instrumentos : Instrumento[]
