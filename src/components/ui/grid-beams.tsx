@@ -183,3 +183,7 @@ export const GridBeams: React.FC<GridBeamsProps> = ({
     </div>
   );
 };
+
+GridBeams.displayName = "GridBeams";
+
+export default GridBeams;
