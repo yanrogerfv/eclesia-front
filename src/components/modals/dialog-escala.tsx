@@ -21,7 +21,7 @@ import { Textarea } from "../ui/textarea";
 import { ScrollArea } from "../ui/scroll-area";
 import { Card } from "../ui/card";
 import Link from "next/link";
-import { getMethod, postMethod, putMethod } from "@/lib/apiRequests";
+import { getMethod, postMethod, publicGetMethod, putMethod } from "@/lib/apiRequests";
 import Cookies from "js-cookie";
 import { Checkbox } from "../ui/checkbox";
 import { DayPicker } from "react-day-picker";
@@ -30,6 +30,65 @@ import { toast } from "sonner";
 interface props {
 	escalaId: UUID,
 	levitasDisponiveis: Levita[] | undefined
+}
+
+export function VerEscalaSomenteLeitura({escalaId}: {escalaId: UUID}) {
+	const [escalaData, setEscalaData] = useState<Escala | undefined>(undefined)
+	const [escalaMusicas, setEscalaMusicas] = useState<Musica[] | undefined>(undefined)
+
+	useEffect(() => {
+		console.log(escalaData, escalaMusicas)
+		if (escalaData && escalaMusicas) return;
+		publicGetMethod<Escala | undefined>(`v1/escala/find/${escalaId}`, setEscalaData)
+		publicGetMethod<Musica[] | undefined>(`v1/escala/musicas/${escalaId}`, setEscalaMusicas)
+	}, [escalaData, escalaMusicas])
+
+	return (
+		<Dialog>
+			<DialogTrigger asChild key={escalaData?.id} className="p-5">
+				<Button variant={"outline"} disabled={(!escalaData)} className="flex items-center rounded-md justify-center">Ver Escala</Button>
+			</DialogTrigger>
+			<DialogContent>
+				{!escalaData ?
+                    <div className="absolute w-full h-[85%] bg-black/50 z-50 flex justify-center items-center">
+                        <div className="h-16 w-16 border-4 border-subprimary rounded-3xl animate-spin" />
+                    </div>
+                : <></>}
+				<DialogHeader>
+					<DialogTitle className={"text-2xl " + (escalaData?.domingo ? "text-primary/80" :
+						escalaData?.quarta ? "text-secondary/80" : "text-special"
+					)}>{escalaData?.titulo}</DialogTitle>
+					<DialogDescription className="border-b border-zinc-600">
+						{convertDateFormat(escalaData ? escalaData.data : undefined)}
+					</DialogDescription>
+					<br />
+					<p className="text-special">Ministro: <a className="text-secondary">{escalaData?.ministro.nome}</a></p>
+					<p className="text-subprimary">Violão: {escalaData?.violao ? <a className="text-colortext"> {escalaData.violao.nome}</a> : <a className="text-colortext/50">Não inserido.</a>}</p>
+					<p className="text-subprimary">Teclado: {escalaData?.teclado ? <a className="text-colortext"> {escalaData.teclado.nome}</a> : <a className="text-colortext/50">Não inserido.</a>}</p>
+					<p className="text-subprimary">Bateria: {escalaData?.bateria ? <a className="text-colortext"> {escalaData.bateria.nome}</a> : <a className="text-colortext/50">Não inserido.</a>}</p>
+					<p className="text-subprimary">Baixo: {escalaData?.baixo ? <a className="text-colortext"> {escalaData.baixo.nome}</a> : <a className="text-colortext/50">Não inserido.</a>}</p>
+					<p className="text-subprimary">Guitarra: {escalaData?.guitarra ? <a className="text-colortext"> {escalaData.guitarra.nome}</a> : <a className="text-colortext/50">Não inserido.</a>}</p>
+					<p className="text-subprimary">Backs: {escalaData ? <a className="text-colortext"> {listBacks(escalaData.back)}.</a> : <a className="text-colortext/50">Não inseridos.</a>}</p>
+					<br />
+
+				</DialogHeader>
+				<Label className="text-secondary/85">Observações:</Label>
+				{escalaData?.observacoes ? <p className="text-colortext">{escalaData?.observacoes}</p> : <p className="text-foreground/25">Nenhuma observação.</p>}
+				<br />
+
+				<Label className="text-secondary/85">Músicas:</Label>
+				<Card className="bg-transparent grid grid-flow-row p-2">
+					{escalaMusicas ? escalaMusicas.length > 0 ?
+						escalaMusicas.map((musica) => (
+							<Button key={musica.id} variant={"outline"} className="rounded-lg m-2">
+								<Link key={musica.id} href={musica.link} target="_blank" className="w-full">
+									{musica.nome}</Link></Button>
+						)) : <p className="text-foreground/25">Nenhuma música inserida.</p>
+					: <p className="text-foreground/25">Carregando músicas...</p>}
+				</Card>
+			</DialogContent>
+		</Dialog>
+	)
 }
 
 export function VerEscala(props: props) {

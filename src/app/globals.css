@@ -76,7 +76,7 @@
 	} */
 
 	:root {
-		--gradient: #fff23a;
+		--gradient: #fff67d;
 		--background: 60 97.35% 98.44%;
 		--foreground: 60 4.699999999999999% 0.88%;
 	
@@ -86,17 +86,17 @@
 		--popover: 60 52.400000000000006% 92.2%;
 		--popover-foreground: 60 4.699999999999999% 1.1%;
 	
-		--card: 60 100% 85%;
+		--card: 60 100% 88%;
 		--card-start-bg: 60 52.400000000000006% 92.2%;
 		--card-foreground: 60 4.699999999999999% 1.1%;
 	
-		--border: 47 64% 53.1%;
+		--border: 47 100% 67%;
 		--input: 60 9.7% 89.88%;
 	
 		--primary: 44 99% 54%;
 		--primary-foreground: 60 0.94% 92.2%;
 	
-		--secondary: 50 78% 51%;
+		--secondary: 50 92% 64%;
 		--secondary-foreground: 60 3.82% 12.2%;
 
 		--subprimary: 59 61% 47%;
@@ -104,7 +104,7 @@
 
 		--special: 332 100% 50%;
 		--special-foreground: 60 4.699999999999999% 1.1%;
-		--special-text: 60 100% 85%;
+		--special-text: 0 100% 52%;
 	
 		--accent: 60 2.3499999999999996% 96.1%;
 		--accent-foreground: 60 3.82% 12.2%;
@@ -114,7 +114,7 @@
 
 		--colortext: 48 6% 16%;
 	
-		--ring: 60 47% 22%;
+		--ring: 60 39% 28%;
 	
 		--radius: 0.5rem;
 		--table-bg: 48 100% 70%;
