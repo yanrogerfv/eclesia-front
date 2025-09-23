@@ -30,7 +30,7 @@ export default function LandingPage() {
                                     Eclesia
                                 </VideoText>
                             </h1>
-                            <p className="text-center text-colortext text-lg sm:text-xl md:text-2xl pt-2 border-t border-primary">
+                            <p className="text-center text-zinc-700 text-lg sm:text-xl md:text-2xl pt-2 border-t border-primary">
                                 Uma amiga na hora de organizar os Levitas!</p>
                         </div>
                         <br />
@@ -49,7 +49,7 @@ export default function LandingPage() {
 
 
                         <div className="w-full flex justify-center mt-10">
-                            <div className="flex justify-center items-center border rounded-sm">
+                            <div className="flex justify-center items-center border rounded-sm text-black">
                                 <Link href="/login" className="m-4">
                                     <Button variant={"ghost"} className="text-lg sm:text-xl md:text-2xl">
                                         Acessar
@@ -65,12 +65,12 @@ export default function LandingPage() {
                         </div>
 
                         <div className="flex text-center justify-center w-full mt-12">
-                            <div className="max-w-xl">
+                            <div className="max-w-xl text-black">
                                 {/* <Card className={"w-[90%] sm:w-[80dvh] outline outline-1 outline-primary py-3 px-6 text-center justify-center items-center "}> */}
                                 <p className="sm:text-lg">Eclesia é uma aplicação web que visa facilitar a organização de escalas e a comunicação entre os membros de um grupo de louvor.
                                     Aqui você pode criar e gerenciar Escalas, Levitas, os Instrumentos usados e as Músicas escolhidas!</p>
                                 <br />
-                                <p className="sm:text-lg text-colortext">Esta ainda é uma aplicação em desenvolvimento, então fique a vontade para relatar problemas e sugerir melhorias!</p>
+                                <p className="sm:text-lg text-zinc-700">Esta ainda é uma aplicação em desenvolvimento, então fique a vontade para relatar problemas e sugerir melhorias!</p>
                                 {/* </Card> */}
                             </div>
                         </div>
