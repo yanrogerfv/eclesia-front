@@ -4,11 +4,9 @@ import ThemeSelector from "@/components/themeSelector";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { GridBeams } from "@/components/ui/grid-beams";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
 import { VideoText } from "@/components/ui/video-text";
-import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
 
