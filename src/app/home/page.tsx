@@ -11,7 +11,7 @@ import { ChevronLeft } from "lucide-react";
 import Cookies from "js-cookie";
 import { getMethod } from "@/lib/apiRequests";
 import { AppSidebar } from "@/components/app-sidebar";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 
 export default function Home() {
 
@@ -26,7 +26,7 @@ export default function Home() {
 
     return (
         <SidebarProvider>
-            <AppSidebar lado="left" />
+            <AppSidebar side="left" alwaysOpen />
             {/* <SidebarTrigger className="border" /> */}
             <main className="max-w-6xl mx-auto my-12 px-4 sm:px-6 lg:px-8">
                 <nav>
@@ -43,10 +43,10 @@ export default function Home() {
                 <br />
                 <div>
                     <div key={"card-bg"} className="flex flex-col sm:flex-row items-center justify-between gap-4 w-full">
-                        <Link href="v0/escalas" className="flex border hover:bg-primary/90 justify-center items-center h-12 w-full text-lg rounded-lg">Escalas</Link>
-                        <Link href="v0/levitas" className="flex border hover:bg-primary/90 justify-center items-center h-12 w-full text-lg rounded-lg">Levitas</Link>
-                        <Link href="v0/musicas" className="flex border hover:bg-primary/90 justify-center items-center h-12 w-full text-lg rounded-lg">Músicas</Link>
-                        <Link href="v0/instrumentos" className="flex border hover:bg-primary/90 justify-center items-center h-12 w-full text-lg rounded-lg">Instrumentos</Link>
+                        <Link href="home/escalas" className="flex border hover:bg-primary/90 justify-center items-center h-12 w-full text-lg rounded-lg">Escalas</Link>
+                        <Link href="home/levitas" className="flex border hover:bg-primary/90 justify-center items-center h-12 w-full text-lg rounded-lg">Levitas</Link>
+                        <Link href="home/musicas" className="flex border hover:bg-primary/90 justify-center items-center h-12 w-full text-lg rounded-lg">Músicas</Link>
+                        <Link href="home/instrumentos" className="flex border hover:bg-primary/90 justify-center items-center h-12 w-full text-lg rounded-lg">Instrumentos</Link>
                     </div>
                     <br />
                     <Card className="p-4 sm:p-10 bg-current/30">
@@ -65,7 +65,7 @@ export default function Home() {
                                     <Carousel className="w-full">
                                         <CarouselContent className="-ml-1">
                                             {nextEscalas.map(escala => (
-                                                <CarouselItem key={escala.id} className="pl-1 basis-full sm:basis-1/2 lg:basis-1/3">
+                                                <CarouselItem key={escala.id} className="pl-1 basis-full sm:basis-1/2 lg:basis-1/3 select-none">
                                                     <EscalaSimpleCard key={escala.id}
                                                         id={escala.id}
                                                         titulo={escala.titulo}
@@ -108,7 +108,7 @@ export default function Home() {
                                     <Carousel className="w-full">
                                         <CarouselContent className="-ml-1">
                                             {levitasData.map(levita => (
-                                                <CarouselItem key={levita.id} className="pl-1 basis-full sm:basis-1/2 lg:basis-1/3">
+                                                <CarouselItem key={levita.id} className="pl-1 basis-full sm:basis-1/2 lg:basis-1/3 select-none">
                                                     <LevitaSimpleCard key={levita.id}
                                                         id={levita.id}
                                                         nome={levita.nome}

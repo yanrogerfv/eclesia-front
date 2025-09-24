@@ -17,6 +17,7 @@ import { Musica } from "@/lib/apiObjects";
 import { DialogAddMusica } from "@/components/modals/dialog-musica";
 import { deleteMethod, getMethod } from "@/lib/apiRequests";
 import { toast } from "sonner";
+import BackButton from "@/components/next-back";
 
 export default function Home() {
 
@@ -56,13 +57,11 @@ export default function Home() {
 			<nav>
 				<div className="flex items-center gap-4 justify-between">
 					<div className="flex">
-						<Link href="/v0" className="w-auto text-4xl justify-center items-center p-2 cursor-pointer outline outline-1 outline-primary/50 hover:bg-secondary hover:text-black rounded-lg">
-							<ChevronLeft className="size-10" />
-						</Link>
+						<BackButton />
 						<h1 className="mx-5 font-extrabold tracking-tight text-5xl">Músicas</h1>
 					</div>
 					<div className="">
-						<DialogAddMusica setState={setMusicas} />
+						<DialogAddMusica setState={setMusicas} disabled={isLoading} />
 					</div>
 				</div>
 				<br />

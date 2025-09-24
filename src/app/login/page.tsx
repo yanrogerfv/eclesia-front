@@ -54,7 +54,7 @@ export default function LoginPage() {
                 sessionStorage.setItem("role", resp.role)
                 sessionStorage.setItem("levita", resp.levita.id)
                 toast.success("Usuário logado com sucesso!")
-                router.push("/v0")
+                router.push("/home")
             }
             if (!response.ok) {
                 // const error = await response.json()
@@ -100,7 +100,7 @@ export default function LoginPage() {
                                                 <Input
                                                     placeholder="Insira o Usuário"
                                                     {...field}
-                                                    className="pl-10 text-white rounded-lg"
+                                                    className="pl-10 rounded-lg"
                                                 />
                                                 <span className="absolute inset-y-0 left-0 flex items-center pl-3">
                                                     <User size={20} />
@@ -122,7 +122,7 @@ export default function LoginPage() {
                                                 <Input
                                                     type={seePass ? "text" : "password"}
                                                     placeholder="Insira a Senha"
-                                                    className="pl-10 text-white rounded-lg"
+                                                    className="pl-10 rounded-lg"
                                                     {...field}
                                                 />
                                                 <span className="absolute inset-y-0 left-0 flex items-center pl-3">
