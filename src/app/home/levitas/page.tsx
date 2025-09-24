@@ -9,7 +9,7 @@ import {
 	CardHeader,
 	CardTitle
 } from "@/components/ui/card";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { Filter, FilterX, ListFilter, UserMinus, X } from "lucide-react";
 import { DialogAddLevita, DialogVerLevita } from "@/components/modals/dialog-levita";
 import { Input } from "@/components/ui/input";
@@ -61,6 +61,16 @@ export default function Home() {
 		if (levitas) return;
 		getMethod<Levita[] | undefined>("v1/levita/resumed", setLevitas);
 	}, [levitas])
+
+	// useEffect(() => {
+	// 	if (reload) {
+	// 		setLevitas(undefined)
+	// 		setFilteredLevita(undefined)
+	// 		setInstrumentos(undefined)
+	// 		setIsLoading(true)
+	// 		setReload(false)
+	// 	}
+	// }, [reload])
 
 	useEffect(() => {
 		if (instrumentos) return;

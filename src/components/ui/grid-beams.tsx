@@ -111,7 +111,7 @@ const LightRay = React.memo<LightRayProps>(
   },
 );
 
-export const GridBeams: React.FC<GridBeamsProps> = ({
+const GridBeams: React.FC<GridBeamsProps> = ({
   children,
   className,
   gridSize = 40,
@@ -183,7 +183,6 @@ export const GridBeams: React.FC<GridBeamsProps> = ({
     </div>
   );
 };
-
-GridBeams.displayName = "GridBeams";
+GridBeams.displayName = "GridBeams"
 
 export default GridBeams;
