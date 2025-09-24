@@ -113,6 +113,7 @@ export function DialogAddLevita(props: DialogAddLevitaProps) {
                 toast.success("Levita adicionado com sucesso!")
                 setLoading(false)
                 props.setLevitas && props.setLevitas(undefined)
+                window.location.reload();
                 setOpen(false)
             })
         }
@@ -228,22 +229,22 @@ export function DialogEditLevita(props: DialogEditLevitaProps) {
                     </DialogDescription>
                     <br />
                     <Label>Nome:</Label>
-                    <Input type="text" placeholder="Insira o nome do Levita."
+                    <Input type="text" placeholder="Insira o nome do Levita." disabled={isLoading}
                         value={nomeLevita ? nomeLevita : undefined} onChange={(e) => setNomeLevita(e.target.value)} />
                     <br />
                     <Label>Email:</Label>
-                    <Input type="email" placeholder="Insira um email do Levita."
+                    <Input type="email" placeholder="Insira um email do Levita."  disabled={isLoading}
                         value={emailLevita ? emailLevita : undefined} onChange={(e) => setEmailLevita(e.target.value)} />
                     <br />
                     <Label>Telefone:</Label>
-                    <Input type="tel" placeholder="Insira um contato do Levita."
+                    <Input type="tel" placeholder="Insira um contato do Levita." disabled={isLoading}
                         value={contatoLevita ? contatoLevita : undefined} onChange={(e) => setContatoLevita(e.target.value)} />
                     <br />
                     <Label>Instrumentos:</Label>
                     {allInstrumentos?.map((instrumento) => (
                         <div key={instrumento.id} className="flex items-center space-x-2">
                             <Checkbox id={instrumento.nome} checked={instrumentosLevita.some((current) => current.id == instrumento.id) ? true : false}
-                                onClick={() => {
+                                disabled={isLoading}onClick={() => {
                                     if (instrumentosLevita.some((currentInstrument) => currentInstrument.id === instrumento.id)) {
                                         removeInstrumentoInFilter(instrumento)
                                     } else {
@@ -258,7 +259,7 @@ export function DialogEditLevita(props: DialogEditLevitaProps) {
                     <br />
                     <Label>Descrição:</Label>
                     <Textarea placeholder={levita.descricao ? levita.descricao : "Insira uma descrição do Levita."} onChange={(e) => setDescricaoLevita(e.target.value)}
-                        value={descricaoLevita || undefined} />
+                        value={descricaoLevita || undefined} disabled={isLoading}/>
 
 
                 </DialogHeader>
@@ -279,6 +280,7 @@ export function DialogEditLevita(props: DialogEditLevitaProps) {
                             toast.success("Levita editado com sucesso!")
                             setLoading(false)
                             props.setLevitas && props.setLevitas(undefined)
+                            window.location.reload();
                             setOpen(false)
                         })
                     }}>Salvar</Button>

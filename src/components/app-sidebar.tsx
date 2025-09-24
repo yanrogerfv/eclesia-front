@@ -16,7 +16,7 @@ import { SidebarAddUser, SidebarManageUsers, SidebarMyAgenda, SidebarMyEscalas, 
 import ThemeSelector from "./themeSelector"
 import { useEffect, useState } from "react"
 
-export function AppSidebar({ lado }: { lado: "left" | "right" }) {
+export function AppSidebar({ side, alwaysOpen }: { side: "left" | "right", alwaysOpen?: boolean }) {
 
     const [isUserLeader, setUserLeader] = useState(false)
     const [isUserAdmin, setUserAdmin] = useState(false)
@@ -32,23 +32,27 @@ export function AppSidebar({ lado }: { lado: "left" | "right" }) {
     }, []);
 
     return (
-        <Sidebar side={lado} collapsible="icon">
+        <Sidebar side={side} collapsible="icon">
             <SidebarContent className="h-screen flex flex-col">
                 <SidebarGroup>
-                    <SidebarGroupLabel className="flex justify-between p-4">
-                        Eclesia <UserCircle2 size={20} />
+                    <SidebarGroupLabel className="flex justify-between">
+                        <div className="flex items-center">
+                            {!alwaysOpen && <SidebarTrigger className="text-primary brightness-150 hover:-rotate-180 transition-all duration-300 ease-in-out"/>}
+                            Eclesia
+                        </div>
+                        <UserCircle2 size={20} />
                     </SidebarGroupLabel>
-                    <SidebarGroupLabel className="flex justify-center p-2 m-4">
+                    <SidebarGroupLabel className="justify-center p-2 m-4 group-data-[collapsible=icon]:hidden">
                         <p className="text-3xl text-primary">
                             {username}
                         </p>
                     </SidebarGroupLabel>
-                    {/* <SidebarTrigger className="data-[sidebar=active]:bg-fuchsia-500 [&>span:last-child]:truncate data-[active=true]:bg-lime-500 [&>svg]:size-4 [&>svg]:shrink-0" /> */}
+                    <SidebarTrigger className="group-data-[collapsible=icon]:block hidden w-full h-full p-2 text-primary brightness-150 hover:rotate-180 transition-all duration-300 ease-in-out" />
                     <SidebarGroupContent>
                         <SidebarMenu>
                             <SidebarMenuItem key={"initial_page"}>
                                 <SidebarMenuButton asChild>
-                                    <a href="/v0" className="flex items-center gap-2 p-2 hover:bg-primary/10 rounded-lg">
+                                    <a href="/home" className="flex items-center gap-2 p-2 hover:bg-primary/10 rounded-lg">
                                         <Home size={16} />
                                         <span>Página Inicial</span>
                                     </a>
@@ -122,7 +126,7 @@ export function AppSidebar({ lado }: { lado: "left" | "right" }) {
                 </SidebarGroup>
                 <SidebarFooter className="mt-auto flex justify-center items-center ">
                     {/* <SidebarMenuButton className="flex items-center justify-center h-fit gap-2 p-2 hover:bg-primary/10 rounded-lg group"> */}
-                        <ThemeSelector className="bg-zinc-700/10 w-full" />
+                    <ThemeSelector className="bg-zinc-700/10 w-full" />
                     {/* </SidebarMenuButton> */}
                 </SidebarFooter>
             </SidebarContent>

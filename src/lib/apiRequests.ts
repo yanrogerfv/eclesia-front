@@ -5,6 +5,27 @@ import { toast } from "sonner";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
+export async function publicGetMethod<T>(url: string, setState: React.Dispatch<React.SetStateAction<T>>) {
+	const req = await fetch(`${apiUrl}${url}`, {
+		method: "GET",
+		headers: {
+			"Content-Type": "application/json",
+		}
+	}).catch((error) => {
+		if (error instanceof TypeError) {
+		} else {
+			console.error("Erro na comunicação com a api: ", error);
+			toast.error("Erro na comunicação com a api: ", error.error);
+		}
+	});
+	if (req?.status !== 200 && req?.status) {
+		console.error(`Erro na comunicação com a api: ${req}`);
+		toast.error(`Erro na comunicação com a api: ${req.status}`);
+	}
+	const data = await req?.json();
+	setState(data);
+}
+
 /**
  * Function to perform a GET request to the API
  * @function 

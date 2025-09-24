@@ -9,14 +9,12 @@ import {
 	CardHeader,
 	CardTitle
 } from "@/components/ui/card";
-import { useEffect, useMemo, useState, useTransition } from "react";
-import Link from "next/link";
-import { ChevronLeft, Filter, FilterX, ListFilter, UserMinus, X } from "lucide-react";
+import { use, useEffect, useState } from "react";
+import { Filter, FilterX, ListFilter, UserMinus, X } from "lucide-react";
 import { DialogAddLevita, DialogVerLevita } from "@/components/modals/dialog-levita";
 import { Input } from "@/components/ui/input";
-import { UUID } from "crypto";
 import { Levita, Instrumento } from "@/lib/apiObjects";
-import { SidebarFiltroLevita } from "@/components/sidebar";
+import { SheetFiltroLevita } from "@/components/filter-sheet";
 import { Button } from "@/components/ui/button";
 import {
 	Sheet,
@@ -36,6 +34,7 @@ import { deleteMethod, getMethod } from "@/lib/apiRequests";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import BackButton from "@/components/next-back";
 
 export default function Home() {
 
@@ -63,6 +62,16 @@ export default function Home() {
 		getMethod<Levita[] | undefined>("v1/levita/resumed", setLevitas);
 	}, [levitas])
 
+	// useEffect(() => {
+	// 	if (reload) {
+	// 		setLevitas(undefined)
+	// 		setFilteredLevita(undefined)
+	// 		setInstrumentos(undefined)
+	// 		setIsLoading(true)
+	// 		setReload(false)
+	// 	}
+	// }, [reload])
+
 	useEffect(() => {
 		if (instrumentos) return;
 		getMethod<Instrumento[] | undefined>("v1/instrumento", setInstrumentos);
@@ -85,12 +94,7 @@ export default function Home() {
 
 	}, [searchItem, filteredInstruments])
 
-	function addInstrumentoInFilter(instrumento: Instrumento) {
-		setFilteredInstruments([...filteredInstruments, instrumento])
-	}
-	function removeInstrumentoInFilter(instrumento: Instrumento) {
-		setFilteredInstruments(filteredInstruments.filter((filteredInstrument) => filteredInstrument.id !== instrumento.id))
-	}
+	
 
 	return (
 		<SidebarProvider defaultOpen={false}>
@@ -99,9 +103,7 @@ export default function Home() {
 					<>
 						<div className="flex items-center gap-3 justify-between">
 							<div className="flex">
-								<Link href="/v0" className="w-auto text-4xl justify-center items-center p-2 cursor-pointer outline outline-1 outline-primary/50 hover:bg-secondary hover:text-black rounded-lg">
-									<ChevronLeft className="size-10" />
-								</Link>
+								<BackButton />
 								<h1 className="mx-5 font-extrabold tracking-tight text-5xl">Levitas</h1>
 							</div>
 							<div>
@@ -121,52 +123,17 @@ export default function Home() {
 				}
 				<div className="flex w-full items-center space-x-2 col-span-4">
 					{isLoading ?
-						<Filter
-							className="w-auto text-4xl justify-center size-9 p-1 outline outline-1 outline-primary/45 bg-secondary/30 hover:bg-secondary/20 text-black rounded-md" />
+						<ListFilter
+							className="w-auto text-4xl justify-center size-9 p-2 outline outline-1 outline-primary/45 bg-secondary/30 hover:bg-secondary/20 text-black rounded-md" />
 						:
-						<Sheet>
-							<SheetTrigger asChild>
-								{filteredInstruments.length == 0 ?
-									<Filter className="w-auto text-4xl justify-center size-[2.4rem] p-1 cursor-pointer outline outline-1 outline-border hover:bg-secondary/80 hover:text-black rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" /> :
-									<FilterX onClick={() => setFilteredInstruments([])}
-										className="w-auto text-4xl justify-center size-[2.4rem] p-1 cursor-pointer outline outline-1 outline-red-500/45 hover:bg-red-500 hover:text-black rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" />
-								}
-							</SheetTrigger>
-							<SheetContent>
-								<SheetHeader>
-									<SheetTitle>Filtrar Levitas</SheetTitle>
-									<SheetDescription>
-										Filtre os Levitas por instrumento.
-									</SheetDescription>
-								</SheetHeader>
-								<div className="grid grid-cols-1 space-y-1">
-									<br />
-									{instrumentos?.map((instrumento) => (
-										<div key={instrumento.id} className="flex items-center space-x-2">
-											<Checkbox id="terms" onClick={() => {
-												if (filteredInstruments.some((filteredInstrument) => filteredInstrument.id === instrumento.id)) {
-													removeInstrumentoInFilter(instrumento)
-												} else {
-													addInstrumentoInFilter(instrumento)
-												}
-											}} />
-											<Label
-												htmlFor="terms"
-												className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-												{instrumento.nome}
-											</Label>
-											<br />
-										</div>
-									))}
-								</div>
-								<SheetFooter>
-									<SheetClose asChild>
-										<Button type="submit">Salvar</Button>
-									</SheetClose>
-								</SheetFooter>
-							</SheetContent>
-						</Sheet>}
-					<Input disabled={isLoading} className="flex" type="text"
+						<SheetFiltroLevita
+							disabled={isLoading}
+							filteredInstruments={filteredInstruments}
+							setFilteredInstruments={setFilteredInstruments}
+							instrumentos={instrumentos}
+						/>
+					}
+					<Input disabled={isLoading} className="flex focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2" type="text"
 						value={searchItem} onChange={(e) => setSearchItem(e.target.value)} placeholder="Procure por um Levita" />
 				</div>
 				<br />
@@ -237,8 +204,7 @@ export default function Home() {
 					}
 				</div>
 			</main>
-			<SidebarTrigger className="border" />
-			<AppSidebar lado="right" />
+			<AppSidebar side="right" />
 		</SidebarProvider>
 	);
 }

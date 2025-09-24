@@ -14,7 +14,7 @@ import { deleteMethod, getMethod, patchMethod, postMethod, putMethod } from "@/l
 import { toast } from "sonner";
 import { ScrollArea } from "../ui/scroll-area";
 import { DialogEditLevita, DialogVerLevita } from "./dialog-levita";
-import { PencilLine, RefreshCcw, RefreshCw, Trash, Trash2 } from "lucide-react";
+import { Eye, EyeOff, PencilLine, RectangleEllipsis, RefreshCcw, RefreshCw, Trash, Trash2 } from "lucide-react";
 import { TooltipProvider, TooltipTrigger, Tooltip, TooltipContent } from "../ui/tooltip";
 import Cookies from "js-cookie";
 
@@ -66,52 +66,61 @@ export function SidebarNextEvents({ icon, title, style }: SidebarModalsProps) {
 
                 <div className={!escalas ? "" :
                     "grid grid-cols-2 gap-4"}>
-                    {Array.isArray(special) && special.map((escala) => (
-                        <Card key={escala.id} className="col-span-1">
-                            <CardHeader className="items-center lg:items-start">
-                                <CardTitle className={escala.domingo ? "text-primary" : escala.quarta ? "text-secondary" : "text-special"}>
-                                    {escala.titulo}
-                                </CardTitle>
-                                <CardDescription>
-                                    {convertDateFormat(escala.data)}
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <p>
-                                    <span className="text-special">Ministro:</span> <span className="text-primary">{escala.ministro}</span>
-                                </p>
-                                <p>
-                                    <span className="text-subprimary">Violão:</span> {escala.violao ? escala.violao : <span className="text-secondary/40">Não inserido.</span>}
-                                </p>
-                                <p>
-                                    <span className="text-subprimary">Teclado:</span> {escala.teclado ? escala.teclado : <span className="text-secondary/40">Não inserido.</span>}
-                                </p>
-                                <p>
-                                    <span className="text-subprimary">Bateria:</span> {escala.bateria ? escala.bateria : <span className="text-secondary/40">Não inserido.</span>}
-                                </p>
-                                <p>
-                                    <span className="text-subprimary">Baixo:</span> {escala.baixo ? escala.baixo : <span className="text-secondary/40">Não inserido.</span>}
-                                </p>
-                                <p>
-                                    <span className="text-subprimary">Guitarra:</span> {escala.guitarra ? escala.guitarra : <span className="text-secondary/40">Não inserido.</span>}
-                                </p>
-                            </CardContent>
-                            <CardFooter className="flex items-center justify-between">
-                                <div>
-                                    {escala.domingo ? (
-                                        <Badge className="bg-primary/80 hover:bg-primary/60 cursor-default">Domingo</Badge>
-                                    ) : escala.quarta ? (
-                                        <Badge className="bg-secondary/80 hover:bg-secondary/60 cursor-default">Quarta</Badge>
-                                    ) : (
-                                        <Badge className="bg-special/80 hover:bg-special/60 cursor-default">Especial</Badge>
-                                    )}
-                                </div>
-                                <div>
-                                    <VerEscala escalaId={escala.id} levitasDisponiveis={levitas} />
-                                </div>
-                            </CardFooter>
-                        </Card>
-                    ))}
+                    {!escalas ? (
+                        <div className="flex justify-center items-center h-32">
+                            <p className="text-zinc-500">Nenhuma escala encontrada.</p>
+                        </div>
+                    ) : !special || special.length == 0 ? (
+                        <div className="flex justify-center items-center h-32 col-span-2">
+                            <p className="text-zinc-500">Nenhum evento especial encontrado.</p>
+                        </div>
+                    ) : (
+                        Array.isArray(special) && special.map((escala) => (
+                            <Card key={escala.id} className="col-span-1">
+                                <CardHeader className="items-center lg:items-start">
+                                    <CardTitle className={escala.domingo ? "text-primary" : escala.quarta ? "text-secondary" : "text-special"}>
+                                        {escala.titulo}
+                                    </CardTitle>
+                                    <CardDescription>
+                                        {convertDateFormat(escala.data)}
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent>
+                                    <p>
+                                        <span className="text-special">Ministro:</span> <span className="text-primary">{escala.ministro}</span>
+                                    </p>
+                                    <p>
+                                        <span className="text-subprimary">Violão:</span> {escala.violao ? escala.violao : <span className="text-secondary/40">Não inserido.</span>}
+                                    </p>
+                                    <p>
+                                        <span className="text-subprimary">Teclado:</span> {escala.teclado ? escala.teclado : <span className="text-secondary/40">Não inserido.</span>}
+                                    </p>
+                                    <p>
+                                        <span className="text-subprimary">Bateria:</span> {escala.bateria ? escala.bateria : <span className="text-secondary/40">Não inserido.</span>}
+                                    </p>
+                                    <p>
+                                        <span className="text-subprimary">Baixo:</span> {escala.baixo ? escala.baixo : <span className="text-secondary/40">Não inserido.</span>}
+                                    </p>
+                                    <p>
+                                        <span className="text-subprimary">Guitarra:</span> {escala.guitarra ? escala.guitarra : <span className="text-secondary/40">Não inserido.</span>}
+                                    </p>
+                                </CardContent>
+                                <CardFooter className="flex items-center justify-between">
+                                    <div>
+                                        {escala.domingo ? (
+                                            <Badge className="bg-primary/80 hover:bg-primary/60 cursor-default">Domingo</Badge>
+                                        ) : escala.quarta ? (
+                                            <Badge className="bg-secondary/80 hover:bg-secondary/60 cursor-default">Quarta</Badge>
+                                        ) : (
+                                            <Badge className="bg-special/80 hover:bg-special/60 cursor-default">Especial</Badge>
+                                        )}
+                                    </div>
+                                    <div>
+                                        <VerEscala escalaId={escala.id} levitasDisponiveis={levitas} />
+                                    </div>
+                                </CardFooter>
+                            </Card>
+                        )))}
                 </div>
                 <DialogFooter>
 
@@ -255,7 +264,7 @@ export function SidebarMyEscalas({ icon, title, style }: SidebarModalsProps) {
                         {title}
                     </DialogTitle>
                     <DialogDescription>
-                        {loading ? "Carregando..." : escalas ? "Todas as suas escalas cadastradas abaixo" : "Erro ao carregar escala"}
+                        {loading ? "Carregando..." : escalas ? "Todas as suas escalas cadastradas abaixo" : "Erro ao carregar escalas"}
                     </DialogDescription>
                 </DialogHeader>
                 {/* Content aqui */}
@@ -267,7 +276,7 @@ export function SidebarMyEscalas({ icon, title, style }: SidebarModalsProps) {
                         </div>
                     ) : escalas.length === 0 ? (
                         <Card className="text-center">
-                            <p className="p-6 sm:p-10 text-lg sm:text-2xl text-zinc-400/80">
+                            <p className="p-6 sm:p-10 text-lg sm:text-xl text-zinc-400/80">
                                 Você não está em nenhuma escala no momento.
                             </p>
                         </Card>
@@ -324,6 +333,8 @@ export function SidebarMyProfile({ icon, title, style }: SidebarModalsProps) {
     const [self, setSelf] = useState<UserDTO | undefined>(undefined);
     const [currentLevita, setCurrentLevita] = useState<Levita | undefined>();
 
+    const [seePass, setSeePass] = useState(false);
+
     const [username, setUsername] = useState(self?.username ?? "");
     const [password, setPassword] = useState("");
 
@@ -354,10 +365,29 @@ export function SidebarMyProfile({ icon, title, style }: SidebarModalsProps) {
                 {/* Content aqui */}
                 <Label>Usuário:</Label>
                 <Input onChange={(e) => setUsername(e.target.value)} value={username} type="text" placeholder="Insira seu usuário" />
-                {/* <Label>Data de Nascimento:</Label> 
-                 <Input type="text" placeholder="Insira sua data de nascimento" value={self?.dataNascimento}/> */}
+
                 <Label>Senha:</Label>
-                <Input onChange={(e) => setPassword(e.target.value)} value={password} type="password" placeholder="••••••••" />
+                <div className="relative">
+                    <Input onChange={(e) => setPassword(e.target.value)} value={password}
+                        type={seePass ? "text" : "password"}
+                        placeholder="Insira a Senha"
+                    />
+                    {seePass ? (
+                        <span className="absolute inset-y-0 right-0 flex items-center justify-center pr-3 cursor-pointer">
+                            <Eye
+                                onClick={() => setSeePass(false)}
+                                size={20}
+                            />
+                        </span>
+                    ) : (
+                        <span className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer">
+                            <EyeOff
+                                onClick={() => setSeePass(true)}
+                                size={20}
+                            />
+                        </span>
+                    )}
+                </div>
 
                 <Card>
                     <CardHeader>
@@ -383,20 +413,20 @@ export function SidebarMyProfile({ icon, title, style }: SidebarModalsProps) {
                 <DialogFooter>
                     <div className="flex flex-wrap justify-between w-full">
                         <div>
-                            {currentLevita ?
-                                <DialogEditLevita levita={currentLevita} />
-                                :
-                                <TooltipProvider delayDuration={250}>
-                                    <Tooltip>
-                                        <TooltipTrigger>
+                            <TooltipProvider delayDuration={250}>
+                                <Tooltip>
+                                    <TooltipTrigger>
+                                        {currentLevita ?
+                                            <DialogEditLevita levita={currentLevita} />
+                                            :
                                             <PencilLine className="outline rounded-lg p-1 size-auto outline-1 outline-secondary/25 hover:bg-destructive/50 cursor-pointer" />
-                                        </TooltipTrigger>
-                                        <TooltipContent className="bg-transparent border-none p-0">
-                                            <p className="text-primary/80">Editar Levita.</p>
-                                        </TooltipContent>
-                                    </Tooltip>
-                                </TooltipProvider>
-                            }
+                                        }
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        Editar Levita
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
                         </div>
                         <div className="flex gap-2">
                             <Button className="hover:bg-emerald-500" onClick={() => {
@@ -599,14 +629,14 @@ export function SidebarManageUsers({ icon, title, style }: SidebarModalsProps) {
                                         <ConfirmationModal
                                             onConfirm={() => {
                                                 deleteMethod(`auth/user/${user.id}`)
-                                                .catch((error) => {
-                                                    toast.error("Erro ao remover usuário: ", error);
-                                                    console.error("Erro ao remover usuário: ", error);
-                                                })
-                                                .then(() => {
-                                                    toast.success("Usuário removido com sucesso!");
-                                                    setUsers(users?.filter(u => u.id !== user.id));
-                                                })
+                                                    .catch((error) => {
+                                                        toast.error("Erro ao remover usuário: ", error);
+                                                        console.error("Erro ao remover usuário: ", error);
+                                                    })
+                                                    .then(() => {
+                                                        toast.success("Usuário removido com sucesso!");
+                                                        setUsers(users?.filter(u => u.id !== user.id));
+                                                    })
                                             }}
                                             title={`Remover usuário: ${user.username}`}
                                             trigger={

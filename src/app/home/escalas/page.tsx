@@ -20,6 +20,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AddEscala, VerEscala } from "@/components/modals/dialog-escala";
 import { convertDateFormat, EscalaResumida, Levita } from "@/lib/apiObjects";
 import { toast } from "sonner";
+import BackButton from "@/components/next-back";
 
 export default function Home() {
 	const [removeOverlay, setRemoveOverlay] = useState(false);
@@ -68,9 +69,7 @@ export default function Home() {
 					<nav>
 						<div className="flex flex-wrap md:flex-nowrap justify-between items-center">
 							<div className="flex items-center">
-								<Link href="/v0" className="w-auto text-2xl sm:text-4xl flex items-center p-2 cursor-pointer outline outline-1 outline-primary/50 hover:bg-secondary hover:text-black rounded-lg">
-									<ChevronLeft className="h-6 w-6 sm:h-8 sm:w-8" />
-								</Link>
+								<BackButton />
 								<h1 className="ml-4 font-extrabold tracking-tight text-2xl sm:text-5xl">Escalas</h1>
 							</div>
 							<div className="flex w-full justify-between sm:justify-end gap-2 mt-4 sm:w-full">
@@ -114,7 +113,6 @@ export default function Home() {
 						) : (
 							<div className={isLoading ? "grid grid-cols-1" : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-8"}>
 								{isLoading ? (
-
 										<div className="flex items-center justify-center z-50">
 											<div className="size-80 border-4 border-transparent text-primary/40 text-4xl animate-spin flex items-center justify-center border-t-primary rounded-full">
 												<div className="size-64 border-4 border-transparent text-subprimary/40 text-2xl animate-spin flex items-center justify-center border-t-subprimary rounded-full" />
@@ -122,7 +120,7 @@ export default function Home() {
 										</div>
 								) : Array.isArray(filteredEscalas) && filteredEscalas.map((escala) => (
 									<Card key={escala.id} className={`${removeOverlay ? "animate-pulse" : ""} ${new Date(escala.data) < new Date() ? 'opacity-60 grayscale' : ''}`}>
-										<X className={removeOverlay ? "absolute hover:cursor-pointer bg-rose-500/80 rounded-br-xl" : "absolute invisible"}
+										<X className={removeOverlay ? "absolute hover:cursor-pointer bg-rose-500/80 rounded-br-xl p-1" : "absolute invisible"}
 											onClick={() => {
 												setIsLoading(true);
 												deleteMethod(`v1/escala/${escala.id}`)
@@ -182,8 +180,7 @@ export default function Home() {
 					</div>
 				</main>
 			</>
-			<SidebarTrigger />
-			<AppSidebar lado="right" />
+			<AppSidebar side="right" />
 		</SidebarProvider>
 	);
 }

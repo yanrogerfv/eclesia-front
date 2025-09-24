@@ -17,7 +17,7 @@ import { Input } from "../ui/input";
 import { postMethod } from "@/lib/apiRequests";
 import { toast } from "sonner";
 
-export function DialogAddMusica(props: { setState: React.Dispatch<React.SetStateAction<Musica[] | undefined>> }) {
+export function DialogAddMusica({setState, disabled}: { setState: React.Dispatch<React.SetStateAction<Musica[] | undefined>>, disabled?: boolean }) {
     const [nomeMusica, setNomeMusica] = useState("");
     const [linkMusica, setLinkMusica] = useState("");
     const [cifraMusica, setCifraMusica] = useState("");
@@ -26,7 +26,7 @@ export function DialogAddMusica(props: { setState: React.Dispatch<React.SetState
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild className="flex p-5">
+            <DialogTrigger asChild className="flex p-5" disabled={disabled}>
                 <Button variant={"outline"} className="hover:text-emerald-500" onClick={() => setLoading(false)}>
                     <Music className="mr-2 hover:animate-bounce" />Adicionar Música</Button>
             </DialogTrigger>
@@ -43,9 +43,9 @@ export function DialogAddMusica(props: { setState: React.Dispatch<React.SetState
                     <Input type="url" placeholder="Insira o link da música."
                         value={linkMusica} onChange={(e) => setLinkMusica(e.target.value)} />
                     <br />
-                    {/* <Label>Cifra:</Label>
-                    <Input type="text" placeholder="Insira um contato do Levita." 
-                        value ={cifraMusica} onChange={(e) => setCifraMusica(e.target.value)}/> */}
+                    <Label>Cifra:</Label>
+                    <Input type="text" placeholder="Insira o link da cifra da música." 
+                        value={cifraMusica} onChange={(e) => setCifraMusica(e.target.value)} />
 
                 </DialogHeader>
                 <DialogFooter className="">
@@ -60,7 +60,7 @@ export function DialogAddMusica(props: { setState: React.Dispatch<React.SetState
                                 nome: nomeMusica,
                                 link: linkMusica,
                                 cifra: cifraMusica
-                            }, () => setOpen(false)).then(() => props.setState(undefined))
+                            }, () => setOpen(false)).then(() => setState(undefined))
                                 .catch((error) => {
                                     toast.error("Erro na comunicação com a api: ", error);
                                 })

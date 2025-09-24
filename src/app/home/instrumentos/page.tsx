@@ -7,6 +7,7 @@ import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/ca
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import BackButton from "@/components/next-back";
 
 export default function Home() {
 	const [isLoading, setLoading] = useState(true)
@@ -34,9 +35,7 @@ export default function Home() {
 			<nav>
 				<div className="flex items-center gap-4 justify-between">
 					<div className="flex">
-						<Link href="/v0" className="w-auto text-4xl justify-center items-center p-2 cursor-pointer outline outline-1 outline-primary/50 hover:bg-secondary hover:text-black rounded-lg">
-							<ChevronLeft className="size-10" />
-						</Link>
+						<BackButton />
 						<h1 className="mx-5 font-extrabold tracking-tight text-5xl">Instrumentos</h1>
 					</div>
 					<div className="flex">
