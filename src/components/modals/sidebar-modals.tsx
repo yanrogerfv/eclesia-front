@@ -7,7 +7,7 @@ import { Badge } from "../ui/badge";
 import { SidebarMenuButton } from "../ui/sidebar";
 import { Calendar } from "../ui/calendar";
 import { Button } from "../ui/button";
-import { ptBR } from "date-fns/locale";
+import { ptBR, ro } from "date-fns/locale";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { deleteMethod, getMethod, patchMethod, postMethod, putMethod } from "@/lib/apiRequests";
@@ -17,6 +17,7 @@ import { DialogEditLevita, DialogVerLevita } from "./dialog-levita";
 import { Eye, EyeOff, PencilLine, RectangleEllipsis, RefreshCcw, RefreshCw, Trash, Trash2 } from "lucide-react";
 import { TooltipProvider, TooltipTrigger, Tooltip, TooltipContent } from "../ui/tooltip";
 import Cookies from "js-cookie";
+import { RadioGroup, RadioGroupItem } from "../ui/motion-radio-group";
 
 
 interface SidebarModalsProps {
@@ -465,20 +466,27 @@ export function SidebarMyProfile({ icon, title, style }: SidebarModalsProps) {
 export function SidebarAddUser({ icon, title, style }: SidebarModalsProps) {
     const [isLoading, setIsLoading] = useState(true);
     const [levitas, setLevitas] = useState<Levita[] | undefined>(undefined);
-    // const [roles, setRoles] = useState<RoleDTO[] | undefined>(undefined);
+    const [roles, setRoles] = useState<RoleDTO[] | undefined>(undefined);
     const [levitaToAdd, setLevitaToAdd] = useState<Levita | undefined>(undefined);
     const [open, setOpen] = useState(false);
 
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    // const [selectedRole, setSelectedRole] = useState("levita");
+    const [selectedRole, setSelectedRole] = useState("levita");
 
     useEffect(() => {
         if (levitas) return;
         getMethod<Levita[] | undefined>("auth/user/levita-x", setLevitas)
-        // getMethod<RoleDTO[] | undefined>("auth/role", setRoles)
+        getMethod<RoleDTO[] | undefined>("auth/role", setRoles)
         setIsLoading(false);
     }, [levitas])
+
+    const [isUserAdmin, setUserAdmin] = useState(false)
+
+    useEffect(() => {
+        const userAdmin = sessionStorage.getItem("role") === "ADMIN";
+        setUserAdmin(userAdmin);
+    }, []);
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -503,18 +511,21 @@ export function SidebarAddUser({ icon, title, style }: SidebarModalsProps) {
                 <Label>Senha:</Label>
                 <Input onChange={(e) => setPassword(e.target.value)} value={password} type="text"
                     placeholder="Insira a senha que será usada para login." className="mb-4" />
-                {/* <Label>Cargo:</Label>
-                <RadioGroup onValueChange={(value) => setSelectedRole(value)} className="flex gap-4 mb-2 justify-between mx-4">
-                    {roles?.map((role) => (
-                        <div className="flex items-center space-x-2" key={role.id}>
-                            <RadioGroupItem id={role.id} value={role.id} disabled={toDisable} />
-                            <Label htmlFor={role.role}>{role.role}</Label>
-                        </div>
-                    ))}
-                </RadioGroup> */}
+
+                <div className={isUserAdmin ? "" : "hidden"}>
+                    <Label>Cargo:</Label>
+                    <RadioGroup onValueChange={(value) => setSelectedRole(value)} className="flex gap-4 mb-2 justify-between mx-4">
+                        {roles?.map((role) => (
+                            <div className="flex items-center space-x-2" key={role.id}>
+                                <RadioGroupItem id={role.id} value={role.id} disabled={isLoading} />
+                                <Label htmlFor={role.role}>{role.role}</Label>
+                            </div>
+                        ))}
+                    </RadioGroup>
+                </div>
 
                 <Label>Selecione o Levita que deseja associar ao login:</Label>
-                <ScrollArea className="md:h-[35vh] w-full">
+                <ScrollArea className="md:max-h-[35vh] w-full">
                     <Card className="bg-transparent grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1">
                         {isLoading || levitas == undefined ?
                             <div className="flex justify-center items-center h-40">

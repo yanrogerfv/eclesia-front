@@ -11,7 +11,7 @@ import { ChevronLeft } from "lucide-react";
 import Cookies from "js-cookie";
 import { getMethod } from "@/lib/apiRequests";
 import { AppSidebar } from "@/components/app-sidebar";
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
 export default function Home() {
 
@@ -28,104 +28,159 @@ export default function Home() {
         <SidebarProvider>
             <AppSidebar side="left" alwaysOpen />
             {/* <SidebarTrigger className="border" /> */}
-            <main className="max-w-6xl mx-auto my-12 px-4 sm:px-6 lg:px-8">
-                <nav>
-                    <div className="flex">
-                        <Link href="/" className="w-auto text-4xl justify-center items-center p-2 mr-5 cursor-pointer border hover:bg-primary hover:text-black rounded-lg">
-                            <ChevronLeft className="size-8" />
-                        </Link>
-                        <h1 className="font-extrabold tracking-tight text-3xl sm:text-4xl lg:text-5xl">Planejador</h1>
+            <main className="flex-1 w-full max-w-7xl max-h-screen mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+                {/* Navigation Header */}
+                <nav className="space-y-4">
+                    <div className="flex justify-between items-center">
+                        <div className="flex items-center gap-3 sm:gap-4">
+                            <Link href="/" className="flex-shrink-0 flex items-center justify-center p-2 sm:p-3 border hover:bg-primary hover:text-black rounded-lg transition-colors">
+                                <ChevronLeft className="size-6 sm:size-8" />
+                            </Link>
+                            <h1 className="font-extrabold tracking-tight text-2xl sm:text-3xl md:text-4xl lg:text-5xl truncate">
+                                Planejador
+                            </h1>
+                        </div>
+                        <SidebarTrigger className="border md:hidden" />
                     </div>
-                    <br />
-                    <h2 className="scroll-m-20 border-b border-primary/30 text-base text-neutral-700 tracking-tight transition-colors first:mt-0">
-                        Planejador de Escalas</h2>
+
+                    <div className="space-y-2">
+                        <h2 className="text-sm sm:text-base text-neutral-700 tracking-tight border-b border-primary/30 pb-2">
+                            Planejador de Escalas
+                        </h2>
+                    </div>
                 </nav>
-                <br />
-                <div>
-                    <div key={"card-bg"} className="flex flex-col sm:flex-row items-center justify-between gap-4 w-full">
-                        <Link href="home/escalas" className="flex border hover:bg-primary/90 justify-center items-center h-12 w-full text-lg rounded-lg">Escalas</Link>
-                        <Link href="home/levitas" className="flex border hover:bg-primary/90 justify-center items-center h-12 w-full text-lg rounded-lg">Levitas</Link>
-                        <Link href="home/musicas" className="flex border hover:bg-primary/90 justify-center items-center h-12 w-full text-lg rounded-lg">Músicas</Link>
-                        <Link href="home/instrumentos" className="flex border hover:bg-primary/90 justify-center items-center h-12 w-full text-lg rounded-lg">Instrumentos</Link>
-                    </div>
-                    <br />
-                    <Card className="p-4 sm:p-10 bg-current/30">
-                        <Card className="p-2">
-                            <CardTitle className="text-primary p-4">
+
+                {/* Quick Action Buttons */}
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                    <Link
+                        href="home/escalas"
+                        className="flex border hover:bg-primary/90 hover:text-black justify-center items-center h-12 sm:h-14 text-sm sm:text-base md:text-lg rounded-lg transition-colors font-medium"
+                    >
+                        Escalas
+                    </Link>
+                    <Link
+                        href="home/levitas"
+                        className="flex border hover:bg-primary/90 hover:text-black justify-center items-center h-12 sm:h-14 text-sm sm:text-base md:text-lg rounded-lg transition-colors font-medium"
+                    >
+                        Levitas
+                    </Link>
+                    <Link
+                        href="home/musicas"
+                        className="flex border hover:bg-primary/90 hover:text-black justify-center items-center h-12 sm:h-14 text-sm sm:text-base md:text-lg rounded-lg transition-colors font-medium"
+                    >
+                        Músicas
+                    </Link>
+                    <Link
+                        href="home/instrumentos"
+                        className="flex border hover:bg-primary/90 hover:text-black justify-center items-center h-12 sm:h-14 text-sm sm:text-base md:text-lg rounded-lg transition-colors font-medium"
+                    >
+                        Instrumentos
+                    </Link>
+                </div>
+
+                {/* Content Cards */}
+                <div className="space-y-6">
+                    <Card className="p-3 sm:p-6 lg:p-8 bg-current/30">
+                        {/* Próximas Escalas Section */}
+                        <Card className="p-3 sm:p-4 mb-6">
+                            <CardTitle className="text-primary p-3 sm:p-4 text-lg sm:text-xl">
                                 Próximas escalas:
                             </CardTitle>
-                            {!nextEscalas ?
-                                <div className="flex flex-row">
-                                    <Skeleton className="h-48 w-80 rounded-lg mx-5" />
-                                    <Skeleton className="h-48 w-80 rounded-lg mx-5" />
-                                    <Skeleton className="h-48 w-80 rounded-lg mx-5" />
+
+                            {!nextEscalas ? (
+                                <div className="flex flex-col sm:flex-row gap-4 px-4">
+                                    <Skeleton className="h-40 sm:h-48 w-full sm:w-80 rounded-lg flex-shrink-0" />
+                                    <Skeleton className="h-40 sm:h-48 w-full sm:w-80 rounded-lg flex-shrink-0 hidden sm:block" />
+                                    <Skeleton className="h-40 sm:h-48 w-full sm:w-80 rounded-lg flex-shrink-0 hidden lg:block" />
                                 </div>
-                                :
-                                nextEscalas.length > 0 ?
+                            ) : nextEscalas.length > 0 ? (
+                                <div className="px-2 sm:px-4">
                                     <Carousel className="w-full">
-                                        <CarouselContent className="-ml-1">
+                                        <CarouselContent className="-ml-2 sm:-ml-1">
                                             {nextEscalas.map(escala => (
-                                                <CarouselItem key={escala.id} className="pl-1 basis-full sm:basis-1/2 lg:basis-1/3 select-none">
-                                                    <EscalaSimpleCard key={escala.id}
-                                                        id={escala.id}
-                                                        titulo={escala.titulo}
-                                                        ministro={escala.ministro}
-                                                        violao={escala.violao}
-                                                        teclado={escala.teclado}
-                                                        bateria={escala.bateria}
-                                                        guitarra={escala.guitarra}
-                                                        baixo={escala.baixo}
-                                                        data={escala.data}
-                                                        quarta={escala.quarta}
-                                                        observacoes={escala.observacoes ? escala.observacoes : ""}
-                                                        domingo={escala.domingo}
-                                                        especial={escala.especial} />
+                                                <CarouselItem key={escala.id} className="pl-2 sm:pl-1 basis-full sm:basis-1/2 xl:basis-1/3 select-none">
+                                                    <div className="p-1">
+                                                        <EscalaSimpleCard
+                                                            key={escala.id}
+                                                            id={escala.id}
+                                                            titulo={escala.titulo}
+                                                            ministro={escala.ministro}
+                                                            violao={escala.violao}
+                                                            teclado={escala.teclado}
+                                                            bateria={escala.bateria}
+                                                            guitarra={escala.guitarra}
+                                                            baixo={escala.baixo}
+                                                            data={escala.data}
+                                                            quarta={escala.quarta}
+                                                            observacoes={escala.observacoes ? escala.observacoes : ""}
+                                                            domingo={escala.domingo}
+                                                            especial={escala.especial}
+                                                        />
+                                                    </div>
                                                 </CarouselItem>
                                             ))}
                                         </CarouselContent>
-                                        <CarouselPrevious />
-                                        <CarouselNext />
-                                    </Carousel> :
-                                    <h1 className="text-colortext ml-[2dvh] justify-center self-center align-middle">Nenhuma escala cadastrada para os próximos dias.</h1>
-                            }
-                            <br />
+                                        <div className="hidden sm:flex">
+                                            <CarouselPrevious className="ml-4" />
+                                            <CarouselNext className="mr-4" />
+                                        </div>
+                                    </Carousel>
+                                </div>
+                            ) : (
+                                <div className="px-4 py-8 text-center">
+                                    <p className="text-neutral-600 text-sm sm:text-base">
+                                        Nenhuma escala cadastrada para os próximos dias.
+                                    </p>
+                                </div>
+                            )}
                         </Card>
-                        <br />
 
-                        {/*LEVITA SECTION BELOW*/}
-                        <Card className="p-2">
-                            <CardTitle className="text-primary p-4">
+                        {/* Levitas Section */}
+                        <Card className="p-3 sm:p-4">
+                            <CardTitle className="text-primary p-3 sm:p-4 text-lg sm:text-xl">
                                 Levitas Disponíveis:
                             </CardTitle>
-                            {!levitasData ?
-                                <div className="flex flex-row">
-                                    <Skeleton className="h-48 w-80 rounded-lg mx-5" />
-                                    <Skeleton className="h-48 w-80 rounded-lg mx-5" />
-                                    <Skeleton className="h-48 w-80 rounded-lg mx-5" />
+
+                            {!levitasData ? (
+                                <div className="flex flex-col sm:flex-row gap-4 px-4">
+                                    <Skeleton className="h-40 sm:h-48 w-full sm:w-80 rounded-lg flex-shrink-0" />
+                                    <Skeleton className="h-40 sm:h-48 w-full sm:w-80 rounded-lg flex-shrink-0 hidden sm:block" />
+                                    <Skeleton className="h-40 sm:h-48 w-full sm:w-80 rounded-lg flex-shrink-0 hidden lg:block" />
                                 </div>
-                                :
-                                levitasData.length > 0 ?
+                            ) : levitasData.length > 0 ? (
+                                <div className="px-2 sm:px-4">
                                     <Carousel className="w-full">
-                                        <CarouselContent className="-ml-1">
+                                        <CarouselContent className="-ml-2 sm:-ml-1">
                                             {levitasData.map(levita => (
-                                                <CarouselItem key={levita.id} className="pl-1 basis-full sm:basis-1/2 lg:basis-1/3 select-none">
-                                                    <LevitaSimpleCard key={levita.id}
-                                                        id={levita.id}
-                                                        nome={levita.nome}
-                                                        email={levita.email}
-                                                        contato={levita.contato}
-                                                        descricao={levita.descricao}
-                                                        instrumentos={levita.instrumentos}
-                                                        agenda={levita.agenda} />
+                                                <CarouselItem key={levita.id} className="pl-2 sm:pl-1 basis-full sm:basis-1/2 xl:basis-1/3 select-none">
+                                                    <div className="p-1">
+                                                        <LevitaSimpleCard
+                                                            key={levita.id}
+                                                            id={levita.id}
+                                                            nome={levita.nome}
+                                                            email={levita.email}
+                                                            contato={levita.contato}
+                                                            descricao={levita.descricao}
+                                                            instrumentos={levita.instrumentos}
+                                                            agenda={levita.agenda}
+                                                        />
+                                                    </div>
                                                 </CarouselItem>
                                             ))}
                                         </CarouselContent>
-                                        <CarouselPrevious />
-                                        <CarouselNext />
-                                    </Carousel> :
-                                    <h1 className="text-colortext justify-center self-center align-middle">Nenhum levita encontrado!</h1>
-                            }
-                            <br />
+                                        <div className="hidden sm:flex">
+                                            <CarouselPrevious className="ml-4" />
+                                            <CarouselNext className="mr-4" />
+                                        </div>
+                                    </Carousel>
+                                </div>
+                            ) : (
+                                <div className="px-4 py-8 text-center">
+                                    <p className="text-neutral-600 text-sm sm:text-base">
+                                        Nenhum levita encontrado!
+                                    </p>
+                                </div>
+                            )}
                         </Card>
                     </Card>
                 </div>

@@ -68,9 +68,12 @@ export default function Home() {
 				<main className="max-w-6xl w-full px-4 sm:px-8 lg:px-6 mx-auto my-6 sm:my-12">
 					<nav>
 						<div className="flex flex-wrap md:flex-nowrap justify-between items-center">
-							<div className="flex items-center">
-								<BackButton />
-								<h1 className="ml-4 font-extrabold tracking-tight text-2xl sm:text-5xl">Escalas</h1>
+							<div className="flex items-center justify-between w-full">
+								<div className="flex items-center">
+									<BackButton />
+									<h1 className="ml-4 font-extrabold tracking-tight text-2xl sm:text-5xl">Escalas</h1>
+								</div>
+								<SidebarTrigger className="border sm:hidden" />
 							</div>
 							<div className="flex w-full justify-between sm:justify-end gap-2 mt-4 sm:w-full">
 								{isLeader && <AddEscala disabled={escalasData === undefined} setEscalas={setEscalasData} />}
@@ -113,11 +116,11 @@ export default function Home() {
 						) : (
 							<div className={isLoading ? "grid grid-cols-1" : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-8"}>
 								{isLoading ? (
-										<div className="flex items-center justify-center z-50">
-											<div className="size-80 border-4 border-transparent text-primary/40 text-4xl animate-spin flex items-center justify-center border-t-primary rounded-full">
-												<div className="size-64 border-4 border-transparent text-subprimary/40 text-2xl animate-spin flex items-center justify-center border-t-subprimary rounded-full" />
-											</div>
+									<div className="flex items-center justify-center z-50">
+										<div className="size-80 border-4 border-transparent text-primary/40 text-4xl animate-spin flex items-center justify-center border-t-primary rounded-full">
+											<div className="size-64 border-4 border-transparent text-subprimary/40 text-2xl animate-spin flex items-center justify-center border-t-subprimary rounded-full" />
 										</div>
+									</div>
 								) : Array.isArray(filteredEscalas) && filteredEscalas.map((escala) => (
 									<Card key={escala.id} className={`${removeOverlay ? "animate-pulse" : ""} ${new Date(escala.data) < new Date() ? 'opacity-60 grayscale' : ''}`}>
 										<X className={removeOverlay ? "absolute hover:cursor-pointer bg-rose-500/80 rounded-br-xl p-1" : "absolute invisible"}

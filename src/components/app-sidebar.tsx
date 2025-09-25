@@ -23,7 +23,6 @@ export function AppSidebar({ side, alwaysOpen }: { side: "left" | "right", alway
     const [username, setUsername] = useState("");
 
     useEffect(() => {
-        // This code now runs only on the client side, avoiding the ReferenceError
         const userLeader = sessionStorage.getItem("role") === "Líder";
         const userAdmin = sessionStorage.getItem("role") === "ADMIN";
         setUsername(Cookies.get("username") || "Usuário")
@@ -37,7 +36,7 @@ export function AppSidebar({ side, alwaysOpen }: { side: "left" | "right", alway
                 <SidebarGroup>
                     <SidebarGroupLabel className="flex justify-between">
                         <div className="flex items-center">
-                            {!alwaysOpen && <SidebarTrigger className="text-primary brightness-150 hover:-rotate-180 transition-all duration-300 ease-in-out"/>}
+                            {!alwaysOpen && <SidebarTrigger className="text-primary hover:-rotate-180 transition-all duration-300 ease-in-out"/>}
                             Eclesia
                         </div>
                         <UserCircle2 size={20} />
@@ -47,7 +46,7 @@ export function AppSidebar({ side, alwaysOpen }: { side: "left" | "right", alway
                             {username}
                         </p>
                     </SidebarGroupLabel>
-                    <SidebarTrigger className="group-data-[collapsible=icon]:block hidden w-full h-full p-2 text-primary brightness-150 hover:rotate-180 transition-all duration-300 ease-in-out" />
+                    <SidebarTrigger className="group-data-[collapsible=icon]:block hidden w-full h-full p-2 text-primary hover:rotate-180 transition-all duration-300 ease-in-out" />
                     <SidebarGroupContent>
                         <SidebarMenu>
                             <SidebarMenuItem key={"initial_page"}>
