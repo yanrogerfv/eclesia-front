@@ -24,7 +24,7 @@ export function DialogAddInstrumento(props: { disabled: boolean, state: React.Di
                     <p className="hidden lg:inline">Adicionar Instrumento</p>
                 </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="w-[85%]">
                 {isLoading ?
                     <div className="absolute w-full h-[85%] z-50 flex justify-center items-center">
                         <div className="h-16 w-16 border-4 border-subprimary rounded-3xl animate-spin" />
@@ -32,33 +32,29 @@ export function DialogAddInstrumento(props: { disabled: boolean, state: React.Di
                     : <></>}
                 <DialogHeader>
                     <DialogTitle>Adicionar Instrumento</DialogTitle>
-                    <br />
-                    <Label>Nome:</Label>
-                    <Input type="text" placeholder="Insira o nome do instrumento."
-                        value={nomeInstrumento} onChange={(e) => setNomeInstrumento(e.target.value)} />
-                    <br />
-
                 </DialogHeader>
-                <DialogFooter className="">
-                    <Button className="hover:bg-emerald-500"
-                        type="submit" disabled={isLoading} onClick={() => {
+
+                <Label>Nome:</Label>
+                <Input type="text" placeholder="Insira o nome do instrumento."
+                    value={nomeInstrumento} onChange={(e) => setNomeInstrumento(e.target.value)} />
+
+                <DialogFooter className="gap-4">
+                    <Button className="hover:bg-rose-600 bg-red-600" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
+                    <Button className="hover:bg-emerald-500 bg-green-600"
+                        type="submit" disabled={isLoading || nomeInstrumento.length === 0} onClick={() => {
                             setLoading(true)
-                            if (nomeInstrumento === "") {
-                                alert("O nome do instrumento não pode ser vazio.")
-                                setLoading(false)
-                            } else {
-                                postMethod("v1/instrumento", {
-                                    nome: nomeInstrumento
-                                }, () => { }).then(() => {
-                                    setOpen(false)
-                                    setLoading(false)
-                                    props.state(undefined)
-                                }).catch((error) => {
-                                    console.error("Erro na comunicação com a api: ", error);
+                            postMethod("v1/instrumento", {
+                                nome: nomeInstrumento
+                            }, () => setOpen(false))
+                                .then(() => props.state(undefined))
+                                .catch((error) => {
+                                    toast.error("Erro na comunicação com a api: ", error);
                                 })
-                            }
+                                .finally(() => {
+                                    setLoading(false)
+                                    toast.success("Instrumento inserido com sucesso!")
+                                });
                         }}>Salvar</Button>
-                    <Button className="hover:bg-rose-600/80" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
@@ -78,7 +74,7 @@ export function DialogRemoveInstrumento(props: { allInstrumentos: Instrumento[] 
                     <p className="hidden lg:inline">Remover Instrumento</p>
                 </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="w-[85%]">
                 {isLoading ?
                     <div className="absolute w-full h-[85%] z-50 flex justify-center items-center">
                         <div className="h-16 w-16 border-4 border-subprimary rounded-3xl animate-spin" />
@@ -100,21 +96,22 @@ export function DialogRemoveInstrumento(props: { allInstrumentos: Instrumento[] 
                         </SelectGroup>
                     </SelectContent>
                 </Select>
-                <DialogFooter className="">
-                    <Button className="hover:bg-emerald-500"
-                        type="submit" disabled={isLoading} onClick={() => {
+                <DialogFooter className="gap-4">
+                    <Button className="hover:bg-rose-500 bg-red-600" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
+                    <Button className="hover:bg-emerald-500 bg-green-600"
+                        type="submit" disabled={isLoading || !selectedInstrumento} onClick={() => {
                             setLoading(true)
                             deleteMethod(`v1/instrumento/${selectedInstrumento}`)
-                                .then(() => {
-                                    setOpen(false)
-                                    setLoading(false)
-                                    props.state(undefined)
-                                })
+                                .then(() => props.state(undefined))
+                                .then(() => setOpen(false))
                                 .catch((error) => {
-                                    console.error("Erro na comunicação com a api: ", error);
+                                    toast.error("Erro na comunicação com a api: ", error);
                                 })
+                                .finally(() => {
+                                    setLoading(false)
+                                    toast.success("Instrumento removido com sucesso!")
+                                });
                         }}>Remover</Button>
-                    <Button className="hover:bg-rose-500" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

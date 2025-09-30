@@ -26,6 +26,7 @@ import Cookies from "js-cookie";
 import { Checkbox } from "../ui/checkbox";
 import { toast } from "sonner";
 import SelectLevita from "../select-levita";
+import CheckboxConfettiDemo from "../ui/checkbox-animated";
 
 interface props {
 	escalaId: UUID,
@@ -245,8 +246,7 @@ export function EditEscala(pp: addEditDialogProps) {
 								value={data} onChange={(e) => setData(e.target.value)} />
 						</div>
 						<div className="w-full space-y-1 my-4">
-							<Label>Especial:    </Label>
-							<Checkbox checked={pp.escala?.especial} onClick={() => setEspecial(!especial)} />
+							<CheckboxConfettiDemo title="Especial:" onClick={() => setEspecial(!especial)} />
 						</div>
 
 						<div className="w-full space-y-1 my-4">
@@ -344,7 +344,7 @@ export function EditEscala(pp: addEditDialogProps) {
 
 						<div className="w-full space-y-1 my-4">
 							<Label>Observação:</Label>
-							<Textarea placeholder="Insira uma observação. (Ex: Dia e hora de ensaio, local de apresentação, etc.)"
+							<Textarea placeholder="Insira uma observação. (Exemplo: dia e hora de ensaio, etc.)"
 								value={pp.escala?.observacoes} onChange={(e) => setObservacao(e.target.value)} />
 						</div>
 
@@ -362,7 +362,7 @@ export function EditEscala(pp: addEditDialogProps) {
 
 				</ScrollArea>
 				<DialogFooter className={`gap-4 ${isLoading ? "opacity-50" : ""}`}>
-					<Button className="hover:bg-emerald-500" disabled={isLoading} onClick={() => {
+					<Button className="hover:bg-emerald-500 bg-green-600" disabled={isLoading} onClick={() => {
 						if (titulo.length == 0) {
 							toast.warning("Insira um título para a escala!")
 						} else if (data.length == 0) {
@@ -398,7 +398,7 @@ export function EditEscala(pp: addEditDialogProps) {
 								: toast.error("Escala não encontrada.")
 						}
 					}}>{pp.isEdit ? "Confirmar" : "Adicionar"}</Button>
-					<Button className="hover:bg-rose-700 bg-red-700 md:bg-primary" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
+					<Button className="hover:bg-rose-500 bg-red-600" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
 				</DialogFooter>
 			</DialogContent>
 		</Dialog >
@@ -562,7 +562,7 @@ export function AddEscala(props: DialogAddEscalaProps) {
 
 							<div className="w-full space-y-1 my-4">
 								<Label>Observação:</Label>
-								<Textarea placeholder="Insira uma observação. (Ex: Dia e hora de ensaio, local de apresentação, etc.)"
+								<Textarea placeholder="Insira uma observação. (Exemplo: dia e hora de ensaio, etc.)"
 									value={observacao} onChange={(e) => setObservacao(e.target.value)} maxLength={255} disabled={disableFields} />
 							</div>
 
@@ -571,7 +571,7 @@ export function AddEscala(props: DialogAddEscalaProps) {
 								<Card className="bg-transparent grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1">
 									{filterByInstrumento(0)?.map((levita) => (
 										<Button key={levita.id} variant={backs.includes(levita.id) ? "default" : "outline"} type="submit"
-											className={"p-2 rounded-lg m-2"} disabled={disableFields}
+											className={"m-2"} disabled={disableFields}
 											onClick={() => { backs.includes(levita.id) ? removeBack(levita.id) : addBack(levita.id) }}>{levita.nome}</Button>
 									))}
 								</Card>
@@ -580,7 +580,8 @@ export function AddEscala(props: DialogAddEscalaProps) {
 					</div>
 				</ScrollArea>
 				<DialogFooter className={`gap-4 ${isLoading ? "opacity-50" : ""}`}>
-					<Button className="hover:bg-emerald-500" disabled={isLoading || disableFields} onClick={() => {
+					<Button className="hover:bg-rose-500 bg-red-600" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
+					<Button className="hover:bg-emerald-500 bg-green-600" disabled={isLoading || disableFields} onClick={() => {
 						if (titulo.length == 0) {
 							toast.warning("Insira um título para a escala!")
 						} else if (!data || data.length == 0) {
@@ -615,7 +616,6 @@ export function AddEscala(props: DialogAddEscalaProps) {
 							})
 						}
 					}}>{"Adicionar"}</Button>
-					<Button className="hover:bg-rose-700 bg-red-700 md:bg-primary" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
 				</DialogFooter>
 			</DialogContent>
 
@@ -653,9 +653,9 @@ export function DialogAddMusicaInEscala(props: DialogAddMusicaInEscalaProps) {
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
 				<Button variant={"outline"} className={"hover:text-emerald-500 "} disabled={false}>
-					<CirclePlus className="mx-1 text-emerald-500" />Adicionar Música</Button>
+					<CirclePlus className="mx-1 text-emerald-500" />Adicionar Músicas</Button>
 			</DialogTrigger>
-			<DialogContent className="w-[85%]">
+			<DialogContent className="w-[85%] ">
 				{isLoading ?
 					<div className="absolute w-full h-[85%] z-50 flex justify-center items-center">
 						<div className="h-16 w-16 border-4 border-subprimary rounded-3xl animate-spin" />
@@ -667,7 +667,6 @@ export function DialogAddMusicaInEscala(props: DialogAddMusicaInEscalaProps) {
 						Selecione as músicas que deseja adicionar a escala {props.escala?.titulo}.
 					</DialogDescription>
 				</DialogHeader>
-				<br />
 				<Label>Músicas para adicionar:</Label>
 				<Select onValueChange={(value) => addSelectedMusica(value)} disabled={!musicas}>
 					<SelectTrigger>
@@ -679,18 +678,17 @@ export function DialogAddMusicaInEscala(props: DialogAddMusicaInEscalaProps) {
 						))}
 					</SelectContent>
 				</Select>
-				<br />
 				<Label>Músicas selecionadas:</Label>
-				<Card className="bg-transparent grid grid-flow-row">
+				<Card className="bg-transparent grid grid-flow-row mb-4 gap-2 max-h-[42dvh] md:max-h-[50dvh] overflow-y-auto border rounded">
 					{getSelectedMusicas().map((musica) => (
 						<Button key={musica?.id} variant={"outline"} type="submit" className="p-2 rounded-lg m-2 hover:bg-red-400/50"
 							onClick={() => removeSelectedMusica(musica ? musica.id : "")}>{musica?.nome}</Button>
 					))}
 				</Card>
-				<br />
 
 				<DialogFooter className="flex justify-between gap-4">
-					<Button className="hover:bg-emerald-500"
+					<Button className="hover:bg-rose-500 bg-red-600" onClick={() => setOpen(false)}>Cancelar</Button>
+					<Button className="hover:bg-emerald-500 bg-green-600"
 						type="submit" disabled={isLoading} onClick={() => {
 							setLoading(true)
 							putMethod(`v1/escala/musicas/${props.escala?.id}`, { musicasIds: selectedMusicas })
@@ -701,7 +699,6 @@ export function DialogAddMusicaInEscala(props: DialogAddMusicaInEscalaProps) {
 								.then(() => setOpen(false))
 							setLoading(false)
 						}}>Salvar</Button>
-					<Button className="hover:bg-rose-700 bg-rose-700 md:bg-primary" onClick={() => setOpen(false)}>Cancelar</Button>
 				</DialogFooter>
 			</DialogContent>
 		</Dialog>
