@@ -33,17 +33,17 @@ export default function LandingPage() {
 
                     {/* Action Buttons */}
                     <div className="flex justify-center mb-8 md:mb-12">
-                        <div className="w-full max-w-md sm:max-w-lg">
+                        <div className="w-fit max-w-md">
                             <div className="flex flex-col sm:flex-row justify-center items-center border rounded-sm text-black bg-white/10 backdrop-blur-sm">
                                 <Link href="/login" className="w-full sm:w-auto">
-                                    <Button variant={"ghost"} className="text-base sm:text-lg md:text-xl w-full sm:w-auto m-2 sm:m-4">
+                                    <Button variant={"ghost"} className="text-base sm:text-lg md:text-xl w-fit sm:w-auto m-2 sm:m-4">
                                         Acessar
                                     </Button>
                                 </Link>
                                 <Separator orientation="vertical" className="hidden sm:block py-4 my-4" />
                                 <Separator orientation="horizontal" className="sm:hidden w-full" />
                                 <Link href="/escalas" className="w-full sm:w-auto">
-                                    <Button variant={"ghost"} className="text-base sm:text-lg md:text-xl w-full sm:w-auto m-2 sm:m-4">
+                                    <Button variant={"ghost"} className="text-base sm:text-lg md:text-xl w-fit sm:w-auto m-2 sm:m-4">
                                         Ver Próximas Escalas
                                     </Button>
                                 </Link>

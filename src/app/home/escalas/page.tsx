@@ -41,12 +41,23 @@ export default function Home() {
 		}
 	}, [])
 
+	function compareDates(date1: string | Date, date2: string | Date): boolean {
+		const d1 = new Date(new Date(date1).toISOString().substring(0, 10));
+		const d2 = new Date(new Date(date2).toISOString().substring(0, 10));
+		return d1 < d2;
+	}
+
 	useEffect(() => {
-		if (escalasData && levitasDisponiveis) return;
+		if (escalasData) return;
 		getMethod<EscalaResumida[] | undefined>("v1/escala/resumed", setEscalasData);
-		getMethod<Levita[] | undefined>("v1/levita/resumed", setLevitasDisponiveis);
 		// deleteMethod("escala/clean");
 	}, [escalasData, levitasDisponiveis])
+
+	useEffect(() => {
+		if (levitasDisponiveis) return;
+		getMethod<Levita[] | undefined>("v1/levita/resumed", setLevitasDisponiveis);
+	}, [])
+
 
 	useEffect(() => {
 		if (!escalasData) return;
@@ -75,19 +86,19 @@ export default function Home() {
 								</div>
 								<SidebarTrigger className="border sm:hidden" />
 							</div>
-							<div className="flex w-full justify-between sm:justify-end gap-2 mt-4 sm:w-full">
-								{isLeader && <AddEscala disabled={escalasData === undefined} setEscalas={setEscalasData} />}
-								{isLeader && <Button
-									variant="outline"
-									disabled={escalasData === undefined}
-									className={removeOverlay ? "font-bold bg-rose-500/80 border-rose-600/90 hover:bg-rose-600/40" : "font-bold hover:bg-rose-500/40"}
-									onClick={() => setRemoveOverlay(!removeOverlay)}>
-									<CircleMinus className="mx-1 text-rose-500" />Excluir Escala
-								</Button>}
-							</div>
+							{isLeader && (
+								<div className="flex w-full justify-between sm:justify-end gap-2 mt-4 sm:w-full">
+									<AddEscala disabled={escalasData === undefined} setEscalas={setEscalasData} />
+									<Button
+										variant="outline"
+										disabled={escalasData === undefined}
+										className={removeOverlay ? "font-bold bg-rose-500/80 border-rose-600/90 hover:bg-rose-600/40" : "font-bold hover:bg-rose-500/40"}
+										onClick={() => setRemoveOverlay(!removeOverlay)}>
+										<CircleMinus className="mx-1 text-rose-500" />Excluir Escala
+									</Button>
+								</div>)}
 						</div>
-						<br />
-						<h2 className="border-b text-sm sm:text-base text-neutral-700 tracking-tight">
+						<h2 className="border-b mt-3 text-sm sm:text-base text-neutral-700 tracking-tight">
 							{!filteredEscalas ? "Carregando Escalas..." : "Visualizando Escalas"}
 						</h2>
 					</nav>
@@ -122,7 +133,7 @@ export default function Home() {
 										</div>
 									</div>
 								) : Array.isArray(filteredEscalas) && filteredEscalas.map((escala) => (
-									<Card key={escala.id} className={`${removeOverlay ? "animate-pulse" : ""} ${new Date(escala.data) < new Date() ? 'opacity-60 grayscale' : ''}`}>
+									<Card key={escala.id} className={`${removeOverlay ? "animate-pulse" : ""} ${compareDates(escala.data, new Date()) ? 'opacity-60 grayscale' : ''}`}>
 										<X className={removeOverlay ? "absolute hover:cursor-pointer bg-rose-500/80 rounded-br-xl p-1" : "absolute invisible"}
 											onClick={() => {
 												setIsLoading(true);

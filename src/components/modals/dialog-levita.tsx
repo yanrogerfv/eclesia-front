@@ -121,9 +121,9 @@ export function DialogAddLevita(props: DialogAddLevitaProps) {
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild className="p-5" disabled={props.disable}>
-                <Button variant={"outline"} className="mx-2 font-bold hover:text-emerald-500" onClick={() => setLoading(false)}>
-                    <UserPlus className="mr-2" />Adicionar Levita</Button>
+            <DialogTrigger asChild disabled={props.disable}>
+                <Button variant={"outline"} className="font-bold hover:text-emerald-500" onClick={() => setLoading(false)}>
+                    <UserPlus className="mx-1 text-emerald-500" />Adicionar Levita</Button>
             </DialogTrigger>
             <DialogContent>
                 {isLoading ?

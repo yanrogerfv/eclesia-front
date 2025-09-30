@@ -33,9 +33,9 @@ export function SheetFiltroLevita(props: props) {
       <Sheet>
         <SheetTrigger asChild>
           {filteredInstruments.length == 0 ?
-            <ListFilter className="w-auto text-4xl justify-center size-[2.4rem] p-2 cursor-pointer outline outline-1 outline-border hover:bg-secondary/80 hover:text-black rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" /> :
+            <ListFilter className="w-auto text-4xl justify-center size-[2.4rem] p-2 cursor-pointer border hover:bg-secondary/80 hover:text-black rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" /> :
             <ListFilter onClick={() => setFilteredInstruments([])}
-              className="w-auto text-4xl justify-center size-[2.4rem] p-2 cursor-pointer outline outline-1 outline-red-500/45 hover:bg-red-500 hover:text-black rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" />
+              className="w-auto text-4xl justify-center size-[2.4rem] p-2 cursor-pointer border outline-red-500/45 hover:bg-red-500 hover:text-black rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" />
           }
         </SheetTrigger>
         <SheetContent>

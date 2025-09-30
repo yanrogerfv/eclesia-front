@@ -37,7 +37,6 @@ export function VerEscalaSomenteLeitura({ escalaId }: { escalaId: UUID }) {
 	const [escalaMusicas, setEscalaMusicas] = useState<Musica[] | undefined>(undefined)
 
 	useEffect(() => {
-		console.log(escalaData, escalaMusicas)
 		if (escalaData && escalaMusicas) return;
 		publicGetMethod<Escala | undefined>(`v1/escala/find/${escalaId}`, setEscalaData)
 		publicGetMethod<Musica[] | undefined>(`v1/escala/musicas/${escalaId}`, setEscalaMusicas)
@@ -96,7 +95,6 @@ export function VerEscala(props: props) {
 	const [escalaMusicas, setEscalaMusicas] = useState<Musica[] | undefined>(undefined)
 
 	useEffect(() => {
-		console.log(escalaData, escalaMusicas)
 		if (escalaData && escalaMusicas) return;
 		getMethod<Escala | undefined>(`v1/escala/find/${props.escalaId}`, setEscalaData)
 		getMethod<Musica[] | undefined>(`v1/escala/musicas/${props.escalaId}`, setEscalaMusicas)
