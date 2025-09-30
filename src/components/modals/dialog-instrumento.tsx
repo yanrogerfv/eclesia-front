@@ -2,7 +2,7 @@
 
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Button } from "../ui/button"
-import { CircleMinus, CirclePlus } from "lucide-react"
+import { BadgeMinus, BadgePlus, CircleMinus, CirclePlus } from "lucide-react"
 import React, { useState } from "react"
 import { Label } from "../ui/label"
 import { Input } from "../ui/input"
@@ -19,15 +19,17 @@ export function DialogAddInstrumento(props: { disabled: boolean, state: React.Di
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant={"outline"} disabled={props.disabled} className="mx-2 hover:text-emerald-500">
-                    <CirclePlus />Adicionar Instrumento</Button>
+                <Button variant={"outline"} disabled={props.disabled} className="hover:text-emerald-500">
+                    <BadgePlus className="text-emerald-500" />
+                    <p className="hidden lg:inline">Adicionar Instrumento</p>
+                </Button>
             </DialogTrigger>
             <DialogContent>
                 {isLoading ?
                     <div className="absolute w-full h-[85%] z-50 flex justify-center items-center">
                         <div className="h-16 w-16 border-4 border-subprimary rounded-3xl animate-spin" />
                     </div>
-                : <></>}
+                    : <></>}
                 <DialogHeader>
                     <DialogTitle>Adicionar Instrumento</DialogTitle>
                     <br />
@@ -63,7 +65,7 @@ export function DialogAddInstrumento(props: { disabled: boolean, state: React.Di
     )
 }
 
-export function DialogRemoveInstrumento( props: { allInstrumentos: Instrumento[] | undefined, state: React.Dispatch<React.SetStateAction<Instrumento[] | undefined>> }) {
+export function DialogRemoveInstrumento(props: { allInstrumentos: Instrumento[] | undefined, state: React.Dispatch<React.SetStateAction<Instrumento[] | undefined>> }) {
     const [isLoading, setLoading] = useState(false);
     const [open, setOpen] = useState(false);
     const [selectedInstrumento, setSelectedInstrumento] = useState<any>(null);
@@ -71,15 +73,17 @@ export function DialogRemoveInstrumento( props: { allInstrumentos: Instrumento[]
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant={"outline"} disabled={!props.allInstrumentos} className="mx-2 hover:bg-rose-500/40" >
-                    <CircleMinus />Remover Instrumento</Button>
+                <Button variant={"outline"} disabled={!props.allInstrumentos} className="hover:bg-rose-500/40" >
+                    <BadgeMinus className="text-rose-500" />
+                    <p className="hidden lg:inline">Remover Instrumento</p>
+                </Button>
             </DialogTrigger>
             <DialogContent>
                 {isLoading ?
                     <div className="absolute w-full h-[85%] z-50 flex justify-center items-center">
                         <div className="h-16 w-16 border-4 border-subprimary rounded-3xl animate-spin" />
                     </div>
-                : <></>}
+                    : <></>}
                 <DialogHeader>
                     <DialogTitle>Remover Instrumento</DialogTitle>
                 </DialogHeader>

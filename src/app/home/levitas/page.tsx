@@ -122,7 +122,7 @@ export default function Home() {
 									disabled={isLoading}
 									onClick={() => setRemoveOverlay(!removeOverlay)}
 								>
-									<UserMinus className="mx-1 text-rose-500" />
+									<UserMinus className="text-rose-500" />
 									<span className="hidden sm:block">Remover Levita</span>
 								</Button>
 							</div>

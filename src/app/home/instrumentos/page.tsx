@@ -4,8 +4,6 @@ import { Instrumento } from "@/lib/apiObjects";
 import { getMethod } from "@/lib/apiRequests";
 import { DialogAddInstrumento, DialogRemoveInstrumento } from "@/components/modals/dialog-instrumento";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ChevronLeft } from "lucide-react";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import BackButton from "@/components/next-back";
 
@@ -31,26 +29,27 @@ export default function Home() {
 	}, [instrumentosData])
 
 	return (
-		<main className="max-w-6xl mx-auto my-12">
-			<nav>
-				<div className="flex items-center gap-4 justify-between">
-					<div className="flex">
-						<BackButton />
-						<h1 className="mx-5 font-extrabold tracking-tight text-5xl">Instrumentos</h1>
+		<main className="max-w-6xl w-full h-full px-4 sm:px-8 lg:px-6 mx-auto my-6 sm:my-12">
+			<nav className="mb-4">
+				<div className="flex items-center mb-4 gap-4 justify-between align-middle">
+					<div className="flex items-center justify-between w-full">
+						<div className="flex items-center">
+							<BackButton />
+							<h1 className="ml-4 font-extrabold tracking-tight text-2xl sm:text-5xl">Instrumentos</h1>
+						</div>
+						{/* <SidebarTrigger className="border sm:hidden" /> */}
 					</div>
-					<div className="flex">
+					<div className="flex gap-2">
 						{isLeader && <DialogAddInstrumento disabled={isLoading} state={setInstrumentosData} />}
 						{isLeader && <DialogRemoveInstrumento allInstrumentos={instrumentosData ? instrumentosData : undefined} state={setInstrumentosData}/>}
 					</div>
 				</div>
-				<br />
 				<h2 className="scroll-m-20 border-b text-base text-neutral-700 tracking-tight transition-colors first:mt-0">
 					{isLoading ? "Carregando Instrumentos..." : "Visualizando Instrumentos"}</h2>
 			</nav>
-			<br />
 
 
-			<div className="grid grid-cols-3 gap-8">
+			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
 				{isLoading || !instrumentosData ? (
 					<div className="col-span-4 h-full flex items-center justify-center mt-20">
 						<div className="size-80 border-4 border-transparent text-primary/40 text-4xl animate-spin flex items-center justify-center border-t-primary rounded-full">

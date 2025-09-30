@@ -457,7 +457,7 @@ export function AddEscala(props: DialogAddEscalaProps) {
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
 				<Button variant={"outline"} className="hover:text-emerald-500" disabled={props.disabled}>
-					<CirclePlus className="mx-1 text-emerald-500" />Criar Escala</Button>
+					<CirclePlus className="text-emerald-500" />Criar Escala</Button>
 			</DialogTrigger>
 			<DialogContent className="w-[85%]">
 				{isLoading ?
