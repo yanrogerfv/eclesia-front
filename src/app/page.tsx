@@ -20,7 +20,7 @@ export default function LandingPage() {
                     <div className="flex justify-center mb-8 md:mb-12">
                         <div className="w-full max-w-2xl">
                             <h1 className="mb-4">
-                                <VideoText autoPlay loop muted className="h-20 sm:h-24 md:h-32"
+                                <VideoText autoPlay loop muted className="h-32"
                                     src="https://www.pexels.com/download/video/19493166/">
                                     Eclesia
                                 </VideoText>

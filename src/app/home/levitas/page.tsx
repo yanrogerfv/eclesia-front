@@ -9,42 +9,28 @@ import {
 	CardHeader,
 	CardTitle
 } from "@/components/ui/card";
-import { use, useEffect, useState } from "react";
-import { Filter, FilterX, ListFilter, UserMinus, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ListFilter, Trash2, UserMinus } from "lucide-react";
 import { DialogAddLevita, DialogVerLevita } from "@/components/modals/dialog-levita";
 import { Input } from "@/components/ui/input";
 import { Levita, Instrumento } from "@/lib/apiObjects";
 import { SheetFiltroLevita } from "@/components/filter-sheet";
 import { Button } from "@/components/ui/button";
-import {
-	Sheet,
-	SheetClose,
-	SheetContent,
-	SheetDescription,
-	SheetFooter,
-	SheetHeader,
-	SheetTitle,
-	SheetTrigger,
-} from "@/components/ui/sheet"
-import { CheckboxDemo } from "@/components/checkboxObj";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { deleteMethod, getMethod } from "@/lib/apiRequests";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import BackButton from "@/components/next-back";
+import { toast } from "sonner";
 
 export default function Home() {
 
 	const [levitas, setLevitas] = useState<Levita[] | undefined>(undefined)
 	const [instrumentos, setInstrumentos] = useState<Instrumento[] | undefined>(undefined)
 	const [isLoading, setIsLoading] = useState(true)
-	const [loadingRemove, setLoadingRemove] = useState(false)
 	const [removeOverlay, setRemoveOverlay] = useState(false)
 	const [searchItem, setSearchItem] = useState("");
-	const [reload, setReload] = useState(false)
 	const [filteredInstruments, setFilteredInstruments] = useState<Instrumento[]>([])
 	const [filteredLevitas, setFilteredLevita] = useState<Levita[] | undefined>(undefined)
 	const [isAdminOrLeader, setLeader] = useState(false)
@@ -62,16 +48,6 @@ export default function Home() {
 		getMethod<Levita[] | undefined>("v1/levita/resumed", setLevitas);
 	}, [levitas])
 
-	// useEffect(() => {
-	// 	if (reload) {
-	// 		setLevitas(undefined)
-	// 		setFilteredLevita(undefined)
-	// 		setInstrumentos(undefined)
-	// 		setIsLoading(true)
-	// 		setReload(false)
-	// 	}
-	// }, [reload])
-
 	useEffect(() => {
 		if (instrumentos) return;
 		getMethod<Instrumento[] | undefined>("v1/instrumento", setInstrumentos);
@@ -84,6 +60,11 @@ export default function Home() {
 		}
 	}, [levitas, instrumentos])
 
+	function clearStates() {
+		setLevitas(undefined)
+		setInstrumentos(undefined)
+	}
+
 	useEffect(() => {
 		if (!levitas) return;
 		if (filteredInstruments.length === 0)
@@ -92,9 +73,7 @@ export default function Home() {
 			setFilteredLevita(levitas.filter((levita) => levita.nome.toLowerCase().includes(searchItem.toLowerCase())
 				&& levita.instrumentos.some((instrumento) => filteredInstruments.some((filteredInstrument) => filteredInstrument.id === instrumento.id))))
 
-	}, [searchItem, filteredInstruments])
-
-
+	}, [searchItem, filteredInstruments, levitas])
 
 	return (
 		<SidebarProvider defaultOpen={false}>
@@ -122,7 +101,7 @@ export default function Home() {
 									disabled={isLoading}
 									onClick={() => setRemoveOverlay(!removeOverlay)}
 								>
-									<UserMinus className="text-rose-500" />
+									<UserMinus className={`${removeOverlay ? "" : "text-rose-500"}`} />
 									<span className="hidden sm:block">Remover Levita</span>
 								</Button>
 							</div>
@@ -161,7 +140,7 @@ export default function Home() {
 				</div>
 
 				{/* Content Grid */}
-				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+				<div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
 					{isLoading ? (
 						<div className="col-span-full flex items-center justify-center py-16 sm:py-20">
 							<div className="size-32 sm:size-48 lg:size-80 border-4 border-transparent text-primary/40 animate-spin flex items-center justify-center border-t-primary rounded-full">
@@ -176,45 +155,26 @@ export default function Home() {
 									} ${Cookies.get("levitaname") == levita.nome ? "border-special/30 bg-special/10" : ""
 									}`}
 							>
-								<X
-									className={`absolute transition-all self-end sm:self-start duration-500 ${removeOverlay
-										? "hover:cursor-pointer p-1 size-6 bg-rose-500/80 hover:bg-rose-600 rounded-bl-xl sm:rounded-bl-none sm:rounded-br-xl animate-none"
-										: "invisible"
-										}`}
-									onClick={() => {
-										setLoadingRemove(true)
-										deleteMethod(`v1/levita/${levita.id}`)
-											.then(() => {
-												setLoadingRemove(false)
-												setReload(!reload)
-												setLevitas(undefined)
-												setFilteredLevita(undefined)
-												setInstrumentos(undefined)
-												setIsLoading(true)
-												setRemoveOverlay(false)
-											})
-											.catch((error) => {
-												alert("Erro ao remover o Levita!")
-												console.error("Erro na comunicação com a api: ", error);
-											})
-									}}
-								/>
-
 								<CardHeader className="pb-3 items-center text-center lg:items-start lg:text-start">
 									<CardTitle className={`text-base sm:text-lg ${Cookies.get("username") == levita.nome ? "text-special" : "text-primary"
 										} leading-tight`}>
 										{levita.nome}
 									</CardTitle>
 									<CardDescription className="text-xs sm:text-sm line-clamp-1">
-										{levita.email ? levita.email : levita.contato}
+										<p className="sm:hidden">
+											{levita.contato ? levita.contato : levita.email.length > 18 ? levita.email.substring(0, 18) + "..." : levita.email}
+										</p>
+										<p className="hidden sm:block">
+											{levita.contato ? levita.contato : levita.email}
+										</p>
 									</CardDescription>
 								</CardHeader>
 
-								<CardContent className="flex-1 pb-3 space-y-3">
+								<CardContent className="flex-1 pb-3 space-y-3 w-full">
 									{/* Instruments Carousel */}
 									<div className="min-h-[2rem]">
 										{levita.instrumentos.length > 0 ? (
-											<Carousel className="w-fit max-w-48 lg:w-full lg:justify-self-start justify-self-center">
+											<Carousel className="w-fit max-w-[140px] sm:max-w-48 lg:w-full lg:justify-self-start justify-self-center">
 												<CarouselContent className="-ml-1">
 													{levita.instrumentos.map(instrumento => (
 														<CarouselItem key={instrumento.id} className="basis-auto pl-1">
@@ -231,7 +191,7 @@ export default function Home() {
 									</div>
 
 									{/* Description */}
-									<div className="min-h-[3rem] sm:min-h-[4rem] justify-self-center lg:justify-self-start">
+									<div className="min-h-[3rem] sm:min-h-[4rem] justify-self-center">
 										{levita.descricao ? (
 											<CardDescription className="text-xs sm:text-sm text-subprimary line-clamp-3">
 												{levita.descricao}
@@ -244,13 +204,26 @@ export default function Home() {
 									</div>
 								</CardContent>
 
-								<CardFooter className="pt-3 justify-center">
+								<CardFooter className="pt-3 justify-between w-full">
 									<DialogVerLevita
 										key={levita.id}
 										levita={levita}
 										disabled={removeOverlay}
 										setLevitas={setLevitas}
 									/>
+									<Button variant={"destructive"} size={"sm"} disabled={!removeOverlay || isLoading}
+										className={`transition-all duration-200 ease-in-out ${removeOverlay ? "hover:cursor-pointer animate-none" : "invisible"}`}
+										onClick={() => {
+											deleteMethod(`v1/levita/${levita.id}`)
+												.then(() => toast.success(`Levita ${levita.nome} removido com sucesso!`))
+												.catch((error) => {
+													toast.error("Erro ao remover o Levita!")
+													console.error("Erro na comunicação com a api: ", error);
+												})
+												.finally(() => clearStates());
+										}}>
+										<Trash2 />
+									</Button>
 								</CardFooter>
 							</Card>
 						))
@@ -259,8 +232,8 @@ export default function Home() {
 							<p className="text-lg sm:text-xl text-muted-foreground mb-2">
 								Nenhum levita encontrado
 							</p>
-							<p className="text-sm text-muted-foreground">
-								Tente ajustar os filtros ou busca
+							<p className="text-sm text-muted-foreground mx-8">
+								Tente ajustar os filtros ou buscar por outro nome.
 							</p>
 						</div>
 					)}

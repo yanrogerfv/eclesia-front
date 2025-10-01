@@ -8,7 +8,6 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
-import Cookies from "js-cookie";
 import { getMethod } from "@/lib/apiRequests";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
@@ -25,10 +24,10 @@ export default function Home() {
     }, [])
 
     return (
-        <SidebarProvider>
-            <AppSidebar side="left" alwaysOpen />
-            {/* <SidebarTrigger className="border" /> */}
-            <main className="flex-1 w-full max-w-7xl max-h-screen mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+        <SidebarProvider defaultOpen>
+            <AppSidebar side="left" />
+			{/* <main className="max-w-3xl xl:max-w-7xl w-fit px-4 sm:px-8 lg:px-6 mx-auto my-6 sm:my-12 space-y-6"> */}
+            <main className="flex-1 w-full max-w-3xl xl:max-w-6xl max-h-screen mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
                 {/* Navigation Header */}
                 <nav className="space-y-4">
                     <div className="flex justify-between items-center">

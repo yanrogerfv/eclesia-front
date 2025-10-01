@@ -26,7 +26,7 @@ import Cookies from "js-cookie";
 import { Checkbox } from "../ui/checkbox";
 import { toast } from "sonner";
 import SelectLevita from "../select-levita";
-import CheckboxConfettiDemo from "../ui/checkbox-animated";
+import CheckboxConfetti from "../ui/checkbox-animated";
 
 interface props {
 	escalaId: UUID,
@@ -48,7 +48,7 @@ export function VerEscalaSomenteLeitura({ escalaId }: { escalaId: UUID }) {
 			<DialogTrigger asChild key={escalaData?.id} className="p-5">
 				<Button variant={"outline"} disabled={(!escalaData)} className="flex items-center rounded-md justify-center">Ver Escala</Button>
 			</DialogTrigger>
-			<DialogContent>
+			<DialogContent className="w-[85%] max-h-[90vh] overflow-y-auto">
 				{!escalaData ?
 					<div className="absolute w-full h-[85%] bg-black/50 z-50 flex justify-center items-center">
 						<div className="h-16 w-16 border-4 border-subprimary rounded-3xl animate-spin" />
@@ -61,28 +61,35 @@ export function VerEscalaSomenteLeitura({ escalaId }: { escalaId: UUID }) {
 					<DialogDescription className="border-b border-zinc-600">
 						{convertDateFormat(escalaData ? escalaData.data : undefined)}
 					</DialogDescription>
-					<br />
-					<p className="text-special">Ministro: <a className="text-secondary">{escalaData?.ministro.nome}</a></p>
-					<p className="text-subprimary">Violão: {escalaData?.violao ? <a className="text-colortext"> {escalaData.violao.nome}</a> : <a className="text-colortext/50">Não inserido.</a>}</p>
-					<p className="text-subprimary">Teclado: {escalaData?.teclado ? <a className="text-colortext"> {escalaData.teclado.nome}</a> : <a className="text-colortext/50">Não inserido.</a>}</p>
-					<p className="text-subprimary">Bateria: {escalaData?.bateria ? <a className="text-colortext"> {escalaData.bateria.nome}</a> : <a className="text-colortext/50">Não inserido.</a>}</p>
-					<p className="text-subprimary">Baixo: {escalaData?.baixo ? <a className="text-colortext"> {escalaData.baixo.nome}</a> : <a className="text-colortext/50">Não inserido.</a>}</p>
-					<p className="text-subprimary">Guitarra: {escalaData?.guitarra ? <a className="text-colortext"> {escalaData.guitarra.nome}</a> : <a className="text-colortext/50">Não inserido.</a>}</p>
-					<p className="text-subprimary">Backs: {escalaData ? <a className="text-colortext"> {listBacks(escalaData.back)}.</a> : <a className="text-colortext/50">Não inseridos.</a>}</p>
-					<br />
+
+					<div className="text-start">
+						<p className="text-special">Ministro: <a className="text-secondary">{escalaData?.ministro.nome}</a></p>
+						<p className="text-subprimary">Violão: {escalaData?.violao ? <a className="text-colortext"> {escalaData.violao.nome}</a> : <a className="text-colortext/50">Não inserido.</a>}</p>
+						<p className="text-subprimary">Teclado: {escalaData?.teclado ? <a className="text-colortext"> {escalaData.teclado.nome}</a> : <a className="text-colortext/50">Não inserido.</a>}</p>
+						<p className="text-subprimary">Bateria: {escalaData?.bateria ? <a className="text-colortext"> {escalaData.bateria.nome}</a> : <a className="text-colortext/50">Não inserido.</a>}</p>
+						<p className="text-subprimary">Baixo: {escalaData?.baixo ? <a className="text-colortext"> {escalaData.baixo.nome}</a> : <a className="text-colortext/50">Não inserido.</a>}</p>
+						<p className="text-subprimary">Guitarra: {escalaData?.guitarra ? <a className="text-colortext"> {escalaData.guitarra.nome}</a> : <a className="text-colortext/50">Não inserido.</a>}</p>
+						<p className="text-subprimary">Backs: {escalaData ? <a className="text-colortext"> {listBacks(escalaData.back)}.</a> : <a className="text-colortext/50">Não inseridos.</a>}</p>
+					</div>
 
 				</DialogHeader>
 				<Label className="text-secondary/85">Observações:</Label>
-				{escalaData?.observacoes ? <p className="text-colortext">{escalaData?.observacoes}</p> : <p className="text-foreground/25">Nenhuma observação.</p>}
-				<br />
+				{escalaData?.observacoes ? <p className="text-colortext line-clamp-3">{escalaData?.observacoes}</p> : <p className="text-foreground/25">Nenhuma observação.</p>}
 
 				<Label className="text-secondary/85">Músicas:</Label>
-				<Card className="bg-transparent grid grid-flow-row p-2">
+				<Card className="bg-transparent grid p-2">
 					{escalaMusicas ? escalaMusicas.length > 0 ?
 						escalaMusicas.map((musica) => (
 							<Button key={musica.id} variant={"outline"} className="rounded-lg m-2">
-								<Link key={musica.id} href={musica.link} target="_blank" className="w-full">
-									{musica.nome}</Link></Button>
+								<Link key={musica.id} href={musica.link} target="_blank" className="">
+								<p className="sm:hidden">
+									{musica.nome.substring(0, 25) + (musica.nome.length > 25 ? "..." : "")}
+								</p>
+								<p className="hidden sm:block">
+									{musica.nome}
+								</p>
+								</Link>
+							</Button>
 						)) : <p className="text-foreground/25">Nenhuma música inserida.</p>
 						: <p className="text-foreground/25">Carregando músicas...</p>}
 				</Card>
@@ -120,7 +127,7 @@ export function VerEscala(props: props) {
 			<DialogTrigger asChild key={escalaData?.id} className="p-5">
 				<Button variant={"outline"} disabled={(!escalaData)} className="flex items-center rounded-md justify-center">Ver Escala</Button>
 			</DialogTrigger>
-			<DialogContent className="w-[85%]">
+			<DialogContent className="w-[85%] max-h-[90vh] overflow-y-auto">
 				{!escalaData ?
 					<div className="absolute w-full h-[85%] bg-black/50 z-50 flex justify-center items-center">
 						<div className="h-16 w-16 border-4 border-subprimary rounded-3xl animate-spin" />
@@ -145,20 +152,26 @@ export function VerEscala(props: props) {
 					</div>
 				</DialogHeader>
 				<Label className="text-secondary/85">Observações:</Label>
-				{escalaData?.observacoes ? <p className="text-colortext">{escalaData?.observacoes}</p> : <p className="text-foreground/25">Nenhuma observação.</p>}
-				<br />
+				{escalaData?.observacoes ? <p className="text-colortext line-clamp-3">{escalaData?.observacoes}</p> : <p className="text-foreground/25">Nenhuma observação.</p>}
 
 				<Label className="text-secondary/85">Músicas:</Label>
-				<Card className="bg-transparent grid grid-flow-row p-2">
+				<Card className="bg-transparent grid md:p-2">
 					{escalaMusicas ? escalaMusicas.length > 0 ?
 						escalaMusicas.map((musica) => (
 							<Button key={musica.id} variant={"outline"} className="rounded-lg m-2">
-								<Link key={musica.id} href={musica.link} target="_blank" className="w-full">
-									{musica.nome}</Link></Button>
+								<Link key={musica.id} href={musica.link} target="_blank" className="">
+								<p className="sm:hidden">
+									{musica.nome.substring(0, 25) + (musica.nome.length > 25 ? "..." : "")}
+								</p>
+								<p className="hidden sm:block">
+									{musica.nome}
+								</p>
+								</Link>
+							</Button>
 						)) : <p className="text-foreground/25">Nenhuma música inserida.</p>
 						: <p className="text-foreground/25">Carregando músicas...</p>}
 				</Card>
-				<DialogFooter className="md:justify-between gap-4">
+				<DialogFooter className="sm:justify-between gap-4">
 					{(isUserAdmin || isUserLeader) && <EditEscala isEdit={true} setEscala={setEscalaData}
 						escala={escalaData} levitasDisponiveis={props.levitasDisponiveis} />}
 					{(isUserAdmin || isUserLeader || isUserMinistro) &&
@@ -246,7 +259,7 @@ export function EditEscala(pp: addEditDialogProps) {
 								value={data} onChange={(e) => setData(e.target.value)} />
 						</div>
 						<div className="w-full space-y-1 my-4">
-							<CheckboxConfettiDemo title="Especial:" onClick={() => setEspecial(!especial)} />
+							<CheckboxConfetti value={especial} title="Especial:" onClick={() => setEspecial(!especial)} />
 						</div>
 
 						<div className="w-full space-y-1 my-4">
@@ -362,6 +375,7 @@ export function EditEscala(pp: addEditDialogProps) {
 
 				</ScrollArea>
 				<DialogFooter className={`gap-4 ${isLoading ? "opacity-50" : ""}`}>
+					<Button className="hover:bg-rose-500 bg-red-600" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
 					<Button className="hover:bg-emerald-500 bg-green-600" disabled={isLoading} onClick={() => {
 						if (titulo.length == 0) {
 							toast.warning("Insira um título para a escala!")
@@ -398,7 +412,6 @@ export function EditEscala(pp: addEditDialogProps) {
 								: toast.error("Escala não encontrada.")
 						}
 					}}>{pp.isEdit ? "Confirmar" : "Adicionar"}</Button>
-					<Button className="hover:bg-rose-500 bg-red-600" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
 				</DialogFooter>
 			</DialogContent>
 		</Dialog >
@@ -484,8 +497,7 @@ export function AddEscala(props: DialogAddEscalaProps) {
 							<Input type="date" value={data} onChange={(e) => setData(e.target.value)} className="" />
 						</div>
 						<div className="flex items-center justify-start gap-2 my-4">
-							<Label>Especial:</Label>
-							<Checkbox className="" onClick={() => setEspecial(!especial)} />
+							<CheckboxConfetti title="Especial" onClick={() => setEspecial(!especial)} />
 						</div>
 						<div className={`w-full ${!disableFields ? "hidden" : "flex"} justify-center items-center text-center`}>
 							{true ?

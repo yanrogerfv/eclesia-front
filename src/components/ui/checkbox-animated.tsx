@@ -36,9 +36,9 @@ const ConfettiPiece = ({ index }: { index: number }) => {
   )
 }
 
-const CheckboxConfettiDemo = ({title, onClick} : {title: string, onClick: React.Dispatch<React.SetStateAction<boolean>>}) => {
+const CheckboxConfetti = ({title, value, onClick} : {title: string, value?: boolean, onClick: React.Dispatch<React.SetStateAction<boolean>>}) => {
   const [showConfetti, setShowConfetti] = useState(false)
-  const [checked, setChecked] = useState(false)
+  const [checked, setChecked] = useState(value || false)
 
   const id = useId()
 
@@ -53,9 +53,9 @@ const CheckboxConfettiDemo = ({title, onClick} : {title: string, onClick: React.
 
   return (
     <div className='relative flex items-center gap-2'>
-      <Label className={`transition-all duration-800 ease-in-out ${checked ? 'text-specialtext' : ''}`} 
+      <Label className={`transition-all duration-800 ease-in-out ${checked ? 'text-special' : ''}`} 
       htmlFor={id} >{title}</Label>
-      <Checkbox id={id} onCheckedChange={handleCheckedChange} />
+      <Checkbox id={id} onCheckedChange={handleCheckedChange} checked={checked} />
       <AnimatePresence>
         {showConfetti && (
           <div className='pointer-events-none absolute inset-0'>
@@ -69,4 +69,4 @@ const CheckboxConfettiDemo = ({title, onClick} : {title: string, onClick: React.
   )
 }
 
-export default CheckboxConfettiDemo
+export default CheckboxConfetti

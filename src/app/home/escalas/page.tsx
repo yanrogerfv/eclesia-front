@@ -9,11 +9,9 @@ import {
 	CardHeader,
 	CardTitle
 } from "@/components/ui/card";
-import * as React from "react";
-import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { useEffect, useMemo, useState } from "react";
-import { ChevronLeft, CircleMinus, LoaderCircle, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { CircleMinus, X } from "lucide-react";
 import { AppSidebar } from "@/components/app-sidebar";
 import { deleteMethod, getMethod } from "@/lib/apiRequests";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
@@ -93,7 +91,7 @@ export default function Home() {
 									disabled={escalasData === undefined}
 									className={removeOverlay ? "font-bold bg-rose-500/80 border-rose-600/90 hover:bg-rose-600/40" : "font-bold hover:bg-rose-500/40"}
 									onClick={() => setRemoveOverlay(!removeOverlay)}>
-									<CircleMinus className="text-rose-500" />Excluir Escala
+									<CircleMinus className={`${removeOverlay ? "" : "text-rose-500"}`} />Excluir Escala
 								</Button>
 							</div>)}
 					</div>
@@ -133,7 +131,6 @@ export default function Home() {
 								<Card key={escala.id} className={`${removeOverlay ? "animate-pulse" : ""} ${compareDates(escala.data, new Date()) ? 'opacity-60 grayscale' : ''}`}>
 									<X className={removeOverlay ? "absolute hover:cursor-pointer bg-rose-500/80 rounded-br-xl p-1" : "absolute invisible"}
 										onClick={() => {
-											setIsLoading(true);
 											deleteMethod(`v1/escala/${escala.id}`)
 												.catch((error: any) => toast.error("Erro ao remover escala: " + error))
 												.then(() => toast.success("Escala " + escala.titulo + " removida com sucesso!"))
