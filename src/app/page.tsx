@@ -68,7 +68,7 @@ export default function LandingPage() {
                     {/* Footer Card */}
                     <div className="flex justify-center mt-auto pt-8">
                         <Card className="w-[95%] sm:w-[90%] md:w-[80%] max-w-4xl outline outline-1 outline-primary flex  justify-between items-center px-3 py-2 sm:py-1 bg-cardstartbg/80 gap-2 sm:gap-0">
-                            <p className="text-xs sm:text-sm text-colortext">v0.1.1</p>
+                            <p className="text-xs sm:text-sm text-colortext">v0.1.2</p>
 
                             <Popover>
                                 <PopoverTrigger asChild>
