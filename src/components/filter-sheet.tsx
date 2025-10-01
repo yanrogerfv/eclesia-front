@@ -33,23 +33,22 @@ export function SheetFiltroLevita(props: props) {
       <Sheet>
         <SheetTrigger asChild>
           {filteredInstruments.length == 0 ?
-            <ListFilter className="w-auto text-4xl justify-center size-[2.4rem] p-2 cursor-pointer outline outline-1 outline-border hover:bg-secondary/80 hover:text-black rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" /> :
+            <ListFilter className="w-auto text-4xl justify-center size-[2.4rem] p-2 cursor-pointer border hover:bg-secondary/80 hover:text-black rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" /> :
             <ListFilter onClick={() => setFilteredInstruments([])}
-              className="w-auto text-4xl justify-center size-[2.4rem] p-2 cursor-pointer outline outline-1 outline-red-500/45 hover:bg-red-500 hover:text-black rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" />
+              className="w-auto text-4xl justify-center size-[2.4rem] p-2 cursor-pointer border outline-red-500/45 hover:bg-red-500 hover:text-black rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" />
           }
         </SheetTrigger>
         <SheetContent>
-          <SheetHeader>
+          <SheetHeader className="mb-4">
             <SheetTitle>Filtrar Levitas</SheetTitle>
             <SheetDescription>
               Filtre os Levitas por instrumento.
             </SheetDescription>
           </SheetHeader>
-          <div className="grid grid-cols-1 space-y-1">
-            <br />
+          <div className="grid space-y-1 mb-4">
             {instrumentos?.map((instrumento) => (
               <div key={instrumento.id} className="flex items-center space-x-2">
-                <Checkbox id="terms" onClick={() => {
+                <Checkbox id={"instrumento-" + instrumento.id} onClick={() => {
                   if (filteredInstruments.some((filteredInstrument) => filteredInstrument.id === instrumento.id)) {
                     removeInstrumentoInFilter(instrumento)
                   } else {
@@ -57,11 +56,10 @@ export function SheetFiltroLevita(props: props) {
                   }
                 }} />
                 <Label
-                  htmlFor="terms"
+                  htmlFor={"instrumento-" + instrumento.id}
                   className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                   {instrumento.nome}
                 </Label>
-                <br />
               </div>
             ))}
           </div>

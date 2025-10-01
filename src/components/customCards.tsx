@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 export function EscalaSimpleCard(escala: EscalaResumida) {
     const day = escala.domingo ? "Domingo" : escala.quarta ? "Quarta" : "Especial"
     return (
-        <Card className={`mx-4 border border-primary/40 ${new Date(escala.data) < new Date() ? 'opacity-60 grayscale' : ''}`} key={escala.id}>
+        <Card className={` border border-primary/40 ${new Date(escala.data) < new Date() ? 'opacity-60 grayscale' : ''}`} key={escala.id}>
             <CardHeader>
                 {/* <CardTitle> */}
                 <CardTitle className={escala.domingo ? "text-secondary" : escala.quarta ? "text-subprimary" : "text-special"}>
@@ -24,7 +24,7 @@ export function EscalaSimpleCard(escala: EscalaResumida) {
 
 export function LevitaSimpleCard(levita: Levita) {
     return (
-        <Card className="mx-4 border border-primary/40" key={levita.id}>
+        <Card className="border border-primary/40" key={levita.id}>
             <CardHeader>
                 <CardTitle className="text-secondary">
                     {levita.nome}</CardTitle>
@@ -32,7 +32,7 @@ export function LevitaSimpleCard(levita: Levita) {
                     {levita.email ? levita.email : levita.contato}
                 </CardDescription>
             </CardHeader>
-            <CardContent className="flow-root h-24">
+            <CardContent className="flow-root h-20">
                 {levita.instrumentos.map(instrumento => (
                     <Badge variant={"outline"} key={instrumento.id}>{instrumento.nome.toUpperCase()}</Badge>
                         ))}

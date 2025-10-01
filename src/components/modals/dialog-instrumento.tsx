@@ -2,7 +2,7 @@
 
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Button } from "../ui/button"
-import { CircleMinus, CirclePlus } from "lucide-react"
+import { BadgeMinus, BadgePlus, CircleMinus, CirclePlus } from "lucide-react"
 import React, { useState } from "react"
 import { Label } from "../ui/label"
 import { Input } from "../ui/input"
@@ -19,51 +19,49 @@ export function DialogAddInstrumento(props: { disabled: boolean, state: React.Di
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant={"outline"} disabled={props.disabled} className="mx-2 hover:text-emerald-500">
-                    <CirclePlus />Adicionar Instrumento</Button>
+                <Button variant={"outline"} disabled={props.disabled} className="hover:text-emerald-500">
+                    <BadgePlus className="text-emerald-500" />
+                    <p className="hidden lg:inline">Adicionar Instrumento</p>
+                </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="w-[85%]">
                 {isLoading ?
                     <div className="absolute w-full h-[85%] z-50 flex justify-center items-center">
                         <div className="h-16 w-16 border-4 border-subprimary rounded-3xl animate-spin" />
                     </div>
-                : <></>}
+                    : <></>}
                 <DialogHeader>
                     <DialogTitle>Adicionar Instrumento</DialogTitle>
-                    <br />
-                    <Label>Nome:</Label>
-                    <Input type="text" placeholder="Insira o nome do instrumento."
-                        value={nomeInstrumento} onChange={(e) => setNomeInstrumento(e.target.value)} />
-                    <br />
-
                 </DialogHeader>
-                <DialogFooter className="">
-                    <Button className="hover:bg-emerald-500"
-                        type="submit" disabled={isLoading} onClick={() => {
+
+                <Label>Nome:</Label>
+                <Input type="text" placeholder="Insira o nome do instrumento."
+                    value={nomeInstrumento} onChange={(e) => setNomeInstrumento(e.target.value)} />
+
+                <DialogFooter className="gap-4">
+                    <Button className="hover:bg-rose-600 bg-red-600" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
+                    <Button className="hover:bg-emerald-500 bg-green-600"
+                        type="submit" disabled={isLoading || nomeInstrumento.length === 0} onClick={() => {
                             setLoading(true)
-                            if (nomeInstrumento === "") {
-                                alert("O nome do instrumento não pode ser vazio.")
-                                setLoading(false)
-                            } else {
-                                postMethod("v1/instrumento", {
-                                    nome: nomeInstrumento
-                                }, () => { }).then(() => {
-                                    setOpen(false)
-                                    setLoading(false)
-                                    props.state(undefined)
-                                }).catch((error) => {
-                                    console.error("Erro na comunicação com a api: ", error);
+                            postMethod("v1/instrumento", {
+                                nome: nomeInstrumento
+                            }, () => setOpen(false))
+                                .then(() => props.state(undefined))
+                                .catch((error) => {
+                                    toast.error("Erro na comunicação com a api: ", error);
                                 })
-                            }
+                                .finally(() => {
+                                    setLoading(false)
+                                    toast.success("Instrumento inserido com sucesso!")
+                                });
                         }}>Salvar</Button>
-                    <Button className="hover:bg-rose-600/80" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
     )
 }
 
-export function DialogRemoveInstrumento( props: { allInstrumentos: Instrumento[] | undefined, state: React.Dispatch<React.SetStateAction<Instrumento[] | undefined>> }) {
+export function DialogRemoveInstrumento(props: { allInstrumentos: Instrumento[] | undefined, state: React.Dispatch<React.SetStateAction<Instrumento[] | undefined>> }) {
     const [isLoading, setLoading] = useState(false);
     const [open, setOpen] = useState(false);
     const [selectedInstrumento, setSelectedInstrumento] = useState<any>(null);
@@ -71,15 +69,17 @@ export function DialogRemoveInstrumento( props: { allInstrumentos: Instrumento[]
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant={"outline"} disabled={!props.allInstrumentos} className="mx-2 hover:bg-rose-500/40" >
-                    <CircleMinus />Remover Instrumento</Button>
+                <Button variant={"outline"} disabled={!props.allInstrumentos} className="hover:bg-rose-500/40" >
+                    <BadgeMinus className="text-rose-500" />
+                    <p className="hidden lg:inline">Remover Instrumento</p>
+                </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="w-[85%]">
                 {isLoading ?
                     <div className="absolute w-full h-[85%] z-50 flex justify-center items-center">
                         <div className="h-16 w-16 border-4 border-subprimary rounded-3xl animate-spin" />
                     </div>
-                : <></>}
+                    : <></>}
                 <DialogHeader>
                     <DialogTitle>Remover Instrumento</DialogTitle>
                 </DialogHeader>
@@ -96,21 +96,22 @@ export function DialogRemoveInstrumento( props: { allInstrumentos: Instrumento[]
                         </SelectGroup>
                     </SelectContent>
                 </Select>
-                <DialogFooter className="">
-                    <Button className="hover:bg-emerald-500"
-                        type="submit" disabled={isLoading} onClick={() => {
+                <DialogFooter className="gap-4">
+                    <Button className="hover:bg-rose-500 bg-red-600" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
+                    <Button className="hover:bg-emerald-500 bg-green-600"
+                        type="submit" disabled={isLoading || !selectedInstrumento} onClick={() => {
                             setLoading(true)
                             deleteMethod(`v1/instrumento/${selectedInstrumento}`)
-                                .then(() => {
-                                    setOpen(false)
-                                    setLoading(false)
-                                    props.state(undefined)
-                                })
+                                .then(() => props.state(undefined))
+                                .then(() => setOpen(false))
                                 .catch((error) => {
-                                    console.error("Erro na comunicação com a api: ", error);
+                                    toast.error("Erro na comunicação com a api: ", error);
                                 })
+                                .finally(() => {
+                                    setLoading(false)
+                                    toast.success("Instrumento removido com sucesso!")
+                                });
                         }}>Remover</Button>
-                    <Button className="hover:bg-rose-500" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

@@ -79,7 +79,7 @@ export default function LoginPage() {
                 <CardHeader className="text-center p-4">
                     <div className="flex flex-row justify-between">
                         <ArrowLeftCircle className="cursor-pointer text-secondary hover:text-current/20" onClick={() => router.push("/")} />
-                        <span className="text-lg sm:text-xl">Login de Usuário</span>
+                        <span className="text-lg sm:text-xl">Login</span>
                         <ArrowLeftCircle color="transparent" />
                     </div>
                     <Separator className="mt-4" />

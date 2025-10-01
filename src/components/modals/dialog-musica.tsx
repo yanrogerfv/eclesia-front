@@ -17,7 +17,7 @@ import { Input } from "../ui/input";
 import { postMethod } from "@/lib/apiRequests";
 import { toast } from "sonner";
 
-export function DialogAddMusica({setState, disabled}: { setState: React.Dispatch<React.SetStateAction<Musica[] | undefined>>, disabled?: boolean }) {
+export function DialogAddMusica({ setState, disabled }: { setState: React.Dispatch<React.SetStateAction<Musica[] | undefined>>, disabled?: boolean }) {
     const [nomeMusica, setNomeMusica] = useState("");
     const [linkMusica, setLinkMusica] = useState("");
     const [cifraMusica, setCifraMusica] = useState("");
@@ -26,47 +26,47 @@ export function DialogAddMusica({setState, disabled}: { setState: React.Dispatch
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild className="flex p-5" disabled={disabled}>
+            <DialogTrigger asChild className="flex" disabled={disabled}>
                 <Button variant={"outline"} className="hover:text-emerald-500" onClick={() => setLoading(false)}>
-                    <Music className="mr-2 hover:animate-bounce" />Adicionar Música</Button>
+                    <Music className="text-emerald-500" />
+                    <p className="hidden sm:inline">Adicionar Música</p>
+                </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="w-[85%]">
                 <DialogHeader>
                     <DialogTitle>Adicionar Música</DialogTitle>
                     <DialogDescription />
-                    <br />
-                    <Label>Nome:</Label>
-                    <Input type="text" placeholder="Insira o nome da música."
-                        value={nomeMusica} onChange={(e) => setNomeMusica(e.target.value)} />
-                    <br />
-                    <Label>Link:</Label>
-                    <Input type="url" placeholder="Insira o link da música."
-                        value={linkMusica} onChange={(e) => setLinkMusica(e.target.value)} />
-                    <br />
-                    <Label>Cifra:</Label>
-                    <Input type="text" placeholder="Insira o link da cifra da música." 
-                        value={cifraMusica} onChange={(e) => setCifraMusica(e.target.value)} />
-
                 </DialogHeader>
-                <DialogFooter className="">
-                    <Button className="hover:bg-emerald-500" type="submit" disabled={isLoading}
+
+                <Label>Nome:</Label>
+                <Input type="text" placeholder="Insira o nome da música."
+                    value={nomeMusica} onChange={(e) => setNomeMusica(e.target.value)} />
+                <Label>Link:</Label>
+                <Input type="url" placeholder="Insira o link da música."
+                    value={linkMusica} onChange={(e) => setLinkMusica(e.target.value)} />
+                <Label>Cifra:</Label>
+                <Input type="text" placeholder="Insira o link da cifra da música."
+                    value={cifraMusica} onChange={(e) => setCifraMusica(e.target.value)} />
+
+                <DialogFooter className="gap-4">
+                    <Button className="hover:bg-rose-600 bg-red-600" onClick={() => setOpen(false)}>Cancelar</Button>
+                    <Button className="hover:bg-emerald-500 bg-green-600" type="submit" disabled={isLoading || nomeMusica === "" || linkMusica === ""}
                         onClick={() => {
                             setLoading(true)
-                            if (nomeMusica === "" || linkMusica === "") {
-                                toast.warning("Preencha todos os campos!")
-                                setLoading(false)
-                            }
                             postMethod<Musica>("v1/musicas", {
                                 nome: nomeMusica,
                                 link: linkMusica,
                                 cifra: cifraMusica
-                            }, () => setOpen(false)).then(() => setState(undefined))
-                                .catch((error) => {
-                                    toast.error("Erro na comunicação com a api: ", error);
-                                })
-                            toast.success("Música inserida com sucesso!")
+                            }, () => setOpen(false))
+                            .then(() => setState(undefined))
+                            .catch((error) => {
+                                toast.error("Erro na comunicação com a api: ", error);
+                            })
+                            .finally(() => {
+                                setLoading(false)
+                                toast.success("Música inserida com sucesso!")
+                            });
                         }}>Salvar</Button>
-                    <Button className="hover:bg-rose-600/80" onClick={() => setOpen(false)}>Cancelar</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

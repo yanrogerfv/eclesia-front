@@ -10,14 +10,14 @@ import { Button } from "../ui/button";
 import { ptBR } from "date-fns/locale";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
-import { deleteMethod, getMethod, patchMethod, postMethod, putMethod } from "@/lib/apiRequests";
+import { deleteMethod, getMethod, postMethod, putMethod } from "@/lib/apiRequests";
 import { toast } from "sonner";
 import { ScrollArea } from "../ui/scroll-area";
 import { DialogEditLevita, DialogVerLevita } from "./dialog-levita";
-import { Eye, EyeOff, PencilLine, RectangleEllipsis, RefreshCcw, RefreshCw, Trash, Trash2 } from "lucide-react";
+import { Eye, EyeOff, PencilLine, Trash2 } from "lucide-react";
 import { TooltipProvider, TooltipTrigger, Tooltip, TooltipContent } from "../ui/tooltip";
 import Cookies from "js-cookie";
-
+import { RadioGroup, RadioGroupItem } from "../ui/motion-radio-group";
 
 interface SidebarModalsProps {
     icon: ReactElement,
@@ -53,7 +53,7 @@ export function SidebarNextEvents({ icon, title, style }: SidebarModalsProps) {
                     <span>{title}</span>
                 </SidebarMenuButton>
             </DialogTrigger>
-            <DialogContent className="max-h-[70vh] max-w-[40vw] overflow-y-auto ">
+            <DialogContent className="w-[90%] max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>
                         {title}
@@ -64,16 +64,19 @@ export function SidebarNextEvents({ icon, title, style }: SidebarModalsProps) {
                 </DialogHeader>
                 {/* Content aqui */}
 
-                <div className={!escalas ? "" :
-                    "grid grid-cols-2 gap-4"}>
+                <div className={"grid grid-cols-1 md:grid-cols-2 gap-4"}>
                     {!escalas ? (
-                        <div className="flex justify-center items-center h-32">
-                            <p className="text-zinc-500">Nenhuma escala encontrada.</p>
-                        </div>
+                        <Card className="text-center">
+                            <p className="p-6 sm:p-10 text-lg sm:text-xl text-zinc-400/80">
+                                Nenhuma escala encontrada.
+                            </p>
+                        </Card>
                     ) : !special || special.length == 0 ? (
-                        <div className="flex justify-center items-center h-32 col-span-2">
-                            <p className="text-zinc-500">Nenhum evento especial encontrado.</p>
-                        </div>
+                        <Card className="text-center">
+                            <p className="p-6 sm:p-10 text-lg sm:text-xl text-zinc-400/80">
+                                Nenhum evento especial encontrado nos próximos dias.
+                            </p>
+                        </Card>
                     ) : (
                         Array.isArray(special) && special.map((escala) => (
                             <Card key={escala.id} className="col-span-1">
@@ -177,7 +180,7 @@ export function SidebarMyAgenda({ icon, title, style }: SidebarModalsProps) {
                     {title}
                 </SidebarMenuButton>
             </DialogTrigger>
-            <DialogContent className="max-h-[70vh] max-w-[36vw] overflow-y-auto ">
+            <DialogContent className="max-w-fit lg:max-w-fit w-[85%] max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>
                         {title}
@@ -186,7 +189,7 @@ export function SidebarMyAgenda({ icon, title, style }: SidebarModalsProps) {
                     </DialogDescription>
                 </DialogHeader>
                 {/* Content aqui */}
-                <div className="grid grid-cols-1 lg:flex lg:justify-between">
+                <div className="flex flex-col gap-4 lg:flex-row lg:justify-between">
                     <Calendar
                         lang="pt-BR"
                         locale={ptBR}
@@ -195,9 +198,9 @@ export function SidebarMyAgenda({ icon, title, style }: SidebarModalsProps) {
                         selected={dates}
                         onSelect={setDates}
                         disabled={(data) => data < new Date(Date.now() - 1000 * 60 * 60 * 24)}
-                        className="border rounded-lg w-fit p-2 m-2"
+                        className="border rounded-lg w-fit"
                     />
-                    <Card className="w-full p-2 m-2 justify-center">
+                    <Card className="w-full justify-center">
                         <CardHeader className="text-2xl flex justify-center font-semibold">
                             <CardTitle className="flex justify-center">
                                 Agenda
@@ -205,10 +208,10 @@ export function SidebarMyAgenda({ icon, title, style }: SidebarModalsProps) {
                         </CardHeader>
                         <CardContent className="justify-center">
                             <p className="flex justify-center text-center">
-                                Selecione ao lado as datas que você não estará disponível,
+                                Selecione as datas em que você não estará disponível,
                                 seja por viagens, aniversários ou outros compromissos.
                             </p>
-                            <p className="mt-2 flex justify-center text-center text-sm text-red-300">
+                            <p className="mt-2 flex justify-center text-center text-sm text-red-300 w-[75%] mx-auto">
                                 Datas em que você já está em uma escala não podem ser removidas.
                             </p>
                         </CardContent>
@@ -258,7 +261,7 @@ export function SidebarMyEscalas({ icon, title, style }: SidebarModalsProps) {
                     {title}
                 </SidebarMenuButton>
             </DialogTrigger>
-            <DialogContent className="max-h-[70vh] max-w-[40vw] overflow-y-auto ">
+            <DialogContent className="w-[90%] max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>
                         {title}
@@ -268,8 +271,7 @@ export function SidebarMyEscalas({ icon, title, style }: SidebarModalsProps) {
                     </DialogDescription>
                 </DialogHeader>
                 {/* Content aqui */}
-                <div className={!escalas || escalas.length === 0 ? "" :
-                    "grid grid-cols-2 gap-4"}>
+                <div className={"md:grid md:grid-cols-2 flex gap-4"}>
                     {loading || !escalas ? (
                         <div className="flex justify-center items-center h-40">
                             <div className="h-16 w-16 border-4 border-primary rounded-3xl animate-spin" />
@@ -281,7 +283,7 @@ export function SidebarMyEscalas({ icon, title, style }: SidebarModalsProps) {
                             </p>
                         </Card>
                     ) : Array.isArray(escalas) && escalas.map((escala) => (
-                        <Card key={escala.id} className={`col-span-1 ${new Date(escala.data) < new Date() ? 'opacity-60 grayscale' : ''}`}>
+                        <Card key={escala.id} className={`w-full md:col-span-1 ${new Date(escala.data) < new Date() ? 'opacity-60 grayscale' : ''}`}>
                             <CardHeader className="items-center lg:items-start">
                                 <CardTitle className={escala.domingo ? "text-primary" : escala.quarta ? "text-secondary" : "text-special"}>
                                     {escala.titulo}
@@ -294,7 +296,7 @@ export function SidebarMyEscalas({ icon, title, style }: SidebarModalsProps) {
                                 </CardDescription>
                             </CardHeader>
                             <CardContent>
-                                <p><span className="text-subprimary">Ministro:</span> <span className="text-secondary">{escala.ministro.nome}</span></p>
+                                <p><span className="text-special">Ministro:</span> <span className="text-secondary">{escala.ministro.nome}</span></p>
                                 <p><span className="text-subprimary">Violão:</span> {escala.violao ? escala.violao.nome : <span className="text-secondary/40">Não inserido.</span>}</p>
                                 <p><span className="text-subprimary">Teclado:</span> {escala.teclado ? escala.teclado.nome : <span className="text-secondary/40">Não inserido.</span>}</p>
                                 <p><span className="text-subprimary">Bateria:</span> {escala.bateria ? escala.bateria.nome : <span className="text-secondary/40">Não inserido.</span>}</p>
@@ -353,7 +355,7 @@ export function SidebarMyProfile({ icon, title, style }: SidebarModalsProps) {
                     {title}
                 </SidebarMenuButton>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="w-[85%] max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>
                         {title}
@@ -429,7 +431,8 @@ export function SidebarMyProfile({ icon, title, style }: SidebarModalsProps) {
                             </TooltipProvider>
                         </div>
                         <div className="flex gap-2">
-                            <Button className="hover:bg-emerald-500" onClick={() => {
+                            <Button className="hover:bg-rose-500 bg-red-600" onClick={() => setOpen(false)}>Cancelar</Button>
+                            <Button className="hover:bg-emerald-500 bg-green-600" onClick={() => {
                                 if (password.length < 8) {
                                     toast.error("A senha deve ter pelo menos 8 caracteres.");
                                 } if (username.length < 3) {
@@ -453,7 +456,6 @@ export function SidebarMyProfile({ icon, title, style }: SidebarModalsProps) {
                                     console.error("Erro na comunicação com a api: ", error);
                                 })
                             }}>Salvar</Button>
-                            <Button className="hover:bg-rose-600/80" onClick={() => setOpen(false)}>Cancelar</Button>
                         </div>
                     </div>
                 </DialogFooter>
@@ -465,20 +467,27 @@ export function SidebarMyProfile({ icon, title, style }: SidebarModalsProps) {
 export function SidebarAddUser({ icon, title, style }: SidebarModalsProps) {
     const [isLoading, setIsLoading] = useState(true);
     const [levitas, setLevitas] = useState<Levita[] | undefined>(undefined);
-    // const [roles, setRoles] = useState<RoleDTO[] | undefined>(undefined);
+    const [roles, setRoles] = useState<RoleDTO[] | undefined>(undefined);
     const [levitaToAdd, setLevitaToAdd] = useState<Levita | undefined>(undefined);
     const [open, setOpen] = useState(false);
 
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    // const [selectedRole, setSelectedRole] = useState("levita");
+    const [selectedRole, setSelectedRole] = useState("levita");
 
     useEffect(() => {
         if (levitas) return;
         getMethod<Levita[] | undefined>("auth/user/levita-x", setLevitas)
-        // getMethod<RoleDTO[] | undefined>("auth/role", setRoles)
+        getMethod<RoleDTO[] | undefined>("auth/role", setRoles)
         setIsLoading(false);
     }, [levitas])
+
+    const [isUserAdmin, setUserAdmin] = useState(false)
+
+    useEffect(() => {
+        const userAdmin = sessionStorage.getItem("role") === "ADMIN";
+        setUserAdmin(userAdmin);
+    }, []);
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -488,7 +497,7 @@ export function SidebarAddUser({ icon, title, style }: SidebarModalsProps) {
                     {title}
                 </SidebarMenuButton>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="w-[85%] max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>
                         {title}
@@ -502,20 +511,23 @@ export function SidebarAddUser({ icon, title, style }: SidebarModalsProps) {
                     placeholder="Insira o usuário que será usado para login." />
                 <Label>Senha:</Label>
                 <Input onChange={(e) => setPassword(e.target.value)} value={password} type="text"
-                    placeholder="Insira a senha que será usada para login." className="mb-4" />
-                {/* <Label>Cargo:</Label>
-                <RadioGroup onValueChange={(value) => setSelectedRole(value)} className="flex gap-4 mb-2 justify-between mx-4">
-                    {roles?.map((role) => (
-                        <div className="flex items-center space-x-2" key={role.id}>
-                            <RadioGroupItem id={role.id} value={role.id} disabled={toDisable} />
-                            <Label htmlFor={role.role}>{role.role}</Label>
-                        </div>
-                    ))}
-                </RadioGroup> */}
+                    placeholder="Insira a senha que será usada para login." />
 
-                <Label>Selecione o Levita que deseja associar ao login:</Label>
-                <ScrollArea className="md:h-[35vh] w-full">
-                    <Card className="bg-transparent grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1">
+                <div className={isUserAdmin ? "" : "hidden"}>
+                    <Label>Cargo:</Label>
+                    <RadioGroup onValueChange={(value) => setSelectedRole(value)} className="flex gap-4 m-2 justify-between mx-4">
+                        {roles?.map((role) => (
+                            <div className="flex items-center space-x-2" key={role.id}>
+                                <RadioGroupItem id={role.id} value={role.id} disabled={isLoading} />
+                                <Label htmlFor={role.role}>{role.role}</Label>
+                            </div>
+                        ))}
+                    </RadioGroup>
+                </div>
+
+                <Label>Selecione o Levita para associar o login:</Label>
+                <ScrollArea className="md:max-h-[35vh] w-full">
+                    <Card className="bg-transparent grid lg:grid-cols-4 md:grid-cols-2 grid-cols-2">
                         {isLoading || levitas == undefined ?
                             <div className="flex justify-center items-center h-40">
                                 <div className="h-16 w-16 border-4 border-primary rounded-3xl animate-spin" />
@@ -533,21 +545,22 @@ export function SidebarAddUser({ icon, title, style }: SidebarModalsProps) {
                     </Card>
                 </ScrollArea>
 
-                <DialogFooter>
-                    <Button onClick={() => {
-                        postMethod<UserDTO>("auth/user", {
-                            username: username,
-                            passcode: password,
-                            levitaId: levitaToAdd?.id
-                        }, () => { }).then(() => {
-                            setOpen(false)
-                            toast.success("Usuário adicionado com sucesso!")
-                        }).catch((error) => {
-                            toast.error("Erro na comunicação com a api: ", error);
-                            console.error("Erro na comunicação com a api: ", error);
-                        })
-                    }}>Adicionar</Button>
-                    <Button onClick={() => setOpen(false)}>Cancelar</Button>
+                <DialogFooter className="flex justify-end gap-2">
+                    <Button className="hover:bg-rose-500 bg-red-600" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
+                    <Button className="hover:bg-emerald-500 bg-green-600" disabled={isLoading || !levitaToAdd || username.length < 3 || password.length < 8}
+                        onClick={() => {
+                            postMethod<UserDTO>("auth/user", {
+                                username: username,
+                                passcode: password,
+                                levitaId: levitaToAdd?.id
+                            }, () => { }).then(() => {
+                                setOpen(false)
+                                toast.success("Usuário adicionado com sucesso!")
+                            }).catch((error) => {
+                                toast.error("Erro na comunicação com a api: ", error);
+                                console.error("Erro na comunicação com a api: ", error);
+                            })
+                        }}>Adicionar</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
@@ -573,7 +586,7 @@ export function SidebarManageUsers({ icon, title, style }: SidebarModalsProps) {
                     {title}
                 </SidebarMenuButton>
             </DialogTrigger>
-            <DialogContent className="max-h-[70vh] max-w-[40vw] overflow-y-auto ">
+            <DialogContent className="w-[85%] max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>
                         {title}
@@ -583,7 +596,7 @@ export function SidebarManageUsers({ icon, title, style }: SidebarModalsProps) {
                     </DialogDescription>
                 </DialogHeader>
                 {/* Content aqui */}
-                <div className={!users ? "" : "grid grid-cols-3 gap-4"}>
+                <div className={"grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4"}>
                     {loading || !users ? (
                         <div className="flex justify-center items-center h-40">
                             <div className="h-16 w-16 border-4 border-primary rounded-3xl animate-spin" />
@@ -658,9 +671,6 @@ export function SidebarManageUsers({ icon, title, style }: SidebarModalsProps) {
                         </Card>
                     ))}
                 </div>
-                <DialogFooter>
-                    <Button variant={"outline"} onClick={() => setOpen(false)}>Fechar</Button>
-                </DialogFooter>
             </DialogContent>
         </Dialog>
     )

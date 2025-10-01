@@ -9,19 +9,16 @@ import {
     CardHeader,
     CardTitle
 } from "@/components/ui/card";
-import * as React from "react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { useEffect, useMemo, useState } from "react";
-import { ChevronLeft, CircleMinus, LoaderCircle, PanelLeftOpen, PanelRight, PanelRightClose, PanelsRightBottom, X } from "lucide-react";
-import { deleteMethod, getMethod, publicGetMethod } from "@/lib/apiRequests";
-import { AddEscala, VerEscalaSomenteLeitura } from "@/components/modals/dialog-escala";
-import { convertDateFormat, EscalaResumida, Levita } from "@/lib/apiObjects";
-import { toast } from "sonner";
+import { useEffect, useState } from "react";
+import { ChevronLeft, PanelLeftOpen, X } from "lucide-react";
+import { publicGetMethod } from "@/lib/apiRequests";
+import { VerEscalaSomenteLeitura } from "@/components/modals/dialog-escala";
+import { convertDateFormat, EscalaResumida } from "@/lib/apiObjects";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export default function ScheduleViewer() {
-    const [removeOverlay, setRemoveOverlay] = useState(false);
     const [domingoFilter, setDomingoFilter] = useState(false);
     const [quartaFilter, setQuartaFilter] = useState(false);
     const [especialFilter, setEspecialFilter] = useState(false);
@@ -52,15 +49,15 @@ export default function ScheduleViewer() {
     return (
         <>
             <main className="max-w-6xl w-full px-4 sm:px-8 lg:px-6 mx-auto my-6 sm:my-12">
-                <nav>
-                    <div className="flex flex-wrap md:flex-nowrap justify-between items-center">
+                <nav className="w-full">
+                    <div className="flex w-full justify-between items-center">
                         <div className="flex items-center">
                             <Link href="/" className="w-auto text-2xl sm:text-4xl flex items-center p-2 cursor-pointer outline outline-1 outline-primary/50 hover:bg-secondary hover:text-black rounded-lg">
                                 <ChevronLeft className="h-6 w-6 sm:h-8 sm:w-8" />
                             </Link>
                             <h1 className="ml-4 font-extrabold tracking-tight text-2xl sm:text-5xl">Escalas</h1>
                         </div>
-                        <div className="flex w-full justify-between sm:justify-end gap-2 mt-4 sm:w-full">
+                        <div className="flex justify-end gap-2 mt-4 sm:w-full">
                             <Link href="/login" >
                                 {/* <Button variant={"ghost"}> */}
                                 <TooltipProvider>
@@ -111,29 +108,15 @@ export default function ScheduleViewer() {
                                     </div>
                                 </div>
                             ) : Array.isArray(filteredEscalas) && filteredEscalas.map((escala) => (
-                                <Card key={escala.id} className={`${removeOverlay ? "animate-pulse" : ""} ${new Date(escala.data) < new Date() ? 'opacity-60 grayscale' : ''}`}>
-                                    <X className={removeOverlay ? "absolute hover:cursor-pointer bg-rose-500/80 rounded-br-xl" : "absolute invisible"}
-                                        onClick={() => {
-                                            setIsLoading(true);
-                                            deleteMethod(`v1/escala/${escala.id}`)
-                                                .catch((error: any) => toast.error("Erro ao remover escala: " + error))
-                                                .then(() => toast.success("Escala " + escala.titulo + " removida com sucesso!"))
-                                                .then(() => {
-                                                    setEscalasData(undefined);
-                                                    setRemoveOverlay(false);
-                                                })
-                                        }}
-                                    />
+                                <Card key={escala.id} className={`${new Date(escala.data) < new Date() ? 'opacity-60 grayscale' : ''}`}>
                                     <CardHeader className="items-center lg:items-start">
                                         <CardTitle className={escala.domingo ? "text-primary" : escala.quarta ? "text-secondary" : "text-special"}>
                                             {escala.titulo}
                                         </CardTitle>
                                         {convertDateFormat(escala.data)}
-                                        <CardDescription>
+                                        <CardDescription className="line-clamp-2">
                                             {escala.observacoes && escala.observacoes.length > 0
-                                                ? escala.observacoes.length > 30
-                                                    ? escala.observacoes.substring(0, 28).trimEnd().concat("...")
-                                                    : escala.observacoes
+                                                ? escala.observacoes
                                                 : "Sem observações."}
                                         </CardDescription>
                                     </CardHeader>

@@ -26,6 +26,7 @@ import Cookies from "js-cookie";
 import { Checkbox } from "../ui/checkbox";
 import { toast } from "sonner";
 import SelectLevita from "../select-levita";
+import CheckboxConfetti from "../ui/checkbox-animated";
 
 interface props {
 	escalaId: UUID,
@@ -37,7 +38,6 @@ export function VerEscalaSomenteLeitura({ escalaId }: { escalaId: UUID }) {
 	const [escalaMusicas, setEscalaMusicas] = useState<Musica[] | undefined>(undefined)
 
 	useEffect(() => {
-		console.log(escalaData, escalaMusicas)
 		if (escalaData && escalaMusicas) return;
 		publicGetMethod<Escala | undefined>(`v1/escala/find/${escalaId}`, setEscalaData)
 		publicGetMethod<Musica[] | undefined>(`v1/escala/musicas/${escalaId}`, setEscalaMusicas)
@@ -48,7 +48,7 @@ export function VerEscalaSomenteLeitura({ escalaId }: { escalaId: UUID }) {
 			<DialogTrigger asChild key={escalaData?.id} className="p-5">
 				<Button variant={"outline"} disabled={(!escalaData)} className="flex items-center rounded-md justify-center">Ver Escala</Button>
 			</DialogTrigger>
-			<DialogContent>
+			<DialogContent className="w-[85%] max-h-[90vh] overflow-y-auto">
 				{!escalaData ?
 					<div className="absolute w-full h-[85%] bg-black/50 z-50 flex justify-center items-center">
 						<div className="h-16 w-16 border-4 border-subprimary rounded-3xl animate-spin" />
@@ -61,28 +61,35 @@ export function VerEscalaSomenteLeitura({ escalaId }: { escalaId: UUID }) {
 					<DialogDescription className="border-b border-zinc-600">
 						{convertDateFormat(escalaData ? escalaData.data : undefined)}
 					</DialogDescription>
-					<br />
-					<p className="text-special">Ministro: <a className="text-secondary">{escalaData?.ministro.nome}</a></p>
-					<p className="text-subprimary">Violão: {escalaData?.violao ? <a className="text-colortext"> {escalaData.violao.nome}</a> : <a className="text-colortext/50">Não inserido.</a>}</p>
-					<p className="text-subprimary">Teclado: {escalaData?.teclado ? <a className="text-colortext"> {escalaData.teclado.nome}</a> : <a className="text-colortext/50">Não inserido.</a>}</p>
-					<p className="text-subprimary">Bateria: {escalaData?.bateria ? <a className="text-colortext"> {escalaData.bateria.nome}</a> : <a className="text-colortext/50">Não inserido.</a>}</p>
-					<p className="text-subprimary">Baixo: {escalaData?.baixo ? <a className="text-colortext"> {escalaData.baixo.nome}</a> : <a className="text-colortext/50">Não inserido.</a>}</p>
-					<p className="text-subprimary">Guitarra: {escalaData?.guitarra ? <a className="text-colortext"> {escalaData.guitarra.nome}</a> : <a className="text-colortext/50">Não inserido.</a>}</p>
-					<p className="text-subprimary">Backs: {escalaData ? <a className="text-colortext"> {listBacks(escalaData.back)}.</a> : <a className="text-colortext/50">Não inseridos.</a>}</p>
-					<br />
+
+					<div className="text-start">
+						<p className="text-special">Ministro: <a className="text-secondary">{escalaData?.ministro.nome}</a></p>
+						<p className="text-subprimary">Violão: {escalaData?.violao ? <a className="text-colortext"> {escalaData.violao.nome}</a> : <a className="text-colortext/50">Não inserido.</a>}</p>
+						<p className="text-subprimary">Teclado: {escalaData?.teclado ? <a className="text-colortext"> {escalaData.teclado.nome}</a> : <a className="text-colortext/50">Não inserido.</a>}</p>
+						<p className="text-subprimary">Bateria: {escalaData?.bateria ? <a className="text-colortext"> {escalaData.bateria.nome}</a> : <a className="text-colortext/50">Não inserido.</a>}</p>
+						<p className="text-subprimary">Baixo: {escalaData?.baixo ? <a className="text-colortext"> {escalaData.baixo.nome}</a> : <a className="text-colortext/50">Não inserido.</a>}</p>
+						<p className="text-subprimary">Guitarra: {escalaData?.guitarra ? <a className="text-colortext"> {escalaData.guitarra.nome}</a> : <a className="text-colortext/50">Não inserido.</a>}</p>
+						<p className="text-subprimary">Backs: {escalaData ? <a className="text-colortext"> {listBacks(escalaData.back)}.</a> : <a className="text-colortext/50">Não inseridos.</a>}</p>
+					</div>
 
 				</DialogHeader>
 				<Label className="text-secondary/85">Observações:</Label>
-				{escalaData?.observacoes ? <p className="text-colortext">{escalaData?.observacoes}</p> : <p className="text-foreground/25">Nenhuma observação.</p>}
-				<br />
+				{escalaData?.observacoes ? <p className="text-colortext line-clamp-3">{escalaData?.observacoes}</p> : <p className="text-foreground/25">Nenhuma observação.</p>}
 
 				<Label className="text-secondary/85">Músicas:</Label>
-				<Card className="bg-transparent grid grid-flow-row p-2">
+				<Card className="bg-transparent grid p-2">
 					{escalaMusicas ? escalaMusicas.length > 0 ?
 						escalaMusicas.map((musica) => (
 							<Button key={musica.id} variant={"outline"} className="rounded-lg m-2">
-								<Link key={musica.id} href={musica.link} target="_blank" className="w-full">
-									{musica.nome}</Link></Button>
+								<Link key={musica.id} href={musica.link} target="_blank" className="">
+								<p className="sm:hidden">
+									{musica.nome.substring(0, 25) + (musica.nome.length > 25 ? "..." : "")}
+								</p>
+								<p className="hidden sm:block">
+									{musica.nome}
+								</p>
+								</Link>
+							</Button>
 						)) : <p className="text-foreground/25">Nenhuma música inserida.</p>
 						: <p className="text-foreground/25">Carregando músicas...</p>}
 				</Card>
@@ -96,7 +103,6 @@ export function VerEscala(props: props) {
 	const [escalaMusicas, setEscalaMusicas] = useState<Musica[] | undefined>(undefined)
 
 	useEffect(() => {
-		console.log(escalaData, escalaMusicas)
 		if (escalaData && escalaMusicas) return;
 		getMethod<Escala | undefined>(`v1/escala/find/${props.escalaId}`, setEscalaData)
 		getMethod<Musica[] | undefined>(`v1/escala/musicas/${props.escalaId}`, setEscalaMusicas)
@@ -121,7 +127,7 @@ export function VerEscala(props: props) {
 			<DialogTrigger asChild key={escalaData?.id} className="p-5">
 				<Button variant={"outline"} disabled={(!escalaData)} className="flex items-center rounded-md justify-center">Ver Escala</Button>
 			</DialogTrigger>
-			<DialogContent>
+			<DialogContent className="w-[85%] max-h-[90vh] overflow-y-auto">
 				{!escalaData ?
 					<div className="absolute w-full h-[85%] bg-black/50 z-50 flex justify-center items-center">
 						<div className="h-16 w-16 border-4 border-subprimary rounded-3xl animate-spin" />
@@ -134,36 +140,42 @@ export function VerEscala(props: props) {
 					<DialogDescription className="border-b border-zinc-600">
 						{convertDateFormat(escalaData ? escalaData.data : undefined)}
 					</DialogDescription>
-					<br />
-					<p className="text-special">Ministro: <a className="text-secondary">{escalaData?.ministro.nome}</a></p>
-					<p className="text-subprimary">Violão: {escalaData?.violao ? <a className="text-colortext"> {escalaData.violao.nome}</a> : <a className="text-colortext/50">Não inserido.</a>}</p>
-					<p className="text-subprimary">Teclado: {escalaData?.teclado ? <a className="text-colortext"> {escalaData.teclado.nome}</a> : <a className="text-colortext/50">Não inserido.</a>}</p>
-					<p className="text-subprimary">Bateria: {escalaData?.bateria ? <a className="text-colortext"> {escalaData.bateria.nome}</a> : <a className="text-colortext/50">Não inserido.</a>}</p>
-					<p className="text-subprimary">Baixo: {escalaData?.baixo ? <a className="text-colortext"> {escalaData.baixo.nome}</a> : <a className="text-colortext/50">Não inserido.</a>}</p>
-					<p className="text-subprimary">Guitarra: {escalaData?.guitarra ? <a className="text-colortext"> {escalaData.guitarra.nome}</a> : <a className="text-colortext/50">Não inserido.</a>}</p>
-					<p className="text-subprimary">Backs: {escalaData ? <a className="text-colortext"> {listBacks(escalaData.back)}.</a> : <a className="text-colortext/50">Não inseridos.</a>}</p>
-					<br />
 
+					<div className="text-start">
+						<p className="text-special">Ministro: <a className="text-secondary">{escalaData?.ministro.nome}</a></p>
+						<p className="text-subprimary">Violão: {escalaData?.violao ? <a className="text-colortext"> {escalaData.violao.nome}</a> : <a className="text-colortext/50">Não inserido.</a>}</p>
+						<p className="text-subprimary">Teclado: {escalaData?.teclado ? <a className="text-colortext"> {escalaData.teclado.nome}</a> : <a className="text-colortext/50">Não inserido.</a>}</p>
+						<p className="text-subprimary">Bateria: {escalaData?.bateria ? <a className="text-colortext"> {escalaData.bateria.nome}</a> : <a className="text-colortext/50">Não inserido.</a>}</p>
+						<p className="text-subprimary">Baixo: {escalaData?.baixo ? <a className="text-colortext"> {escalaData.baixo.nome}</a> : <a className="text-colortext/50">Não inserido.</a>}</p>
+						<p className="text-subprimary">Guitarra: {escalaData?.guitarra ? <a className="text-colortext"> {escalaData.guitarra.nome}</a> : <a className="text-colortext/50">Não inserido.</a>}</p>
+						<p className="text-subprimary">Backs: {escalaData ? <a className="text-colortext"> {listBacks(escalaData.back)}.</a> : <a className="text-colortext/50">Não inseridos.</a>}</p>
+					</div>
 				</DialogHeader>
 				<Label className="text-secondary/85">Observações:</Label>
-				{escalaData?.observacoes ? <p className="text-colortext">{escalaData?.observacoes}</p> : <p className="text-foreground/25">Nenhuma observação.</p>}
-				<br />
+				{escalaData?.observacoes ? <p className="text-colortext line-clamp-3">{escalaData?.observacoes}</p> : <p className="text-foreground/25">Nenhuma observação.</p>}
 
 				<Label className="text-secondary/85">Músicas:</Label>
-				<Card className="bg-transparent grid grid-flow-row p-2">
+				<Card className="bg-transparent grid md:p-2">
 					{escalaMusicas ? escalaMusicas.length > 0 ?
 						escalaMusicas.map((musica) => (
 							<Button key={musica.id} variant={"outline"} className="rounded-lg m-2">
-								<Link key={musica.id} href={musica.link} target="_blank" className="w-full">
-									{musica.nome}</Link></Button>
+								<Link key={musica.id} href={musica.link} target="_blank" className="">
+								<p className="sm:hidden">
+									{musica.nome.substring(0, 25) + (musica.nome.length > 25 ? "..." : "")}
+								</p>
+								<p className="hidden sm:block">
+									{musica.nome}
+								</p>
+								</Link>
+							</Button>
 						)) : <p className="text-foreground/25">Nenhuma música inserida.</p>
 						: <p className="text-foreground/25">Carregando músicas...</p>}
 				</Card>
-				<DialogFooter>
-					{(isUserAdmin || isUserLeader || isUserMinistro) &&
-						<DialogAddMusicaInEscala escala={escalaData} setMusicas={setEscalaMusicas} />}
+				<DialogFooter className="sm:justify-between gap-4">
 					{(isUserAdmin || isUserLeader) && <EditEscala isEdit={true} setEscala={setEscalaData}
 						escala={escalaData} levitasDisponiveis={props.levitasDisponiveis} />}
+					{(isUserAdmin || isUserLeader || isUserMinistro) &&
+						<DialogAddMusicaInEscala escala={escalaData} setMusicas={setEscalaMusicas} />}
 				</DialogFooter>
 			</DialogContent>
 		</Dialog>
@@ -222,7 +234,7 @@ export function EditEscala(pp: addEditDialogProps) {
 						<CirclePlus className="mx-1 text-emerald-500" />Criar Escala</Button>
 				}
 			</DialogTrigger>
-			<DialogContent >
+			<DialogContent className="w-[85%]">
 				{isLoading ?
 					<div className="absolute w-full h-[85%] bg-black/50 z-50 flex justify-center items-center">
 						<div className="h-16 w-16 border-4 border-subprimary rounded-3xl animate-spin" />
@@ -235,123 +247,136 @@ export function EditEscala(pp: addEditDialogProps) {
 					</DialogDescription>
 				</DialogHeader>
 				<ScrollArea className="max-h-[47dvh]">
-					<Label>Título:</Label>
-					<Input type="text" placeholder="Insira um título para a Escala."
-						value={titulo} onChange={(e) => setTitulo(e.target.value)} />
-					<Label>Data:</Label>
-					<Input type="date" placeholder={pp.escala?.data.toString()}
-						value={data} onChange={(e) => setData(e.target.value)} />
-					<div className="my-2">
-						<Label>Especial:    </Label>
-						<Checkbox checked={pp.escala?.especial} onClick={() => setEspecial(!especial)} />
+					<div className="p-1 w-[97%]">
+						<div>
+							<Label>Título:</Label>
+							<Input type="text" placeholder="Insira um título para a Escala."
+								value={titulo} onChange={(e) => setTitulo(e.target.value)} />
+						</div>
+						<div className="w-full space-y-1 my-4">
+							<Label>Data:</Label>
+							<Input type="date" placeholder={pp.escala?.data.toString()}
+								value={data} onChange={(e) => setData(e.target.value)} />
+						</div>
+						<div className="w-full space-y-1 my-4">
+							<CheckboxConfetti value={especial} title="Especial:" onClick={() => setEspecial(!especial)} />
+						</div>
+
+						<div className="w-full space-y-1 my-4">
+							<Label>Ministro</Label>
+							<Select onValueChange={(value) => setMinistro(value)} disabled={pp.escala?.data.toString().length == 0}>
+								<SelectTrigger>
+									<SelectValue placeholder={pp.isEdit ? pp.escala?.ministro.nome : "Selecione um ministro."} />
+								</SelectTrigger>
+								<SelectContent>
+									{levitasDisponiveis?.map((levita) => (
+										<SelectItem value={levita.id} key={levita.id} onSelect={() => setMinistro(levita.nome)}>{levita.nome}</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
+						</div>
+
+						<div className="w-full space-y-1 my-4">
+							<Label>Violão</Label>
+							<Select onValueChange={(value) => setViolao(value)} disabled={pp.escala?.data.toString().length == 0}>
+								<SelectTrigger>
+									<SelectValue className={pp.escala?.violao ? "text-colortext" : "text-colortext/50"}
+										placeholder={pp.escala?.violao ? pp.escala.violao.nome : "Escolha um levita para tocar violão."} />
+								</SelectTrigger>
+								<SelectContent>
+									{filterByInstrumento(1)?.map((levita) => (
+										<SelectItem value={levita.id} key={levita.id} onSelect={() => setViolao(levita.id)}>{levita.nome}</SelectItem>
+									))}
+									<SelectItem value={"null"} onSelect={() => setViolao("")} className="text-zinc-400">Sem violão</SelectItem>
+								</SelectContent>
+							</Select>
+						</div>
+						<div className="w-full space-y-1 my-4">
+							<Label>Teclado</Label>
+							<Select onValueChange={(value) => setTeclado(value)} disabled={pp.escala?.data.toString().length == 0}>
+								<SelectTrigger>
+									<SelectValue className={pp.escala?.teclado ? "text-white" : "text-zinc-50/50"}
+										placeholder={pp.escala?.teclado ? pp.escala.teclado.nome : "Escolha um levita para tocar teclado."} />
+								</SelectTrigger>
+								<SelectContent>
+									{filterByInstrumento(2)?.map((levita) => (
+										<SelectItem value={levita.id} key={levita.id} onSelect={() => setTeclado(levita.id)}>{levita.nome}</SelectItem>
+									))}
+									<SelectItem value={"null"} onSelect={() => setTeclado("")} className="text-zinc-400">Sem teclado</SelectItem>
+								</SelectContent>
+							</Select>
+						</div>
+
+						<div className="w-full space-y-1 my-4">
+							<Label>Bateria</Label>
+							<Select onValueChange={(value) => setBateria(value)} disabled={pp.escala?.data.toString().length == 0}>
+								<SelectTrigger>
+									<SelectValue className={pp.escala?.bateria ? "text-white" : "text-zinc-50/50"}
+										placeholder={pp.escala?.bateria ? pp.escala.bateria.nome : "Escolha um levita para tocar bateria."} />
+								</SelectTrigger>
+								<SelectContent>
+									{filterByInstrumento(3)?.map((levita) => (
+										<SelectItem value={levita.id} key={levita.id} onSelect={() => setBateria(levita.id)}>{levita.nome}</SelectItem>
+									))}
+									<SelectItem value={"null"} onSelect={() => setBateria("")} className="text-zinc-400">Sem bateria</SelectItem>
+								</SelectContent>
+							</Select>
+						</div>
+
+						<div className="w-full space-y-1 my-4">
+							<Label>Baixo</Label>
+							<Select onValueChange={(value) => setBaixo(value)} disabled={pp.escala?.data.toString().length == 0}>
+								<SelectTrigger>
+									<SelectValue className={pp.escala?.baixo ? "text-white" : "text-zinc-50/50"}
+										placeholder={pp.escala?.baixo ? pp.escala.baixo.nome : "Escolha um levita para tocar baixo."} />
+								</SelectTrigger>
+								<SelectContent>
+									{filterByInstrumento(4)?.map((levita) => (
+										<SelectItem value={levita.id} key={levita.id} onSelect={() => setBaixo(levita.id)}>{levita.nome}</SelectItem>
+									))}
+									<SelectItem value={"null"} onSelect={() => setBaixo("")} className="text-zinc-400">Sem baixo</SelectItem>
+								</SelectContent>
+							</Select>
+						</div>
+
+						<div className="w-full space-y-1 my-4">
+							<Label>Guitarra</Label>
+							<Select onValueChange={(value) => setGuitarra(value)} disabled={pp.escala?.data.toString().length == 0}>
+								<SelectTrigger>
+									<SelectValue className={pp.escala?.guitarra ? "text-white" : "text-zinc-50/50"}
+										placeholder={pp.escala?.guitarra ? pp.escala.guitarra.nome : "Escolha um levita para tocar guitarra."} />
+								</SelectTrigger>
+								<SelectContent>
+									{filterByInstrumento(5)?.map((levita) => (
+										<SelectItem value={levita.id} key={levita.id} onSelect={() => setGuitarra(levita.id)}>{levita.nome}</SelectItem>
+									))}
+									<SelectItem value={"null"} onSelect={() => setGuitarra("")} className="text-zinc-400">Sem guitarra</SelectItem>
+								</SelectContent>
+							</Select>
+						</div>
+
+						<div className="w-full space-y-1 my-4">
+							<Label>Observação:</Label>
+							<Textarea placeholder="Insira uma observação. (Exemplo: dia e hora de ensaio, etc.)"
+								value={pp.escala?.observacoes} onChange={(e) => setObservacao(e.target.value)} />
+						</div>
+
+						<div className="w-full space-y-1 my-4">
+							<Label>Backs:</Label>
+							<Card className="bg-transparent grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1">
+								{filterByInstrumento(0)?.map((levita) => (
+									<Button key={levita.id} variant={backs.includes(levita.id) ? "default" : "outline"} type="submit"
+										className={"p-2 rounded-lg m-2"}
+										onClick={() => { backs.includes(levita.id) ? removeBack(levita.id) : addBack(levita.id) }}>{levita.nome}</Button>
+								))}
+							</Card>
+						</div>
 					</div>
 
-					<Label>Ministro</Label>
-					<Select onValueChange={(value) => setMinistro(value)} disabled={pp.escala?.data.toString().length == 0}>
-						<SelectTrigger>
-							<SelectValue placeholder={pp.isEdit ? pp.escala?.ministro.nome : "Selecione um ministro."} />
-						</SelectTrigger>
-						<SelectContent>
-							{levitasDisponiveis?.map((levita) => (
-								<SelectItem value={levita.id} key={levita.id} onSelect={() => setMinistro(levita.nome)}>{levita.nome}</SelectItem>
-							))}
-						</SelectContent>
-					</Select>
-					<br />
-
-					<Label>Violão</Label>
-					<Select onValueChange={(value) => setViolao(value)} disabled={pp.escala?.data.toString().length == 0}>
-						<SelectTrigger>
-							<SelectValue className={pp.escala?.violao ? "text-colortext" : "text-colortext/50"}
-								placeholder={pp.escala?.violao ? pp.escala.violao.nome : "Escolha um levita para tocar violão."} />
-						</SelectTrigger>
-						<SelectContent>
-							{filterByInstrumento(1)?.map((levita) => (
-								<SelectItem value={levita.id} key={levita.id} onSelect={() => setViolao(levita.id)}>{levita.nome}</SelectItem>
-							))}
-							<SelectItem value={"null"} onSelect={() => setViolao("")} className="text-zinc-400">Sem violão</SelectItem>
-						</SelectContent>
-					</Select>
-					<br />
-
-					<Label>Teclado</Label>
-					<Select onValueChange={(value) => setTeclado(value)} disabled={pp.escala?.data.toString().length == 0}>
-						<SelectTrigger>
-							<SelectValue className={pp.escala?.teclado ? "text-white" : "text-zinc-50/50"}
-								placeholder={pp.escala?.teclado ? pp.escala.teclado.nome : "Escolha um levita para tocar teclado."} />
-						</SelectTrigger>
-						<SelectContent>
-							{filterByInstrumento(2)?.map((levita) => (
-								<SelectItem value={levita.id} key={levita.id} onSelect={() => setTeclado(levita.id)}>{levita.nome}</SelectItem>
-							))}
-							<SelectItem value={"null"} onSelect={() => setTeclado("")} className="text-zinc-400">Sem teclado</SelectItem>
-						</SelectContent>
-					</Select>
-					<br />
-
-					<Label>Bateria</Label>
-					<Select onValueChange={(value) => setBateria(value)} disabled={pp.escala?.data.toString().length == 0}>
-						<SelectTrigger>
-							<SelectValue className={pp.escala?.bateria ? "text-white" : "text-zinc-50/50"}
-								placeholder={pp.escala?.bateria ? pp.escala.bateria.nome : "Escolha um levita para tocar bateria."} />
-						</SelectTrigger>
-						<SelectContent>
-							{filterByInstrumento(3)?.map((levita) => (
-								<SelectItem value={levita.id} key={levita.id} onSelect={() => setBateria(levita.id)}>{levita.nome}</SelectItem>
-							))}
-							<SelectItem value={"null"} onSelect={() => setBateria("")} className="text-zinc-400">Sem bateria</SelectItem>
-						</SelectContent>
-					</Select>
-					<br />
-
-					<Label>Baixo</Label>
-					<Select onValueChange={(value) => setBaixo(value)} disabled={pp.escala?.data.toString().length == 0}>
-						<SelectTrigger>
-							<SelectValue className={pp.escala?.baixo ? "text-white" : "text-zinc-50/50"}
-								placeholder={pp.escala?.baixo ? pp.escala.baixo.nome : "Escolha um levita para tocar baixo."} />
-						</SelectTrigger>
-						<SelectContent>
-							{filterByInstrumento(4)?.map((levita) => (
-								<SelectItem value={levita.id} key={levita.id} onSelect={() => setBaixo(levita.id)}>{levita.nome}</SelectItem>
-							))}
-							<SelectItem value={"null"} onSelect={() => setBaixo("")} className="text-zinc-400">Sem baixo</SelectItem>
-						</SelectContent>
-					</Select>
-					<br />
-
-					<Label>Guitarra</Label>
-					<Select onValueChange={(value) => setGuitarra(value)} disabled={pp.escala?.data.toString().length == 0}>
-						<SelectTrigger>
-							<SelectValue className={pp.escala?.guitarra ? "text-white" : "text-zinc-50/50"}
-								placeholder={pp.escala?.guitarra ? pp.escala.guitarra.nome : "Escolha um levita para tocar guitarra."} />
-						</SelectTrigger>
-						<SelectContent>
-							{filterByInstrumento(5)?.map((levita) => (
-								<SelectItem value={levita.id} key={levita.id} onSelect={() => setGuitarra(levita.id)}>{levita.nome}</SelectItem>
-							))}
-							<SelectItem value={"null"} onSelect={() => setGuitarra("")} className="text-zinc-400">Sem guitarra</SelectItem>
-						</SelectContent>
-					</Select>
-					<br />
-
-					<Label>Observação:</Label>
-					<Textarea placeholder="Insira uma observação. (Ex: Dia e hora de ensaio, local de apresentação, etc.)"
-						value={pp.escala?.observacoes} onChange={(e) => setObservacao(e.target.value)} />
-					<br />
-
-					<Label>Backs:</Label>
-					<Card className="bg-transparent grid grid-cols-4">
-						{filterByInstrumento(0)?.map((levita) => (
-							<Button key={levita.id} variant={backs.includes(levita.id) ? "default" : "outline"} type="submit"
-								className={"p-2 rounded-lg m-2"}
-								onClick={() => { backs.includes(levita.id) ? removeBack(levita.id) : addBack(levita.id) }}>{levita.nome}</Button>
-						))}
-					</Card>
-					<br />
-
 				</ScrollArea>
-				<DialogFooter>
-					<Button className="hover:bg-emerald-500" disabled={isLoading} onClick={() => {
+				<DialogFooter className={`gap-4 ${isLoading ? "opacity-50" : ""}`}>
+					<Button className="hover:bg-rose-500 bg-red-600" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
+					<Button className="hover:bg-emerald-500 bg-green-600" disabled={isLoading} onClick={() => {
 						if (titulo.length == 0) {
 							toast.warning("Insira um título para a escala!")
 						} else if (data.length == 0) {
@@ -387,7 +412,6 @@ export function EditEscala(pp: addEditDialogProps) {
 								: toast.error("Escala não encontrada.")
 						}
 					}}>{pp.isEdit ? "Confirmar" : "Adicionar"}</Button>
-					<Button className="hover:bg-rose-700" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
 				</DialogFooter>
 			</DialogContent>
 		</Dialog >
@@ -446,11 +470,12 @@ export function AddEscala(props: DialogAddEscalaProps) {
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
 				<Button variant={"outline"} className="hover:text-emerald-500" disabled={props.disabled}>
-					<CirclePlus className="mx-1 text-emerald-500" />Criar Escala</Button>
+					<CirclePlus className="text-emerald-500" />Criar Escala</Button>
 			</DialogTrigger>
-			<DialogContent className="w-3/5">
+			<DialogContent className="w-[85%]">
 				{isLoading ?
 					<div className="absolute w-full h-[85%] z-50 flex justify-center items-center">
+						{/* Loader */}
 						<div className="h-16 w-16 border-4 border-subprimary rounded-3xl animate-spin" />
 					</div>
 					: <></>}
@@ -469,12 +494,10 @@ export function AddEscala(props: DialogAddEscalaProps) {
 						</div>
 						<div className="w-full space-y-1 my-4">
 							<Label>Data:</Label>
-							{/* <DayPicker onDayClick={(day) => setData(day.toISOString())} /> */}
 							<Input type="date" value={data} onChange={(e) => setData(e.target.value)} className="" />
 						</div>
 						<div className="flex items-center justify-start gap-2 my-4">
-							<Label>Especial:</Label>
-							<Checkbox className="" onClick={() => setEspecial(!especial)} />
+							<CheckboxConfetti title="Especial" onClick={() => setEspecial(!especial)} />
 						</div>
 						<div className={`w-full ${!disableFields ? "hidden" : "flex"} justify-center items-center text-center`}>
 							{true ?
@@ -551,7 +574,7 @@ export function AddEscala(props: DialogAddEscalaProps) {
 
 							<div className="w-full space-y-1 my-4">
 								<Label>Observação:</Label>
-								<Textarea placeholder="Insira uma observação. (Ex: Dia e hora de ensaio, local de apresentação, etc.)"
+								<Textarea placeholder="Insira uma observação. (Exemplo: dia e hora de ensaio, etc.)"
 									value={observacao} onChange={(e) => setObservacao(e.target.value)} maxLength={255} disabled={disableFields} />
 							</div>
 
@@ -560,7 +583,7 @@ export function AddEscala(props: DialogAddEscalaProps) {
 								<Card className="bg-transparent grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1">
 									{filterByInstrumento(0)?.map((levita) => (
 										<Button key={levita.id} variant={backs.includes(levita.id) ? "default" : "outline"} type="submit"
-											className={"p-2 rounded-lg m-2"} disabled={disableFields}
+											className={"m-2"} disabled={disableFields}
 											onClick={() => { backs.includes(levita.id) ? removeBack(levita.id) : addBack(levita.id) }}>{levita.nome}</Button>
 									))}
 								</Card>
@@ -568,57 +591,43 @@ export function AddEscala(props: DialogAddEscalaProps) {
 						</div>
 					</div>
 				</ScrollArea>
-				<DialogFooter className={isLoading ? "opacity-50 space-y-1.5" : ""}>
-					<div className="hidden" />
-					<Button className="hover:bg-emerald-500" disabled={isLoading || disableFields} onClick={() => {
-						console.log({
-							ministro: ministro,
-							titulo: titulo,
-							data: data,
-							especial: especial,
-							violao: violao == "null" ? null : violao,
-							teclado: teclado == "null" ? null : teclado,
-							bateria: bateria == "null" ? null : bateria,
-							baixo: baixo == "null" ? null : baixo,
-							guitarra: guitarra == "null" ? null : guitarra,
-							backs: backs,
-							observacoes: observacao
-						})
-						// if (titulo.length == 0) {
-						// 	toast.warning("Insira um título para a escala!")
-						// } else if (!data || data.length == 0) {
-						// 	toast.warning("Insira uma data para a escala!")
-						// } else if (ministro.length == 0) {
-						// 	toast.warning("Selecione um ministro!")
-						// }
-						// else {
-						// 	setIsLoading(true)
-						// 	postMethod<Escala | undefined>("v1/escala", {
-						// 		ministro: ministro,
-						// 		titulo: titulo,
-						// 		data: data,
-						// 		especial: especial,
-						// 		violao: violao == "null" ? null : violao,
-						// 		teclado: teclado == "null" ? null : teclado,
-						// 		bateria: bateria == "null" ? null : bateria,
-						// 		baixo: baixo == "null" ? null : baixo,
-						// 		guitarra: guitarra == "null" ? null : guitarra,
-						// 		backs: backs,
-						// 		observacoes: observacao
-						// 	}).catch((error) => {
-						// 		toast.error("Erro ao adicionar escala!")
-						// 		console.error("Erro na comunicação com a api: ", error);
-						// 	}).then(() => {
-						// 		toast.success("Escala adicionada com sucesso!")
-						// 		if (props.setEscalas) {
-						// 			props.setEscalas(undefined)
-						// 		}
-						// 		setIsLoading(false)
-						// 		setOpen(false)
-						// 	})
-						// }
+				<DialogFooter className={`gap-4 ${isLoading ? "opacity-50" : ""}`}>
+					<Button className="hover:bg-rose-500 bg-red-600" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
+					<Button className="hover:bg-emerald-500 bg-green-600" disabled={isLoading || disableFields} onClick={() => {
+						if (titulo.length == 0) {
+							toast.warning("Insira um título para a escala!")
+						} else if (!data || data.length == 0) {
+							toast.warning("Insira uma data para a escala!")
+						} else if (ministro.length == 0) {
+							toast.warning("Selecione um ministro!")
+						}
+						else {
+							setIsLoading(true)
+							postMethod<Escala | undefined>("v1/escala", {
+								ministro: ministro,
+								titulo: titulo,
+								data: data,
+								especial: especial,
+								violao: violao == "null" ? null : violao,
+								teclado: teclado == "null" ? null : teclado,
+								bateria: bateria == "null" ? null : bateria,
+								baixo: baixo == "null" ? null : baixo,
+								guitarra: guitarra == "null" ? null : guitarra,
+								backs: backs,
+								observacoes: observacao
+							}).catch((error) => {
+								toast.error("Erro ao adicionar escala!")
+								console.error("Erro na comunicação com a api: ", error);
+							}).then(() => {
+								toast.success("Escala adicionada com sucesso!")
+								if (props.setEscalas) {
+									props.setEscalas(undefined)
+								}
+								setIsLoading(false)
+								setOpen(false)
+							})
+						}
 					}}>{"Adicionar"}</Button>
-					<Button className="hover:bg-rose-700" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
 				</DialogFooter>
 			</DialogContent>
 
@@ -655,10 +664,10 @@ export function DialogAddMusicaInEscala(props: DialogAddMusicaInEscalaProps) {
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
-				<Button variant={"outline"} className={"mx-2 hover:text-emerald-500 "} disabled={false}>
-					<CirclePlus className="mx-1 text-emerald-500" />Adicionar Música</Button>
+				<Button variant={"outline"} className={"hover:text-emerald-500 "} disabled={false}>
+					<CirclePlus className="mx-1 text-emerald-500" />Adicionar Músicas</Button>
 			</DialogTrigger>
-			<DialogContent>
+			<DialogContent className="w-[85%] ">
 				{isLoading ?
 					<div className="absolute w-full h-[85%] z-50 flex justify-center items-center">
 						<div className="h-16 w-16 border-4 border-subprimary rounded-3xl animate-spin" />
@@ -670,7 +679,6 @@ export function DialogAddMusicaInEscala(props: DialogAddMusicaInEscalaProps) {
 						Selecione as músicas que deseja adicionar a escala {props.escala?.titulo}.
 					</DialogDescription>
 				</DialogHeader>
-				<br />
 				<Label>Músicas para adicionar:</Label>
 				<Select onValueChange={(value) => addSelectedMusica(value)} disabled={!musicas}>
 					<SelectTrigger>
@@ -682,18 +690,17 @@ export function DialogAddMusicaInEscala(props: DialogAddMusicaInEscalaProps) {
 						))}
 					</SelectContent>
 				</Select>
-				<br />
 				<Label>Músicas selecionadas:</Label>
-				<Card className="bg-transparent grid grid-flow-row">
+				<Card className="bg-transparent grid grid-flow-row mb-4 gap-2 max-h-[42dvh] md:max-h-[50dvh] overflow-y-auto border rounded">
 					{getSelectedMusicas().map((musica) => (
 						<Button key={musica?.id} variant={"outline"} type="submit" className="p-2 rounded-lg m-2 hover:bg-red-400/50"
 							onClick={() => removeSelectedMusica(musica ? musica.id : "")}>{musica?.nome}</Button>
 					))}
 				</Card>
-				<br />
 
-				<DialogFooter className="">
-					<Button className="hover:bg-emerald-500"
+				<DialogFooter className="flex justify-between gap-4">
+					<Button className="hover:bg-rose-500 bg-red-600" onClick={() => setOpen(false)}>Cancelar</Button>
+					<Button className="hover:bg-emerald-500 bg-green-600"
 						type="submit" disabled={isLoading} onClick={() => {
 							setLoading(true)
 							putMethod(`v1/escala/musicas/${props.escala?.id}`, { musicasIds: selectedMusicas })
@@ -704,7 +711,6 @@ export function DialogAddMusicaInEscala(props: DialogAddMusicaInEscalaProps) {
 								.then(() => setOpen(false))
 							setLoading(false)
 						}}>Salvar</Button>
-					<Button className="hover:bg-rose-600/80" onClick={() => setOpen(false)}>Cancelar</Button>
 				</DialogFooter>
 			</DialogContent>
 		</Dialog>
