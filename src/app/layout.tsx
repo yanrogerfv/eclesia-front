@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Poppins, Noto_Sans_JP } from "next/font/google";
+import { SpeedInsights } from "@vercel/speed-insights/next"
 import "./globals.css";
 import { ThemeProvider } from "@/components/themeProvider";
 import { Toaster } from "@/components/ui/sonner";
@@ -35,6 +36,7 @@ export default function RootLayout({
 			<body className={notosansjp.className} suppressHydrationWarning={true} >
 				{children}
 				<Toaster />
+				<SpeedInsights />
 			</body>
 		</html>
 	);
