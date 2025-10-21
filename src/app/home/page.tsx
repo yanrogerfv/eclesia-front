@@ -16,8 +16,10 @@ export default function Home() {
 
     const [nextEscalas, setNextEscalas] = useState<EscalaResumida[] | undefined>(undefined)
     const [levitasData, setLevitasData] = useState<Levita[] | undefined>(undefined)
+    const [isClient, setIsClient] = useState(false)
 
     useEffect(() => {
+        setIsClient(true)
         if (nextEscalas && levitasData) return;
         getMethod<EscalaResumida[] | undefined>("v1/escala/resumed", setNextEscalas)
         getMethod<Levita[] | undefined>("v1/levita/resumed", setLevitasData)
@@ -86,7 +88,7 @@ export default function Home() {
                                 Próximas escalas:
                             </CardTitle>
 
-                            {!nextEscalas ? (
+                            {!isClient || !nextEscalas ? (
                                 <div className="flex flex-col sm:flex-row gap-4 px-4">
                                     <Skeleton className="h-40 sm:h-48 w-full sm:w-80 rounded-lg flex-shrink-0" />
                                     <Skeleton className="h-40 sm:h-48 w-full sm:w-80 rounded-lg flex-shrink-0 hidden sm:block" />
@@ -140,7 +142,7 @@ export default function Home() {
                                 Levitas Disponíveis:
                             </CardTitle>
 
-                            {!levitasData ? (
+                            {!isClient || !levitasData ? (
                                 <div className="flex flex-col sm:flex-row gap-4 px-4">
                                     <Skeleton className="h-40 sm:h-48 w-full sm:w-80 rounded-lg flex-shrink-0" />
                                     <Skeleton className="h-40 sm:h-48 w-full sm:w-80 rounded-lg flex-shrink-0 hidden sm:block" />

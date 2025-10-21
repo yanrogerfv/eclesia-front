@@ -4,6 +4,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
 import "./globals.css";
 import { ThemeProvider } from "@/components/themeProvider";
 import { Toaster } from "@/components/ui/sonner";
+import { randomThemeName } from "@/util/themes";
 // import { PermissionProvider } from "@/context/permissionContext";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -32,9 +33,9 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang="pt-br" className="">
-			<body className={notosansjp.className} suppressHydrationWarning >
-				<ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+		<html lang="pt-br" suppressHydrationWarning>
+			<body className={notosansjp.className}>
+				<ThemeProvider attribute="class" defaultTheme={"creamy"} enableSystem={false} disableTransitionOnChange>
 					{children}
 					<Toaster />
 					<SpeedInsights />

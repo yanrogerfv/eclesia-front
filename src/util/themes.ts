@@ -1,4 +1,4 @@
-import { Leaf, Lollipop, MoonStar, Popsicle, Sunrise, Sunset, Trees, Waves } from "lucide-react";
+import { IceCream, Leaf, Lollipop, MoonStar, Sunrise, Sunset, Trees, Waves } from "lucide-react";
 
 export const themes = [
     {
@@ -14,9 +14,9 @@ export const themes = [
         displayName: "Leaflight",
         icon: Leaf,
     }, {
-        name: "popsicle",
-        displayName: "Popsicle",
-        icon: Popsicle,
+        name: "creamy",
+        displayName: "Creamy",
+        icon: IceCream,
     }, {
         name: "sunset",
         displayName: "Sunset",
@@ -47,3 +47,7 @@ export const themes = [
         //     icon: MoonStar,
     }
 ];
+
+export const randomThemeName = () => {
+    return themes[Math.floor(Math.random() * themes.length)].name;
+}
