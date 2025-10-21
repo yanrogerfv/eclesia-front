@@ -6,8 +6,6 @@ import type { NextRequest } from 'next/server';
 const publicRoutes = ['/', '/login', '/escalas'];
 
 export async function middleware(request: NextRequest) {
-    // NextResponse.next();
-    console.log('🔒 Middleware triggered for path:', request.nextUrl.pathname);
 
     const { pathname } = request.nextUrl;
 
@@ -16,19 +14,16 @@ export async function middleware(request: NextRequest) {
 
     // If it's a public route, allow access
     if (isPublicRoute) {
-        console.log('✅ Public route, allowing access');
         return NextResponse.next();
     }
 
     const baseURL = process.env.NEXT_PUBLIC_API_URL;
-    console.log('🔍 Validating token with API:', `${baseURL}auth/validate-token`);
 
     // Get the token from cookies
     const token = request.cookies.get('token');
 
     // If there's no token, redirect to login
     if (!token) {
-        console.log('❌ No token found, redirecting to login');
         return NextResponse.redirect(new URL('/login', request.url));
     }
 
@@ -45,9 +40,7 @@ export async function middleware(request: NextRequest) {
             console.error("Error validating token:", error);
         }
     });
-    console.log('🔍 Token validation response status:', response?.status);
     if (response?.ok === false) {
-        console.log('❌ Token validation failed, redirecting to login');
 
         const loginUrl = new URL('/login', request.url);
         const redirectResponse = NextResponse.redirect(loginUrl);
@@ -55,7 +48,6 @@ export async function middleware(request: NextRequest) {
         redirectResponse.cookies.delete('token');
         return redirectResponse;
     } else {
-        console.log('✅ Token valid, allowing access');
         return NextResponse.next();
     }
 }

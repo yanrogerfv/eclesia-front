@@ -21,6 +21,19 @@ import { Textarea } from "../ui/textarea";
 import Cookies from "js-cookie";
 import { toast } from "sonner";
 
+// Helper to format Brazilian phone numbers while typing
+function formatNumberToBRL(value: string): [string, string] {
+    const numericValue = value.replace(/\D/g, "");
+    let formattedValue = numericValue;
+    if (numericValue.length > 2) {
+        formattedValue = `(${numericValue.slice(0, 2)}) ${numericValue.slice(2, 7)}`;
+    }
+    if (numericValue.length > 7) {
+        formattedValue += `-${numericValue.slice(7, 11)}`;
+    }
+    return [numericValue, formattedValue];
+}
+
 export function DialogVerLevita(props: {
     levita: Levita,
     disabled: boolean,
@@ -91,6 +104,7 @@ export function DialogAddLevita({ disable, setLevitas }: DialogAddLevitaProps) {
         setInstrumentos(instrumentosLevita.filter((currentInstrument) => currentInstrument.id !== instrumento.id))
     }
 
+
     const handleSubmitLevita = () => {
         setLoading(true)
         if (!nomeLevita || nomeLevita.length < 3) {
@@ -152,7 +166,10 @@ export function DialogAddLevita({ disable, setLevitas }: DialogAddLevitaProps) {
                     <div>
                         <Label>Telefone:</Label>
                         <Input type="tel" placeholder="Insira um contato do Levita."
-                            value={contatoLevita} onChange={(e) => setTelLevita(e.target.value)} />
+                            value={contatoLevita} onChange={(e) => {
+                                const [, formatted] = formatNumberToBRL(e.target.value);
+                                setTelLevita(formatted);
+                            }} />
                     </div>
                     <div>
                         <Label>Instrumentos:</Label>
@@ -247,7 +264,10 @@ export function DialogEditLevita({ levita, setLevitas }: DialogEditLevitaProps) 
                     <div>
                         <Label>Telefone:</Label>
                         <Input type="tel" placeholder="Insira um contato do Levita." disabled={isLoading}
-                            value={contatoLevita ? contatoLevita : undefined} onChange={(e) => setContatoLevita(e.target.value)} />
+                            value={contatoLevita ? contatoLevita : undefined} onChange={(e) => {
+                                const [, formatted] = formatNumberToBRL(e.target.value);
+                                setContatoLevita(formatted);
+                            }} />
                     </div>
                     <div>
                         <Label>Instrumentos:</Label>

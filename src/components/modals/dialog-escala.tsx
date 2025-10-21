@@ -438,8 +438,7 @@ export function AddEscala(props: DialogAddEscalaProps) {
 	const [backs, setBacks] = useState<String[]>([]);
 	const [observacao, setObservacao] = useState<string>();
 
-	let disableFields =
-		data == undefined || data.length == 0 || levitasDisponiveis == undefined || levitasDisponiveis.length == 0
+	let disableFields = data == undefined || data.length == 0 || levitasDisponiveis == undefined || levitasDisponiveis.length == 0
 
 
 	useEffect(() => {
@@ -464,6 +463,20 @@ export function AddEscala(props: DialogAddEscalaProps) {
 	}
 	function removeBack(levitaId: String) {
 		setBacks(backs.filter((back) => back != levitaId))
+	}
+
+	function clearFields() {
+		setData("");
+		setEspecial(false);
+		setTitulo("");
+		setMinistro("");
+		setBaixo("");
+		setBateria("");
+		setGuitarra("");
+		setTeclado("");
+		setViolao("");
+		setBacks([]);
+		setObservacao("");
 	}
 
 	return (

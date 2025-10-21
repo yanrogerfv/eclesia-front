@@ -51,7 +51,8 @@ export default function LoginPage() {
                 sessionStorage.setItem("role", resp.role)
                 sessionStorage.setItem("levita", resp.levita.id)
                 toast.success(`Usuário logado com sucesso! Bem-vindo, ${data.username}.`)
-                router.push("/home")
+                // router.push("/home")
+                window.location.href = "/home";
             }
             if (!response.ok) {
                 let resp = await response.json();
