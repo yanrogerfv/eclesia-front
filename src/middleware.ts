@@ -6,19 +6,19 @@ import type { NextRequest } from 'next/server';
 const publicRoutes = ['/', '/login', '/escalas'];
 
 export async function middleware(request: NextRequest) {
+  // NextResponse.next();
   console.log('🔒 Middleware triggered for path:', request.nextUrl.pathname);
 
   const { pathname } = request.nextUrl;
 
   // Check if the current path is a public route
-  const isPublicRoute = publicRoutes.some(route => pathname === route);
+  const isPublicRoute = publicRoutes.some(route => pathname.match(route));
 
   // If it's a public route, allow access
   if (isPublicRoute) {
     console.log('✅ Public route, allowing access');
     return NextResponse.next();
   }
-   NextResponse.next();
 
   // Get the token from cookies
   const token = request.cookies.get('token')?.value;

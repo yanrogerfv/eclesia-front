@@ -13,7 +13,7 @@ import {
     SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { SidebarAddUser, SidebarManageUsers, SidebarMyAgenda, SidebarMyEscalas, SidebarMyProfile, SidebarNextEvents } from "./modals/sidebar-modals"
-import ThemeSelector from "./themeSelector"
+import SidebarThemeSelector from "./themeSelector"
 import { useEffect, useState } from "react"
 
 export function AppSidebar({ side, alwaysOpen }: { side: "left" | "right", alwaysOpen?: boolean }) {
@@ -125,7 +125,7 @@ export function AppSidebar({ side, alwaysOpen }: { side: "left" | "right", alway
                 </SidebarGroup>
                 <SidebarFooter className="mt-auto flex justify-center items-center ">
                     {/* <SidebarMenuButton className="flex items-center justify-center h-fit gap-2 p-2 hover:bg-primary/10 rounded-lg group"> */}
-                    <ThemeSelector className="bg-zinc-700/10 w-full" />
+                    <SidebarThemeSelector className="bg-zinc-700/10 w-full" />
                     {/* </SidebarMenuButton> */}
                 </SidebarFooter>
             </SidebarContent>

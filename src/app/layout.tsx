@@ -33,10 +33,12 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="pt-br" className="">
-			<body className={notosansjp.className} suppressHydrationWarning={true} >
-				{children}
-				<Toaster />
-				<SpeedInsights />
+			<body className={notosansjp.className} suppressHydrationWarning >
+				<ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+					{children}
+					<Toaster />
+					<SpeedInsights />
+				</ThemeProvider>
 			</body>
 		</html>
 	);
