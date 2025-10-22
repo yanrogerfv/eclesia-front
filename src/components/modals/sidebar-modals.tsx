@@ -7,7 +7,7 @@ import { Badge } from "../ui/badge";
 import { SidebarMenuButton } from "../ui/sidebar";
 import { Calendar } from "../ui/calendar";
 import { Button } from "../ui/button";
-import { ptBR } from "date-fns/locale";
+import { is, ptBR } from "date-fns/locale";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { deleteMethod, getMethod, postMethod, putMethod } from "@/lib/apiRequests";
@@ -137,6 +137,7 @@ export function SidebarMyAgenda({ icon, title, style }: SidebarModalsProps) {
     const [userDates, setUserDates] = useState<Date[] | undefined>(undefined);
     const [dates, setDates] = useState<Date[] | undefined>(undefined);
     const [open, setOpen] = useState(false);
+    const [isLoading, setLoading] = useState(false);
 
     /* Sorting of dates for better organization when sending to backend */
     useEffect(() => {
@@ -157,18 +158,19 @@ export function SidebarMyAgenda({ icon, title, style }: SidebarModalsProps) {
 
     /* Function to post the agenda of the logged user to backend */
     const postAgenda = () => {
-        const dataBody = dates
+        setLoading(true);
+        const dataBody = Array.isArray(dates)
             ? dates
                 .filter(date => date >= new Date(Date.now() - 1000 * 60 * 60 * 24))
                 .map(date => date.toISOString().split("T")[0])
             : []
-        postMethod<Date[] | undefined>(
+        // Don't set dates with the API response to avoid passing a non-array to Calendar
+        postMethod<undefined>(
             `v1/levita/agenda/${sessionStorage.getItem("levita")}`,
-            dataBody,
-            setDates
+            dataBody
         ).then(() => {
-            setOpen(false)
             toast.info("Agenda atualizada com sucesso!")
+            setLoading(false);
         })
     }
 
@@ -180,8 +182,13 @@ export function SidebarMyAgenda({ icon, title, style }: SidebarModalsProps) {
                     {title}
                 </SidebarMenuButton>
             </DialogTrigger>
-            <DialogContent className="max-w-fit lg:max-w-fit w-[85%] max-h-[90vh] overflow-y-auto">
-                <DialogHeader>
+            <DialogContent className={`max-w-fit lg:max-w-fit w-[85%] max-h-[90vh] overflow-y-auto`}>
+                {isLoading ?
+                    <div className="absolute w-full h-[85%] z-50 flex justify-center items-center">
+                        <div className="h-16 w-16 border-4 border-subprimary rounded-3xl animate-spin" />
+                    </div>
+                    : <></>}
+                <DialogHeader className={`${isLoading ? "pointer-events-none select-none blur-sm" : ""}`}>
                     <DialogTitle>
                         {title}
                     </DialogTitle>
@@ -189,13 +196,14 @@ export function SidebarMyAgenda({ icon, title, style }: SidebarModalsProps) {
                     </DialogDescription>
                 </DialogHeader>
                 {/* Content aqui */}
-                <div className="flex flex-col gap-4 lg:flex-row lg:justify-between">
+                <div className={`flex flex-col gap-4 lg:flex-row lg:justify-between ${isLoading ? "pointer-events-none select-none blur-sm" : ""}`}>
                     <Calendar
                         lang="pt-BR"
                         locale={ptBR}
                         title="Agenda"
                         mode="multiple"
-                        selected={dates}
+                        // Ensure Calendar always receives an array for selected in multiple mode
+                        selected={Array.isArray(dates) ? dates : []}
                         onSelect={setDates}
                         disabled={(data) => data < new Date(Date.now() - 1000 * 60 * 60 * 24)}
                         className="border rounded-lg w-fit"
@@ -220,6 +228,7 @@ export function SidebarMyAgenda({ icon, title, style }: SidebarModalsProps) {
                                 variant="outline"
                                 className="border rounded-lg"
                                 onClick={() => postAgenda()}
+                                disabled={isLoading}
                             >Confirmar agenda</Button>
                         </CardFooter>
                     </Card>
@@ -431,8 +440,8 @@ export function SidebarMyProfile({ icon, title, style }: SidebarModalsProps) {
                             </TooltipProvider>
                         </div>
                         <div className="flex gap-2">
-                            <Button className="hover:bg-rose-500 bg-red-600" onClick={() => setOpen(false)}>Cancelar</Button>
-                            <Button className="hover:bg-emerald-500 bg-green-600" onClick={() => {
+                            <Button variant={"cancel"} onClick={() => setOpen(false)}>Cancelar</Button>
+                            <Button variant={"save"} onClick={() => {
                                 if (password.length < 8) {
                                     toast.error("A senha deve ter pelo menos 8 caracteres.");
                                 } if (username.length < 3) {
@@ -545,9 +554,9 @@ export function SidebarAddUser({ icon, title, style }: SidebarModalsProps) {
                     </Card>
                 </ScrollArea>
 
-                <DialogFooter className="flex justify-end gap-2">
-                    <Button className="hover:bg-rose-500 bg-red-600" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
-                    <Button className="hover:bg-emerald-500 bg-green-600" disabled={isLoading || !levitaToAdd || username.length < 3 || password.length < 8}
+                <DialogFooter className="flex justify-end gap-4">
+                    <Button variant={"cancel"} disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
+                    <Button variant={"save"} disabled={isLoading || !levitaToAdd || username.length < 3 || password.length < 8}
                         onClick={() => {
                             postMethod<UserDTO>("auth/user", {
                                 username: username,
@@ -586,7 +595,7 @@ export function SidebarManageUsers({ icon, title, style }: SidebarModalsProps) {
                     {title}
                 </SidebarMenuButton>
             </DialogTrigger>
-            <DialogContent className="w-[85%] max-h-[90vh] overflow-y-auto">
+            <DialogContent className="max-w-[80%] xl:max-w-[40%] max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>
                         {title}

@@ -117,7 +117,7 @@ export function AppSidebar({ side, alwaysOpen }: { side: "left" | "right", alway
                                         Cookies.remove("username")
                                         { sessionStorage ? sessionStorage.removeItem("role") : null }
                                         setTimeout(() => {
-                                            window.location.reload()
+                                            window.location.href = "/";
                                         }, 1000)
                                     }}>
                                         <LogOut size={16} />

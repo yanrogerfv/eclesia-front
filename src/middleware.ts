@@ -21,16 +21,17 @@ export async function middleware(request: NextRequest) {
 
     // Get the token from cookies
     const token = request.cookies.get('token');
-
+    
+    
     // If there's no token, redirect to login
     if (!token) {
         return NextResponse.redirect(new URL('/login', request.url));
     }
 
-    const response = await fetch(`${baseURL}auth/validate-token`, {
+    const response = await fetch(`${baseURL}v1/instrumento`, {
         method: "GET",
         headers: {
-            "Authorization": `${token.value}`,
+            "Authorization": `Bearer ${token.value}`,
             "Content-Type": "application/json",
         },
     }).catch((error) => {
@@ -40,8 +41,8 @@ export async function middleware(request: NextRequest) {
             console.error("Error validating token:", error);
         }
     });
-    if (response?.ok === false) {
 
+    if (response?.ok === false) {
         const loginUrl = new URL('/login', request.url);
         const redirectResponse = NextResponse.redirect(loginUrl);
         // Clear the invalid token

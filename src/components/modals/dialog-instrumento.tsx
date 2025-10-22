@@ -39,22 +39,21 @@ export function DialogAddInstrumento(props: { disabled: boolean, state: React.Di
                     value={nomeInstrumento} onChange={(e) => setNomeInstrumento(e.target.value)} />
 
                 <DialogFooter className="gap-4">
-                    <Button className="hover:bg-rose-600 bg-red-600" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
-                    <Button className="hover:bg-emerald-500 bg-green-600"
-                        type="submit" disabled={isLoading || nomeInstrumento.length === 0} onClick={() => {
-                            setLoading(true)
-                            postMethod("v1/instrumento", {
-                                nome: nomeInstrumento
-                            }, () => setOpen(false))
-                                .then(() => props.state(undefined))
-                                .catch((error) => {
-                                    toast.error("Erro na comunicação com a api: ", error);
-                                })
-                                .finally(() => {
-                                    setLoading(false)
-                                    toast.success("Instrumento inserido com sucesso!")
-                                });
-                        }}>Salvar</Button>
+                    <Button variant={"cancel"} onClick={() => setOpen(false)}>Cancelar</Button>
+                    <Button variant={"save"} type="submit" disabled={isLoading || nomeInstrumento.length === 0} onClick={() => {
+                        setLoading(true)
+                        postMethod("v1/instrumento", {
+                            nome: nomeInstrumento
+                        }, () => setOpen(false))
+                            .then(() => props.state(undefined))
+                            .catch((error) => {
+                                toast.error("Erro na comunicação com a api: ", error);
+                            })
+                            .finally(() => {
+                                setLoading(false)
+                                toast.success("Instrumento inserido com sucesso!")
+                            });
+                    }}>Salvar</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
@@ -97,21 +96,20 @@ export function DialogRemoveInstrumento(props: { allInstrumentos: Instrumento[] 
                     </SelectContent>
                 </Select>
                 <DialogFooter className="gap-4">
-                    <Button className="hover:bg-rose-500 bg-red-600" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
-                    <Button className="hover:bg-emerald-500 bg-green-600"
-                        type="submit" disabled={isLoading || !selectedInstrumento} onClick={() => {
-                            setLoading(true)
-                            deleteMethod(`v1/instrumento/${selectedInstrumento}`)
-                                .then(() => props.state(undefined))
-                                .then(() => setOpen(false))
-                                .catch((error) => {
-                                    toast.error("Erro na comunicação com a api: ", error);
-                                })
-                                .finally(() => {
-                                    setLoading(false)
-                                    toast.success("Instrumento removido com sucesso!")
-                                });
-                        }}>Remover</Button>
+                    <Button variant={"cancel"} disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
+                    <Button variant={"save"} type="submit" disabled={isLoading || !selectedInstrumento} onClick={() => {
+                        setLoading(true)
+                        deleteMethod(`v1/instrumento/${selectedInstrumento}`)
+                            .then(() => props.state(undefined))
+                            .then(() => setOpen(false))
+                            .catch((error) => {
+                                toast.error("Erro na comunicação com a api: ", error);
+                            })
+                            .finally(() => {
+                                setLoading(false)
+                                toast.success("Instrumento removido com sucesso!")
+                            });
+                    }}>Remover</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

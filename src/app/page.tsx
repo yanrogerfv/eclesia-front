@@ -57,9 +57,6 @@ export default function LandingPage() {
                                 Eclesia é uma aplicação web que visa facilitar a organização de escalas e a comunicação entre os membros de um grupo de louvor.
                                 Aqui você pode criar e gerenciar Escalas, Levitas, os Instrumentos usados e as Músicas escolhidas!
                             </p>
-                            {/* <p className="text-sm sm:text-base md:text-lg text-colortext/75 leading-relaxed">
-                                Esta ainda é uma aplicação em desenvolvimento, então fique a vontade para relatar problemas e sugerir melhorias!
-                            </p> */}
                         </div>
                     </div>
 
@@ -73,13 +70,22 @@ export default function LandingPage() {
                     {/* Footer Card */}
                     <div className="flex justify-center ">
                         <Card className="w-[95%] sm:w-[90%] md:w-[80%] max-w-4xl border border-primary/75 flex  justify-between items-center px-3 py-2 sm:py-1 bg-cardstartbg/80 gap-2 sm:gap-0">
-                            <p className="text-xs sm:text-sm text-colortext">v0.1.2</p>
+                            <Popover>
+                                <PopoverTrigger asChild>
+                                    <p className="text-xs sm:text-sm text-colortext cursor-pointer hover:underline">v0.1.2</p>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-72 sm:w-80 rounded-lg mx-2" side="top">
+                                    <p className="text-sm text-center text-colortext/75 leading-relaxed">
+                                        Esta ainda é uma aplicação em desenvolvimento, então fique a vontade para relatar problemas e sugerir melhorias!
+                                    </p>
+                                </PopoverContent>
+                            </Popover>
 
                             <Popover>
                                 <PopoverTrigger asChild>
                                     <Button variant="link" className="text-xs sm:text-sm p-0 sm:p-2">@yanfv</Button>
                                 </PopoverTrigger>
-                                <PopoverContent className="w-72 sm:w-80 rounded-lg mx-2">
+                                <PopoverContent className="w-72 sm:w-80 rounded-lg mx-2" side="top">
                                     <div className="text-start">
                                         <p className="text-xs sm:text-sm space-y-1">
                                             <p>Nome: <span className="text-subprimary cursor-default hover:brightness-125">Yan Roger Fogaça Vieira</span></p>
@@ -92,7 +98,7 @@ export default function LandingPage() {
                                 </PopoverContent>
                             </Popover>
 
-                            <Popover>
+                        {/* <Popover>
                                 <PopoverTrigger asChild>
                                     <p className="text-xs sm:text-sm cursor-pointer hover:underline order-3 sm:order-3">Thanks!</p>
                                 </PopoverTrigger>
@@ -108,7 +114,7 @@ export default function LandingPage() {
                                         </p>
                                     </div>
                                 </PopoverContent>
-                            </Popover>
+                            </Popover> */}
                         </Card>
                     </div>
                 </main>

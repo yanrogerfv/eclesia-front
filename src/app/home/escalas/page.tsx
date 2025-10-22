@@ -19,6 +19,7 @@ import { AddEscala, VerEscala } from "@/components/modals/dialog-escala";
 import { convertDateFormat, EscalaResumida, Levita } from "@/lib/apiObjects";
 import { toast } from "sonner";
 import BackButton from "@/components/next-back";
+import compareDates from "@/util/compareDates";
 
 export default function Home() {
 	const [removeOverlay, setRemoveOverlay] = useState(false);
@@ -39,12 +40,6 @@ export default function Home() {
 		}
 	}, [])
 
-	function compareDates(date1: string | Date, date2: string | Date): boolean {
-		const d1 = new Date(new Date(date1).toISOString().substring(0, 10));
-		const d2 = new Date(new Date(date2).toISOString().substring(0, 10));
-		return d1 < d2;
-	}
-
 	useEffect(() => {
 		if (escalasData) return;
 		getMethod<EscalaResumida[] | undefined>("v1/escala/resumed", setEscalasData);
@@ -55,7 +50,6 @@ export default function Home() {
 		if (levitasDisponiveis) return;
 		getMethod<Levita[] | undefined>("v1/levita/resumed", setLevitasDisponiveis);
 	}, [])
-
 
 	useEffect(() => {
 		if (!escalasData) return;
@@ -101,11 +95,11 @@ export default function Home() {
 				</nav>
 				<div>
 					<div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-2 sm:gap-4 md:gap-6">
-						<Button variant="outline" className={"md:flex-1 w-full text-lg hover:text-foreground rounded-lg text-primary hover:bg-primary".concat(domingoFilter ? " bg-primary text-foreground" : "")}
+						<Button variant="outline" className={"md:flex-1 w-full text-lg hover:text-colortext rounded-lg text-primary hover:bg-primary".concat(domingoFilter ? " bg-primary text-foreground" : "")}
 							onClick={() => setDomingoFilter(!domingoFilter)} disabled={isLoading}>Domingos</Button>
-						<Button variant="outline" className={"md:flex-1 w-full text-lg hover:text-foreground rounded-lg text-subprimary hover:bg-secondary".concat(quartaFilter ? " bg-secondary text-foreground" : "")}
+						<Button variant="outline" className={"md:flex-1 w-full text-lg hover:text-colortext rounded-lg text-secondary hover:bg-secondary".concat(quartaFilter ? " bg-secondary text-foreground" : "")}
 							onClick={() => setQuartaFilter(!quartaFilter)} disabled={isLoading}>Quartas</Button>
-						<Button variant="outline" className={"md:flex-1 w-full text-lg hover:text-foreground rounded-lg text-special hover:bg-special".concat(especialFilter ? " bg-special text-foreground" : "")}
+						<Button variant="outline" className={"md:flex-1 w-full text-lg hover:text-colortext rounded-lg text-special hover:bg-special".concat(especialFilter ? " bg-special text-foreground" : "")}
 							onClick={() => setEspecialFilter(!especialFilter)} disabled={isLoading}>Especiais</Button>
 					</div>
 
@@ -114,8 +108,11 @@ export default function Home() {
 							<p className="p-6 sm:p-10 text-lg sm:text-2xl text-zinc-400/80">
 								{
 									domingoFilter || quartaFilter || especialFilter
-										? "Nenhuma Escala encontrada com os filtros aplicados."
-										: "Nenhuma Escala cadastrada."
+									//concatenando strings de filtros ativos, dando um join em vírgula
+										? `Nenhuma escala encontrada para ${
+											[domingoFilter && "domingos", quartaFilter && "quartas", especialFilter && " datas especiais"].filter(Boolean).join(" ou ")
+										}.`
+										: "Nenhuma escala cadastrada."
 								}
 							</p>
 						</Card>
@@ -128,7 +125,8 @@ export default function Home() {
 									</div>
 								</div>
 							) : Array.isArray(filteredEscalas) && filteredEscalas.map((escala) => (
-								<Card key={escala.id} className={`${removeOverlay ? "animate-pulse" : ""} ${compareDates(escala.data, new Date()) ? 'opacity-60 grayscale' : ''}`}>
+                                <Card key={escala.id} className={`hover:scale-[1.02] hover:shadow-lg transition-transform ${removeOverlay ? "animate-pulse" : "duration-200"} ${compareDates(escala.data, new Date()) ? 'opacity-60 grayscale' : ''}`}>
+								{/* <Card key={escala.id} className={`${removeOverlay ? "animate-pulse" : ""} ${compareDates(escala.data, new Date()) ? 'opacity-60 grayscale' : ''}`}> */}
 									<X className={removeOverlay ? "absolute hover:cursor-pointer bg-rose-500/80 rounded-br-xl p-1" : "absolute invisible"}
 										onClick={() => {
 											deleteMethod(`v1/escala/${escala.id}`)
@@ -154,7 +152,7 @@ export default function Home() {
 										</CardDescription>
 									</CardHeader>
 									<CardContent>
-										<p><span className="text-subprimary">Ministro:</span> <span className="text-secondary">{escala.ministro}</span>
+										<p><span className="text-primary">Ministro:</span> <span className="text-specialtext">{escala.ministro}</span>
 										</p>
 										<p><span className="text-subprimary">Violão:</span> {escala.violao || <span className="text-secondary/40">Não inserido.</span>}
 										</p>

@@ -30,7 +30,7 @@ export default function LoginPage() {
         }
     })
 
-    const promise = () => new Promise((resolve) => setTimeout(() => resolve({ name: "Sonner" }), 3000))
+    const promise = () => new Promise((resolve) => setTimeout(() => resolve({ name: "Sonner" }), 1000))
 
     const handleLogin = async (data: FormData) => {
         try {
@@ -51,6 +51,7 @@ export default function LoginPage() {
                 sessionStorage.setItem("role", resp.role)
                 sessionStorage.setItem("levita", resp.levita.id)
                 toast.success(`Usuário logado com sucesso! Bem-vindo, ${data.username}.`)
+                await promise();
                 // router.push("/home")
                 window.location.href = "/home";
             }

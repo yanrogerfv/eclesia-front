@@ -55,25 +55,25 @@ export default function Home() {
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                     <Link
                         href="home/escalas"
-                        className="flex border hover:bg-primary/90 hover:text-black justify-center items-center h-12 sm:h-14 text-sm sm:text-base md:text-lg rounded-lg transition-colors font-medium"
+                        className="flex border hover:bg-primary/90 hover:text-colortext justify-center items-center h-12 sm:h-14 text-sm sm:text-base md:text-lg rounded-lg transition-colors font-medium"
                     >
                         Escalas
                     </Link>
                     <Link
                         href="home/levitas"
-                        className="flex border hover:bg-primary/90 hover:text-black justify-center items-center h-12 sm:h-14 text-sm sm:text-base md:text-lg rounded-lg transition-colors font-medium"
+                        className="flex border hover:bg-primary/90 hover:text-colortext justify-center items-center h-12 sm:h-14 text-sm sm:text-base md:text-lg rounded-lg transition-colors font-medium"
                     >
                         Levitas
                     </Link>
                     <Link
                         href="home/musicas"
-                        className="flex border hover:bg-primary/90 hover:text-black justify-center items-center h-12 sm:h-14 text-sm sm:text-base md:text-lg rounded-lg transition-colors font-medium"
+                        className="flex border hover:bg-primary/90 hover:text-colortext justify-center items-center h-12 sm:h-14 text-sm sm:text-base md:text-lg rounded-lg transition-colors font-medium"
                     >
                         Músicas
                     </Link>
                     <Link
                         href="home/instrumentos"
-                        className="flex border hover:bg-primary/90 hover:text-black justify-center items-center h-12 sm:h-14 text-sm sm:text-base md:text-lg rounded-lg transition-colors font-medium"
+                        className="flex border hover:bg-primary/90 hover:text-colortext justify-center items-center h-12 sm:h-14 text-sm sm:text-base md:text-lg rounded-lg transition-colors font-medium"
                     >
                         Instrumentos
                     </Link>
@@ -103,19 +103,7 @@ export default function Home() {
                                                     <div className="p-1">
                                                         <EscalaSimpleCard
                                                             key={escala.id}
-                                                            id={escala.id}
-                                                            titulo={escala.titulo}
-                                                            ministro={escala.ministro}
-                                                            violao={escala.violao}
-                                                            teclado={escala.teclado}
-                                                            bateria={escala.bateria}
-                                                            guitarra={escala.guitarra}
-                                                            baixo={escala.baixo}
-                                                            data={escala.data}
-                                                            quarta={escala.quarta}
-                                                            observacoes={escala.observacoes ? escala.observacoes : ""}
-                                                            domingo={escala.domingo}
-                                                            especial={escala.especial}
+                                                            escala={escala}
                                                         />
                                                     </div>
                                                 </CarouselItem>
@@ -157,13 +145,7 @@ export default function Home() {
                                                     <div className="p-1">
                                                         <LevitaSimpleCard
                                                             key={levita.id}
-                                                            id={levita.id}
-                                                            nome={levita.nome}
-                                                            email={levita.email}
-                                                            contato={levita.contato}
-                                                            descricao={levita.descricao}
-                                                            instrumentos={levita.instrumentos}
-                                                            agenda={levita.agenda}
+                                                            levita={levita}
                                                         />
                                                     </div>
                                                 </CarouselItem>

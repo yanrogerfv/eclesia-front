@@ -10,7 +10,7 @@ import {
 	CardTitle
 } from "@/components/ui/card";
 import { useEffect, useState } from "react";
-import { ListFilter, Trash2, UserMinus } from "lucide-react";
+import { ListFilter, Trash2, UserMinus, X } from "lucide-react";
 import { DialogAddLevita, DialogVerLevita } from "@/components/modals/dialog-levita";
 import { Input } from "@/components/ui/input";
 import { Levita, Instrumento } from "@/lib/apiObjects";
@@ -151,80 +151,90 @@ export default function Home() {
 						filteredLevitas.map(levita => (
 							<Card
 								key={levita.id}
-								className={`relative flex flex-col h-full items-center lg:items-start transition-all ${removeOverlay ? "animate-pulse" : ""
+								className={`relative flex flex-col h-full lg:items-start hover:scale-[1.02] hover:shadow-lg transition-all ${removeOverlay ? "animate-pulse" : "duration-200"
 									} ${Cookies.get("levitaname") == levita.nome ? "border-special/30 bg-special/10" : ""
 									}`}
 							>
-								<CardHeader className="pb-3 items-center text-center lg:items-start lg:text-start">
-									<CardTitle className={`text-base sm:text-lg ${Cookies.get("username") == levita.nome ? "text-special" : "text-primary"
-										} leading-tight`}>
-										{levita.nome}
-									</CardTitle>
-									<CardDescription className="text-xs sm:text-sm line-clamp-1">
-										<p className="sm:hidden">
-											{levita.contato ? levita.contato : levita.email.length > 18 ? levita.email.substring(0, 18) + "..." : levita.email}
-										</p>
-										<p className="hidden sm:block">
-											{levita.contato ? levita.contato : levita.email}
-										</p>
-									</CardDescription>
-								</CardHeader>
+								<X className={removeOverlay ? "absolute hover:cursor-pointer sm:hidden bg-rose-500/80 rounded-br-xl p-1" : "absolute invisible"}
+									onClick={() => {
+										deleteMethod(`v1/levita/${levita.id}`)
+											.then(() => toast.success(`Levita ${levita.nome} removido com sucesso!`))
+											.catch((error) => {
+												toast.error("Erro ao remover o Levita!")
+												console.error("Erro na comunicação com a api: ", error);
+											})
+											.finally(() => clearStates());
+									}}/>
+									<CardHeader className="pb-3 items-center text-center lg:items-start lg:text-start">
+										<CardTitle className={`text-base sm:text-lg ${Cookies.get("username") == levita.nome ? "text-special" : "text-primary"
+											} leading-tight`}>
+											{levita.nome}
+										</CardTitle>
+										<CardDescription className="text-xs sm:text-sm line-clamp-1">
+											<p className="sm:hidden">
+												{levita.contato ? levita.contato : levita.email.length > 18 ? levita.email.substring(0, 18) + "..." : levita.email}
+											</p>
+											<p className="hidden sm:block">
+												{levita.contato ? levita.contato : levita.email}
+											</p>
+										</CardDescription>
+									</CardHeader>
 
-								<CardContent className="flex-1 pb-3 space-y-3 w-full">
-									{/* Instruments Carousel */}
-									<div className="min-h-[2rem]">
-										{levita.instrumentos.length > 0 ? (
-											<Carousel className="w-fit max-w-[140px] sm:max-w-48 lg:w-full lg:justify-self-start justify-self-center">
-												<CarouselContent className="-ml-1">
-													{levita.instrumentos.map(instrumento => (
-														<CarouselItem key={instrumento.id} className="basis-auto pl-1">
-															<Badge variant="outline" className="text-xs whitespace-nowrap">
-																{instrumento.nome}
-															</Badge>
-														</CarouselItem>
-													))}
-												</CarouselContent>
-											</Carousel>
-										) : (
-											<p className="text-xs text-muted-foreground">Sem instrumentos</p>
-										)}
-									</div>
+									<CardContent className="flex-1 pb-3 space-y-3 w-full">
+										{/* Instruments Carousel */}
+										<div className="min-h-[2rem]">
+											{levita.instrumentos.length > 0 ? (
+												<Carousel className="w-fit max-w-[140px] sm:max-w-48 lg:w-full lg:justify-self-start justify-self-center">
+													<CarouselContent className="-ml-1">
+														{levita.instrumentos.map(instrumento => (
+															<CarouselItem key={instrumento.id} className="basis-auto pl-1">
+																<Badge variant="outline" className="text-xs whitespace-nowrap">
+																	{instrumento.nome}
+																</Badge>
+															</CarouselItem>
+														))}
+													</CarouselContent>
+												</Carousel>
+											) : (
+												<p className="text-xs text-muted-foreground">Sem instrumentos</p>
+											)}
+										</div>
 
-									{/* Description */}
-									<div className="min-h-[3rem] sm:min-h-[4rem] justify-self-center">
-										{levita.descricao ? (
-											<CardDescription className="text-xs sm:text-sm text-subprimary line-clamp-3">
-												{levita.descricao}
-											</CardDescription>
-										) : (
-											<CardDescription className="text-xs sm:text-sm line-clamp-3">
-												Levita sem descrição.
-											</CardDescription>
-										)}
-									</div>
-								</CardContent>
+										{/* Description */}
+										<div className="min-h-[3rem] sm:min-h-[4rem] justify-self-center">
+											{levita.descricao ? (
+												<CardDescription className="text-xs sm:text-sm text-subprimary line-clamp-3">
+													{levita.descricao}
+												</CardDescription>
+											) : (
+												<CardDescription className="text-xs sm:text-sm line-clamp-3">
+													Levita sem descrição.
+												</CardDescription>
+											)}
+										</div>
+									</CardContent>
 
-								<CardFooter className="pt-3 justify-between w-full">
-									<DialogVerLevita
-										key={levita.id}
-										levita={levita}
-										disabled={removeOverlay}
-										setLevitas={setLevitas}
-									/>
-									<Button variant={"destructive"} size={"sm"} disabled={!removeOverlay || isLoading}
-										className={`transition-all duration-200 ease-in-out ${removeOverlay ? "hover:cursor-pointer animate-none" : "invisible"}`}
-										onClick={() => {
-											deleteMethod(`v1/levita/${levita.id}`)
-												.then(() => toast.success(`Levita ${levita.nome} removido com sucesso!`))
-												.catch((error) => {
-													toast.error("Erro ao remover o Levita!")
-													console.error("Erro na comunicação com a api: ", error);
-												})
-												.finally(() => clearStates());
-										}}>
-										<Trash2 />
-									</Button>
-								</CardFooter>
+									<CardFooter className="pt-3 justify-between w-full">
+										<DialogVerLevita
+											key={levita.id}
+											levita={levita}
+											disabled={removeOverlay}
+											setLevitas={setLevitas}
+										/>
+										<Button variant={"destructive"} size={"sm"} disabled={!removeOverlay || isLoading}
+											className={`transition-all duration-200 ease-in-out hidden sm:block ${removeOverlay ? "hover:cursor-pointer animate-none" : "invisible"}`}
+											onClick={() => {
+												deleteMethod(`v1/levita/${levita.id}`)
+													.then(() => toast.success(`Levita ${levita.nome} removido com sucesso!`))
+													.catch((error) => {
+														toast.error("Erro ao remover o Levita!")
+														console.error("Erro na comunicação com a api: ", error);
+													})
+													.finally(() => clearStates());
+											}}>
+											<Trash2 />
+										</Button>
+									</CardFooter>
 							</Card>
 						))
 					) : (
