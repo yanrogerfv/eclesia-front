@@ -72,11 +72,11 @@ export default function LandingPage() {
                         <Card className="w-[95%] sm:w-[90%] md:w-[80%] max-w-4xl border border-primary/75 flex  justify-between items-center px-3 py-2 sm:py-1 bg-cardstartbg/80 gap-2 sm:gap-0">
                             <Popover>
                                 <PopoverTrigger asChild>
-                                    <p className="text-xs sm:text-sm text-colortext cursor-pointer hover:underline">v0.2.0</p>
+                                    <p className="text-xs sm:text-sm text-colortext cursor-pointer hover:underline">v0.2.1</p>
                                 </PopoverTrigger>
                                 <PopoverContent className="w-72 sm:w-80 rounded-lg mx-2" side="top">
                                     <p className="text-sm text-center text-colortext/75 leading-relaxed">
-                                        Esta ainda é uma aplicação em desenvolvimento, então fique a vontade para relatar problemas e sugerir melhorias!
+                                        Esta ainda é uma aplicação em desenvolvimento, fique à vontade para relatar problemas e sugerir melhorias!
                                     </p>
                                 </PopoverContent>
                             </Popover>
@@ -98,23 +98,26 @@ export default function LandingPage() {
                                 </PopoverContent>
                             </Popover>
 
-                        {/* <Popover>
+                        <Popover>
                                 <PopoverTrigger asChild>
                                     <p className="text-xs sm:text-sm cursor-pointer hover:underline order-3 sm:order-3">Thanks!</p>
                                 </PopoverTrigger>
-                                <PopoverContent className="w-72 sm:w-80 rounded-lg mx-2">
+                                <PopoverContent className="w-72 sm:w-80 rounded-lg mx-2" side="top">
                                     <div className="text-start">
-                                        <p className="text-xs sm:text-sm leading-relaxed">
+                                        <p className="text-xs sm:text-sm leading-relaxed cursor-default">
                                             <p className="text-primary font-medium mb-2">Agradecimentos:</p>
-                                            <Link className="text-specialtext hover:underline" target="_blank" href={"https://github.com/JoaoVitorSD"}>João Vitor Depollo</Link>, {" "}
+                                            Obrigado 
+                                            {/* <Link className="text-specialtext hover:underline" target="_blank" href={"https://github.com/JoaoVitorSD"}>João Vitor Depollo</Link>, {" "}
                                             <Link className="text-specialtext hover:underline" target="_blank" href={"https://github.com/SamuelAMT"}>Samuel Tavares</Link>, {" "}
                                             <Link className="text-specialtext hover:underline" target="_blank" href={"https://github.com/Souzaa1"}>Pedro Antônio</Link> e {" "}
-                                            <Link className="text-specialtext hover:underline" target="_blank" href={"https://github.com/gregorystevao19"}>Grégory Stevão</Link> pelas dicas, e {" "}
-                                            <span className="text-specialtext hover:brightness-125">Isabella Cassilhas e Gabriel Barros</span> pela avaliação!
+                                            <Link className="text-specialtext hover:underline" target="_blank" href={"https://github.com/gregorystevao19"}>Grégory Stevão</Link> pelas dicas, e {" "} */}
+                                            <span className="text-special hover:brightness-125"> Isabella Cassilhas </span> e 
+                                            <span className="text-special hover:brightness-125"> Gabriel Barros </span> 
+                                            pelas avaliações e sugestões, e todo o ministério pela oportunidade e confiança!
                                         </p>
                                     </div>
                                 </PopoverContent>
-                            </Popover> */}
+                            </Popover>
                         </Card>
                     </div>
                 </main>
