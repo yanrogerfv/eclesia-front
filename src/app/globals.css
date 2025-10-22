@@ -19,7 +19,7 @@
 		--card-start-bg: oklch(96.62% 0.0274 106.90);
 		--card-foreground: oklch(9.60% 0.0013 106.64);
 
-		--border: oklch(89.74% 0.1520 93.52);
+		--border: oklch(77.095% 0.14532 92.579);
 		--input: oklch(92.87% 0.0067 106.53);
 
 		--primary: oklch(83.28% 0.1716 82.06);
@@ -31,7 +31,7 @@
 		--subprimary: oklch(78.09% 0.1554 108.51);
 		--sub-primary-foreground: oklch(9.60% 0.0013 106.64);
 
-		--special: oklch(63.00% 0.2556 28.98);
+		--special: oklch(62.038% 0.21974 33.196);
 		--special-foreground: oklch(9.60% 0.0013 106.64);
 		--special-text: oklch(75.17% 0.15604 71.217);
 
@@ -45,7 +45,7 @@
 		--colortext: oklch(28.57% 0.0071 95.31);
 
 		--radius: 0.05rem;
-		--table-bg: oklch(91.05% 0.1443 95.33);
+		--table-bg: oklch(94.55% 0.09782 97.239);
 		--sidebar-background: oklch(98.25% 0.0961 108.04);
 		--sidebar-foreground: oklch(25.82% 0.0207 107.76);
 		--sidebar-primary: oklch(48.78% 0.2170 264.39);
@@ -71,7 +71,7 @@
 		--card-start-bg: oklch(96.81% 0.0114 81.51);
 		--card-foreground: oklch(29.82% 0.0406 29.21);
 
-		--border: oklch(87.86% 0.0206 76.53);
+		--border: oklch(72.938% 0.10465 140.59);
 		--input: oklch(87.86% 0.0206 76.53);
 
 		--primary: oklch(52.42% 0.1311 144.26);
@@ -190,10 +190,10 @@
 		--primary: oklch(79.00% 0.1000 51.73);
 		--primary-foreground: oklch(100.00% 0.0000 0.00);
 
-		--secondary: oklch(85.522% 0.13401 89.589);
+		--secondary: oklch(71.041% 0.12261 70.152);
 		--secondary-foreground: oklch(45.00% 0.0300 257.68);
 
-		--subprimary: oklch(72.523% 0.04553 53.227);
+		--subprimary: oklch(65.716% 0.08233 51.746);
 		--sub-primary-foreground: oklch(37.00% 0.0300 259.73);
 
 		--special: oklch(69.285% 0.18763 23.329);
@@ -209,7 +209,7 @@
 		--ring: oklch(87.00% 0.0700 18.51);
 		--colortext: oklch(37.00% 0.0300 259.73);
 
-		--table-bg: oklch(95.00% 0.0300 85.46);
+		--table-bg: oklch(93.592% 0.04658 69.241);
 		--sidebar-background: oklch(93.00% 0.0400 51.01);
 		--sidebar-foreground: oklch(37.00% 0.0300 259.73);
 		--sidebar-primary: oklch(73.00% 0.0800 48.51);
@@ -317,7 +317,7 @@
 		--ring: oklch(0.72 0.12 210.36);
 		--colortext: oklch(0.38 0.06 211.49);
 
-		--table-bg: oklch(0.98 0 0);
+		--table-bg: oklch(90.696% 0.03459 194.478);
 		--sidebar-background: oklch(0.98 0 0);
 		--sidebar-foreground: oklch(0.14 0 0);
 		--sidebar-primary: oklch(0.72 0.12 210.36);

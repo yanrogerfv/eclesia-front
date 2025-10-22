@@ -1,7 +1,5 @@
 // import Cookies from "js-cookie";
 // import { useEffect, useState } from "react";
-const userRole = localStorage?.getItem("role");
-export default userRole;
 // export function getUserRole() {
 //     const [role, setRole] = useState<string>("");
 //     if (!Cookies.get("token") || !Cookies.get("username")) return role;

@@ -53,7 +53,7 @@ export function SidebarNextEvents({ icon, title, style }: SidebarModalsProps) {
                     <span>{title}</span>
                 </SidebarMenuButton>
             </DialogTrigger>
-            <DialogContent className="w-[90%] max-h-[90vh] overflow-y-auto">
+            <DialogContent className="w-[90%] md:w-xl md:max-w-xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>
                         {title}
@@ -90,7 +90,7 @@ export function SidebarNextEvents({ icon, title, style }: SidebarModalsProps) {
                                 </CardHeader>
                                 <CardContent>
                                     <p>
-                                        <span className="text-special">Ministro:</span> <span className="text-primary">{escala.ministro}</span>
+                                        <span className="text-special">Ministro:</span> {escala.ministro ? <span className="text-specialtext">{escala.ministro}</span> : <span className="text-colortext/40">Não inserido.</span>}
                                     </p>
                                     <p>
                                         <span className="text-subprimary">Violão:</span> {escala.violao ? escala.violao : <span className="text-secondary/40">Não inserido.</span>}
@@ -270,7 +270,7 @@ export function SidebarMyEscalas({ icon, title, style }: SidebarModalsProps) {
                     {title}
                 </SidebarMenuButton>
             </DialogTrigger>
-            <DialogContent className="w-[90%] max-h-[90vh] overflow-y-auto">
+            <DialogContent className="w-[90%] md:w-xl md:max-w-xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>
                         {title}
@@ -280,7 +280,7 @@ export function SidebarMyEscalas({ icon, title, style }: SidebarModalsProps) {
                     </DialogDescription>
                 </DialogHeader>
                 {/* Content aqui */}
-                <div className={"md:grid md:grid-cols-2 flex gap-4"}>
+                <div className={"grid grid-cols-1 md:grid-cols-2 gap-4"}>
                     {loading || !escalas ? (
                         <div className="flex justify-center items-center h-40">
                             <div className="h-16 w-16 border-4 border-primary rounded-3xl animate-spin" />
@@ -305,12 +305,12 @@ export function SidebarMyEscalas({ icon, title, style }: SidebarModalsProps) {
                                 </CardDescription>
                             </CardHeader>
                             <CardContent>
-                                <p><span className="text-special">Ministro:</span> <span className="text-secondary">{escala.ministro.nome}</span></p>
-                                <p><span className="text-subprimary">Violão:</span> {escala.violao ? escala.violao.nome : <span className="text-secondary/40">Não inserido.</span>}</p>
-                                <p><span className="text-subprimary">Teclado:</span> {escala.teclado ? escala.teclado.nome : <span className="text-secondary/40">Não inserido.</span>}</p>
-                                <p><span className="text-subprimary">Bateria:</span> {escala.bateria ? escala.bateria.nome : <span className="text-secondary/40">Não inserido.</span>}</p>
-                                <p><span className="text-subprimary">Baixo:</span> {escala.baixo ? escala.baixo.nome : <span className="text-secondary/40">Não inserido.</span>}</p>
-                                <p><span className="text-subprimary">Guitarra:</span> {escala.guitarra ? escala.guitarra.nome : <span className="text-secondary/40">Não inserido.</span>}</p>
+                                <p><span className="text-special">Ministro:</span> {escala.ministro ? <span className="text-secondary">{escala.ministro.nome}</span> : <span className="text-colortext/40">Não inserido.</span>}</p>
+                                <p><span className="text-subprimary">Violão:</span> {escala.violao ? escala.violao.nome : <span className="text-colortext/40">Não inserido.</span>}</p>
+                                <p><span className="text-subprimary">Teclado:</span> {escala.teclado ? escala.teclado.nome : <span className="text-colortext/40">Não inserido.</span>}</p>
+                                <p><span className="text-subprimary">Bateria:</span> {escala.bateria ? escala.bateria.nome : <span className="text-colortext/40">Não inserido.</span>}</p>
+                                <p><span className="text-subprimary">Baixo:</span> {escala.baixo ? escala.baixo.nome : <span className="text-colortext/40">Não inserido.</span>}</p>
+                                <p><span className="text-subprimary">Guitarra:</span> {escala.guitarra ? escala.guitarra.nome : <span className="text-colortext/40">Não inserido.</span>}</p>
                             </CardContent>
                             <CardFooter className="flex items-center justify-between">
                                 <div>

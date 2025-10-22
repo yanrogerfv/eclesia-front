@@ -89,10 +89,10 @@ export default function Home() {
                             </CardTitle>
 
                             {!isClient || !nextEscalas ? (
-                                <div className="flex flex-col sm:flex-row gap-4 px-4">
-                                    <Skeleton className="h-40 sm:h-48 w-full sm:w-80 rounded-lg flex-shrink-0" />
-                                    <Skeleton className="h-40 sm:h-48 w-full sm:w-80 rounded-lg flex-shrink-0 hidden sm:block" />
-                                    <Skeleton className="h-40 sm:h-48 w-full sm:w-80 rounded-lg flex-shrink-0 hidden lg:block" />
+                                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 px-4 py-4">
+                                    <Skeleton className="h-40 w-full rounded-lg" />
+                                    <Skeleton className="h-40 w-full rounded-lg hidden sm:block" />
+                                    <Skeleton className="h-40 w-full rounded-lg hidden xl:block" />
                                 </div>
                             ) : nextEscalas.length > 0 ? (
                                 <div className="px-2 sm:px-4">
@@ -131,10 +131,10 @@ export default function Home() {
                             </CardTitle>
 
                             {!isClient || !levitasData ? (
-                                <div className="flex flex-col sm:flex-row gap-4 px-4">
-                                    <Skeleton className="h-40 sm:h-48 w-full sm:w-80 rounded-lg flex-shrink-0" />
-                                    <Skeleton className="h-40 sm:h-48 w-full sm:w-80 rounded-lg flex-shrink-0 hidden sm:block" />
-                                    <Skeleton className="h-40 sm:h-48 w-full sm:w-80 rounded-lg flex-shrink-0 hidden lg:block" />
+                                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 px-4 py-4">
+                                    <Skeleton className="h-40 w-full rounded-lg" />
+                                    <Skeleton className="h-40 w-full rounded-lg hidden sm:block" />
+                                    <Skeleton className="h-40 w-full rounded-lg hidden xl:block" />
                                 </div>
                             ) : levitasData.length > 0 ? (
                                 <div className="px-2 sm:px-4">

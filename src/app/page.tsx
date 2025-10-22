@@ -72,7 +72,7 @@ export default function LandingPage() {
                         <Card className="w-[95%] sm:w-[90%] md:w-[80%] max-w-4xl border border-primary/75 flex  justify-between items-center px-3 py-2 sm:py-1 bg-cardstartbg/80 gap-2 sm:gap-0">
                             <Popover>
                                 <PopoverTrigger asChild>
-                                    <p className="text-xs sm:text-sm text-colortext cursor-pointer hover:underline">v0.2.1</p>
+                                    <p className="text-xs sm:text-sm text-colortext cursor-pointer hover:underline">v0.2.2</p>
                                 </PopoverTrigger>
                                 <PopoverContent className="w-72 sm:w-80 rounded-lg mx-2" side="top">
                                     <p className="text-sm text-center text-colortext/75 leading-relaxed">

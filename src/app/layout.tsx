@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Poppins, Noto_Sans_JP } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next"
+import { Analytics } from "@vercel/analytics/next"
 import "./globals.css";
 import { ThemeProvider } from "@/components/themeProvider";
 import { Toaster } from "@/components/ui/sonner";
@@ -38,6 +39,7 @@ export default function RootLayout({
 				<ThemeProvider attribute="class" defaultTheme={"creamy"} enableSystem={false} disableTransitionOnChange>
 					{children}
 					<Toaster />
+					<Analytics />
 					<SpeedInsights />
 				</ThemeProvider>
 			</body>

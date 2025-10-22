@@ -58,7 +58,7 @@ export default function ScheduleViewer() {
                             <h1 className="ml-4 font-extrabold tracking-tight text-2xl sm:text-5xl">Escalas</h1>
                         </div>
                         <div className="flex justify-end gap-2 mt-4 sm:w-full">
-                            <Link href="/login" >
+                            <Link href="/home" >
                                 {/* <Button variant={"ghost"}> */}
                                 <TooltipProvider>
                                     <Tooltip delayDuration={500}>
@@ -121,17 +121,17 @@ export default function ScheduleViewer() {
                                         </CardDescription>
                                     </CardHeader>
                                     <CardContent>
-                                        <p><span className="text-subprimary">Ministro:</span> <span className="text-secondary">{escala.ministro}</span>
+										<p><span className="text-primary">Ministro:</span> {escala.ministro ? <span className="text-specialtext">{escala.ministro}</span> : <span className="text-colortext/40">Não inserido.</span>}
                                         </p>
-                                        <p><span className="text-subprimary">Violão:</span> {escala.violao || <span className="text-secondary/40">Não inserido.</span>}
+                                        <p><span className="text-subprimary">Violão:</span> {escala.violao || <span className="text-colortext/40">Não inserido.</span>}
                                         </p>
-                                        <p><span className="text-subprimary">Teclado:</span> {escala.teclado || <span className="text-secondary/40">Não inserido.</span>}
+                                        <p><span className="text-subprimary">Teclado:</span> {escala.teclado || <span className="text-colortext/40">Não inserido.</span>}
                                         </p>
-                                        <p><span className="text-subprimary">Bateria:</span> {escala.bateria || <span className="text-secondary/40">Não inserido.</span>}
+                                        <p><span className="text-subprimary">Bateria:</span> {escala.bateria || <span className="text-colortext/40">Não inserido.</span>}
                                         </p>
-                                        <p><span className="text-subprimary">Baixo:</span> {escala.baixo || <span className="text-secondary/40">Não inserido.</span>}
+                                        <p><span className="text-subprimary">Baixo:</span> {escala.baixo || <span className="text-colortext/40">Não inserido.</span>}
                                         </p>
-                                        <p><span className="text-subprimary">Guitarra:</span> {escala.guitarra || <span className="text-secondary/40">Não inserido.</span>}
+                                        <p><span className="text-subprimary">Guitarra:</span> {escala.guitarra || <span className="text-colortext/40">Não inserido.</span>}
                                         </p>
                                     </CardContent>
                                     <CardFooter className="flex items-center justify-between">

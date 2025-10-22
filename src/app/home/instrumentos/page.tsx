@@ -6,6 +6,8 @@ import { DialogAddInstrumento, DialogRemoveInstrumento } from "@/components/moda
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useEffect, useState } from "react";
 import BackButton from "@/components/next-back";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/app-sidebar";
 
 export default function Home() {
 	const [isLoading, setLoading] = useState(true)
@@ -29,46 +31,49 @@ export default function Home() {
 	}, [instrumentosData])
 
 	return (
-		<main className="max-w-6xl w-full h-full px-4 sm:px-8 lg:px-6 mx-auto my-6 sm:my-12">
-			<nav className="mb-4">
-				<div className="flex items-center mb-4 gap-4 justify-between align-middle">
-					<div className="flex items-center justify-between w-full">
-						<div className="flex items-center">
-							<BackButton />
-							<h1 className="ml-4 font-extrabold tracking-tight text-2xl sm:text-5xl">Instrumentos</h1>
+		<SidebarProvider defaultOpen={false}>
+			<main className="max-w-6xl w-full h-full px-4 sm:px-8 lg:px-6 mx-auto my-6 sm:my-12">
+				<nav className="mb-4">
+					<div className="flex items-center mb-4 gap-4 justify-between align-middle">
+						<div className="flex items-center justify-between w-full">
+							<div className="flex items-center">
+								<BackButton />
+								<h1 className="ml-4 font-extrabold tracking-tight text-2xl sm:text-5xl">Instrumentos</h1>
+							</div>
+							<SidebarTrigger className="border sm:hidden" />
 						</div>
-						{/* <SidebarTrigger className="border sm:hidden" /> */}
+						<div className="flex gap-2">
+							{isLeader && <DialogAddInstrumento disabled={isLoading} state={setInstrumentosData} />}
+							{isLeader && <DialogRemoveInstrumento allInstrumentos={instrumentosData ? instrumentosData : undefined} state={setInstrumentosData} />}
+						</div>
 					</div>
-					<div className="flex gap-2">
-						{isLeader && <DialogAddInstrumento disabled={isLoading} state={setInstrumentosData} />}
-						{isLeader && <DialogRemoveInstrumento allInstrumentos={instrumentosData ? instrumentosData : undefined} state={setInstrumentosData}/>}
-					</div>
+					<h2 className="scroll-m-20 border-b text-base text-neutral-700 tracking-tight transition-colors first:mt-0">
+						{isLoading ? "Carregando Instrumentos..." : "Visualizando Instrumentos"}</h2>
+				</nav>
+
+
+				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+					{isLoading || !instrumentosData ? (
+						<div className="col-span-4 h-full flex items-center justify-center mt-20">
+							<div className="size-80 border-4 border-transparent text-primary/40 text-4xl animate-spin flex items-center justify-center border-t-primary rounded-full">
+								<div className="size-64 border-4 border-transparent text-subprimary/40 text-2xl animate-spin flex items-center justify-center border-t-subprimary rounded-full" />
+							</div>
+						</div>
+					) : (
+						instrumentosData.map(instrumento => (
+							<Card key={instrumento.nome}>
+								<CardHeader>
+									<CardTitle className="flex items-center justify-center text-secondary">{instrumento.nome}
+									</CardTitle>
+									<CardDescription>
+									</CardDescription>
+								</CardHeader>
+							</Card>
+						))
+					)}
 				</div>
-				<h2 className="scroll-m-20 border-b text-base text-neutral-700 tracking-tight transition-colors first:mt-0">
-					{isLoading ? "Carregando Instrumentos..." : "Visualizando Instrumentos"}</h2>
-			</nav>
-
-
-			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-				{isLoading || !instrumentosData ? (
-					<div className="col-span-4 h-full flex items-center justify-center mt-20">
-						<div className="size-80 border-4 border-transparent text-primary/40 text-4xl animate-spin flex items-center justify-center border-t-primary rounded-full">
-							<div className="size-64 border-4 border-transparent text-subprimary/40 text-2xl animate-spin flex items-center justify-center border-t-subprimary rounded-full" />
-						</div>
-					</div>
-				) : (
-					instrumentosData.map(instrumento => (
-						<Card key={instrumento.nome}>
-							<CardHeader>
-								<CardTitle className="flex items-center justify-center text-secondary">{instrumento.nome}
-								</CardTitle>
-								<CardDescription>
-								</CardDescription>
-							</CardHeader>
-						</Card>
-					))
-				)}
-			</div>
-		</main>
+			</main>
+			<AppSidebar side="right" />
+		</SidebarProvider >
 	)
 }
