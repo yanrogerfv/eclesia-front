@@ -1,9 +1,9 @@
 "use client"
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { ArrowLeftCircle, Eye, EyeOff, Key, Loader, Lock, LockOpen, LogIn, RectangleEllipsis, User } from "lucide-react";
+import { ArrowLeftCircle, Eye, EyeOff, Loader, LogIn, RectangleEllipsis, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -11,8 +11,6 @@ import { z } from "zod";
 import Cookies from "js-cookie";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
-import { DialogFooter } from "@/components/ui/dialog";
-// import { usePermission } from "@/context/permissionContext";
 
 const formSchema = z.object({
     username: z.string(),
@@ -32,7 +30,7 @@ export default function LoginPage() {
         }
     })
 
-    const promise = () => new Promise((resolve) => setTimeout(() => resolve({ name: "Sonner" }), 3000))
+    const promise = () => new Promise((resolve) => setTimeout(() => resolve({ name: "Sonner" }), 1000))
 
     const handleLogin = async (data: FormData) => {
         try {
@@ -48,20 +46,18 @@ export default function LoginPage() {
             if (response.ok) {
                 let resp = await response.json();
                 Cookies.set("token", resp.token, { expires: expireTime })
-                // setPermission(resp.role);
                 Cookies.set("username", data.username, { expires: expireTime })
                 Cookies.set("levitaname", resp.levita.name, { expires: expireTime })
                 sessionStorage.setItem("role", resp.role)
                 sessionStorage.setItem("levita", resp.levita.id)
-                toast.success("Usuário logado com sucesso!")
-                router.push("/home")
+                toast.success(`Usuário logado com sucesso! Bem-vindo, ${data.username}.`)
+                await promise();
+                // router.push("/home")
+                window.location.href = "/home";
             }
             if (!response.ok) {
-                // const error = await response.json()
                 let resp = await response.json();
                 toast.error("Erro ao fazer login: " + resp.error[0])
-                // toast.error("Erro ao fazer login: ")
-                // console.log(response)
             }
         } catch (error) {
             console.error("Erro na comunicação com a api: ", error);

@@ -21,6 +21,19 @@ import { Textarea } from "../ui/textarea";
 import Cookies from "js-cookie";
 import { toast } from "sonner";
 
+// Helper to format Brazilian phone numbers while typing
+function formatNumberToBRL(value: string): [string, string] {
+    const numericValue = value.replace(/\D/g, "");
+    let formattedValue = numericValue;
+    if (numericValue.length > 2) {
+        formattedValue = `(${numericValue.slice(0, 2)}) ${numericValue.slice(2, 7)}`;
+    }
+    if (numericValue.length > 7) {
+        formattedValue += `-${numericValue.slice(7, 11)}`;
+    }
+    return [numericValue, formattedValue];
+}
+
 export function DialogVerLevita(props: {
     levita: Levita,
     disabled: boolean,
@@ -29,12 +42,12 @@ export function DialogVerLevita(props: {
 ) {
 
     const [levitaId, setLevitaId] = useState<string | null>();
-    const [isUserAdmin, setIsUserAdmin] = useState(false);
+    const [isUserLeaderOrAdmin, setIsUserLeaderOrAdmin] = useState(false);
 
     useEffect(() => {
         // This code now runs only on the client side, avoiding the ReferenceError
-        const userAdmin = sessionStorage.getItem("role") === "ADMIN";
-        setIsUserAdmin(userAdmin);
+        const userLeaderOrAdmin = sessionStorage.getItem("role") === "Líder" || sessionStorage.getItem("role") === "ADMIN";
+        setIsUserLeaderOrAdmin(userLeaderOrAdmin);
         setLevitaId(sessionStorage.getItem("levita"));
     }, []);
 
@@ -54,7 +67,7 @@ export function DialogVerLevita(props: {
                 <p className="text-colortext text-center">{props.levita.descricao ? props.levita.descricao : "Nenhuma descrição inserida para este levita."}</p>
                 <DialogFooter className="w-full flex">
                     <div className="flex gap-4 w-full justify-end">
-                        {levitaId === props.levita.id || isUserAdmin ?
+                        {levitaId === props.levita.id || isUserLeaderOrAdmin ?
                             <DialogEditLevita levita={props.levita} setLevitas={props.setLevitas} />
                             : <Church size={20} />}
                     </div>
@@ -91,6 +104,7 @@ export function DialogAddLevita({ disable, setLevitas }: DialogAddLevitaProps) {
         setInstrumentos(instrumentosLevita.filter((currentInstrument) => currentInstrument.id !== instrumento.id))
     }
 
+
     const handleSubmitLevita = () => {
         setLoading(true)
         if (!nomeLevita || nomeLevita.length < 3) {
@@ -104,10 +118,10 @@ export function DialogAddLevita({ disable, setLevitas }: DialogAddLevitaProps) {
             setLoading(false)
         } else {
             postMethod("v1/levita", {
-                nome: nomeLevita,
-                email: emailLevita,
-                contato: contatoLevita,
-                descricao: descricaoLevita,
+                nome: nomeLevita.trim(),
+                email: emailLevita.trim(),
+                contato: contatoLevita.trim(),
+                descricao: descricaoLevita.trim(),
                 instrumentos: instrumentosLevita.map((instrumento) => instrumento.id)
             }).finally(() => {
                 toast.success("Levita adicionado com sucesso!")
@@ -152,7 +166,10 @@ export function DialogAddLevita({ disable, setLevitas }: DialogAddLevitaProps) {
                     <div>
                         <Label>Telefone:</Label>
                         <Input type="tel" placeholder="Insira um contato do Levita."
-                            value={contatoLevita} onChange={(e) => setTelLevita(e.target.value)} />
+                            value={contatoLevita} onChange={(e) => {
+                                const [, formatted] = formatNumberToBRL(e.target.value);
+                                setTelLevita(formatted);
+                            }} />
                     </div>
                     <div>
                         <Label>Instrumentos:</Label>
@@ -179,8 +196,8 @@ export function DialogAddLevita({ disable, setLevitas }: DialogAddLevitaProps) {
                     </div>
                 </div>
                 <DialogFooter className={`gap-4 ${isLoading && "opacity-50"}`}>
-                    <Button className="hover:bg-rose-600 bg-red-600" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
-                    <Button className="hover:bg-emerald-500 bg-green-600" disabled={isLoading} type="submit" onClick={() => {
+                    <Button variant={"cancel"} onClick={() => setOpen(false)}>Cancelar</Button>
+                    <Button variant={"save"} disabled={isLoading} type="submit" onClick={() => {
                         handleSubmitLevita()
                     }}>Salvar</Button>
                 </DialogFooter>
@@ -247,7 +264,10 @@ export function DialogEditLevita({ levita, setLevitas }: DialogEditLevitaProps) 
                     <div>
                         <Label>Telefone:</Label>
                         <Input type="tel" placeholder="Insira um contato do Levita." disabled={isLoading}
-                            value={contatoLevita ? contatoLevita : undefined} onChange={(e) => setContatoLevita(e.target.value)} />
+                            value={contatoLevita ? contatoLevita : undefined} onChange={(e) => {
+                                const [, formatted] = formatNumberToBRL(e.target.value);
+                                setContatoLevita(formatted);
+                            }} />
                     </div>
                     <div>
                         <Label>Instrumentos:</Label>
@@ -275,15 +295,15 @@ export function DialogEditLevita({ levita, setLevitas }: DialogEditLevitaProps) 
                 </div>
 
                 <DialogFooter className={`gap-4 ${isLoading && "opacity-50"}`}>
-                    <Button className="hover:bg-rose-600 bg-red-600" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
-                    <Button className="hover:bg-emerald-500 bg-green-600" disabled={isLoading} type="submit" onClick={() => {
+                    <Button variant={"cancel"} onClick={() => setOpen(false)}>Cancelar</Button>
+                    <Button variant={"save"} disabled={isLoading} type="submit" onClick={() => {
                         setLoading(true)
                         postMethod("v1/levita", {
                             id: levita.id,
-                            nome: nomeLevita,
-                            email: emailLevita,
-                            contato: contatoLevita,
-                            descricao: descricaoLevita,
+                            nome: nomeLevita.trim(),
+                            email: emailLevita.trim(),
+                            contato: contatoLevita.trim(),
+                            descricao: descricaoLevita.trim(),
                             instrumentos: instrumentosLevita.map((instrumento) => instrumento.id)
                         }).catch((error) => {
                             console.error("Erro na comunicação com a api: ", error);

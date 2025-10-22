@@ -82,12 +82,12 @@ export function VerEscalaSomenteLeitura({ escalaId }: { escalaId: UUID }) {
 						escalaMusicas.map((musica) => (
 							<Button key={musica.id} variant={"outline"} className="rounded-lg m-2">
 								<Link key={musica.id} href={musica.link} target="_blank" className="">
-								<p className="sm:hidden">
-									{musica.nome.substring(0, 25) + (musica.nome.length > 25 ? "..." : "")}
-								</p>
-								<p className="hidden sm:block">
-									{musica.nome}
-								</p>
+									<p className="sm:hidden">
+										{musica.nome.substring(0, 25) + (musica.nome.length > 25 ? "..." : "")}
+									</p>
+									<p className="hidden sm:block">
+										{musica.nome}
+									</p>
 								</Link>
 							</Button>
 						)) : <p className="text-foreground/25">Nenhuma música inserida.</p>
@@ -160,12 +160,12 @@ export function VerEscala(props: props) {
 						escalaMusicas.map((musica) => (
 							<Button key={musica.id} variant={"outline"} className="rounded-lg m-2">
 								<Link key={musica.id} href={musica.link} target="_blank" className="">
-								<p className="sm:hidden">
-									{musica.nome.substring(0, 25) + (musica.nome.length > 25 ? "..." : "")}
-								</p>
-								<p className="hidden sm:block">
-									{musica.nome}
-								</p>
+									<p className="sm:hidden">
+										{musica.nome.substring(0, 25) + (musica.nome.length > 25 ? "..." : "")}
+									</p>
+									<p className="hidden sm:block">
+										{musica.nome}
+									</p>
 								</Link>
 							</Button>
 						)) : <p className="text-foreground/25">Nenhuma música inserida.</p>
@@ -375,8 +375,8 @@ export function EditEscala(pp: addEditDialogProps) {
 
 				</ScrollArea>
 				<DialogFooter className={`gap-4 ${isLoading ? "opacity-50" : ""}`}>
-					<Button className="hover:bg-rose-500 bg-red-600" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
-					<Button className="hover:bg-emerald-500 bg-green-600" disabled={isLoading} onClick={() => {
+					<Button variant={"cancel"} disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
+					<Button variant={"save"} disabled={isLoading} onClick={() => {
 						if (titulo.length == 0) {
 							toast.warning("Insira um título para a escala!")
 						} else if (data.length == 0) {
@@ -438,8 +438,7 @@ export function AddEscala(props: DialogAddEscalaProps) {
 	const [backs, setBacks] = useState<String[]>([]);
 	const [observacao, setObservacao] = useState<string>();
 
-	let disableFields =
-		data == undefined || data.length == 0 || levitasDisponiveis == undefined || levitasDisponiveis.length == 0
+	let disableFields = data == undefined || data.length == 0 || levitasDisponiveis == undefined || levitasDisponiveis.length == 0
 
 
 	useEffect(() => {
@@ -464,6 +463,20 @@ export function AddEscala(props: DialogAddEscalaProps) {
 	}
 	function removeBack(levitaId: String) {
 		setBacks(backs.filter((back) => back != levitaId))
+	}
+
+	function clearFields() {
+		setData("");
+		setEspecial(false);
+		setTitulo("");
+		setMinistro("");
+		setBaixo("");
+		setBateria("");
+		setGuitarra("");
+		setTeclado("");
+		setViolao("");
+		setBacks([]);
+		setObservacao("");
 	}
 
 	return (
@@ -500,17 +513,14 @@ export function AddEscala(props: DialogAddEscalaProps) {
 							<CheckboxConfetti title="Especial" onClick={() => setEspecial(!especial)} />
 						</div>
 						<div className={`w-full ${!disableFields ? "hidden" : "flex"} justify-center items-center text-center`}>
-							{true ?
-								<div className="fixed w-2/3 mt-24 flex justify-center items-center">
-									<h1 className="">
-										{isLoading ? "Buscando levitas disponíveis..." :
-											levitasDisponiveis == undefined ? "Escolha uma data para buscar os levitas disponíveis." :
-												levitasDisponiveis.length == 0 ? "Nenhum levita disponível para a data selecionada." :
-													"Levitas disponíveis carregados!"}
-									</h1>
-								</div>
-								:
-								<></>}
+							<div className="fixed w-2/3 mt-24 flex justify-center items-center">
+								<h1 className="">
+									{isLoading ? "Buscando levitas disponíveis..." :
+										levitasDisponiveis == undefined ? "Escolha uma data para buscar os levitas disponíveis." :
+											levitasDisponiveis.length == 0 ? "Nenhum levita disponível para a data selecionada." :
+												"Levitas disponíveis carregados!"}
+								</h1>
+							</div>
 						</div>
 						<div className={disableFields ? "opacity-40 pointer-events-none select-none blur-[2px]" : ""}>
 							<div className="w-full space-y-1 my-4">
@@ -592,8 +602,8 @@ export function AddEscala(props: DialogAddEscalaProps) {
 					</div>
 				</ScrollArea>
 				<DialogFooter className={`gap-4 ${isLoading ? "opacity-50" : ""}`}>
-					<Button className="hover:bg-rose-500 bg-red-600" disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
-					<Button className="hover:bg-emerald-500 bg-green-600" disabled={isLoading || disableFields} onClick={() => {
+					<Button variant={"cancel"} disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
+					<Button variant={"save"} disabled={isLoading || disableFields} onClick={() => {
 						if (titulo.length == 0) {
 							toast.warning("Insira um título para a escala!")
 						} else if (!data || data.length == 0) {
@@ -699,18 +709,17 @@ export function DialogAddMusicaInEscala(props: DialogAddMusicaInEscalaProps) {
 				</Card>
 
 				<DialogFooter className="flex justify-between gap-4">
-					<Button className="hover:bg-rose-500 bg-red-600" onClick={() => setOpen(false)}>Cancelar</Button>
-					<Button className="hover:bg-emerald-500 bg-green-600"
-						type="submit" disabled={isLoading} onClick={() => {
-							setLoading(true)
-							putMethod(`v1/escala/musicas/${props.escala?.id}`, { musicasIds: selectedMusicas })
-								.catch((error) => toast.error("Erro ao adicionar músicas!", error))
-								.then(() => toast.success("Músicas adicionadas com sucesso!"))
-								.then(() => props.setMusicas && props.setMusicas(undefined))
-								.then(() => setLoading(false))
-								.then(() => setOpen(false))
-							setLoading(false)
-						}}>Salvar</Button>
+					<Button variant={"cancel"} onClick={() => setOpen(false)}>Cancelar</Button>
+					<Button variant={"save"} type="submit" disabled={isLoading} onClick={() => {
+						setLoading(true)
+						putMethod(`v1/escala/musicas/${props.escala?.id}`, { musicasIds: selectedMusicas })
+							.catch((error) => toast.error("Erro ao adicionar músicas!", error))
+							.then(() => toast.success("Músicas adicionadas com sucesso!"))
+							.then(() => props.setMusicas && props.setMusicas(undefined))
+							.then(() => setLoading(false))
+							.then(() => setOpen(false))
+						setLoading(false)
+					}}>Salvar</Button>
 				</DialogFooter>
 			</DialogContent>
 		</Dialog>

@@ -49,8 +49,8 @@ export function DialogAddMusica({ setState, disabled }: { setState: React.Dispat
                     value={cifraMusica} onChange={(e) => setCifraMusica(e.target.value)} />
 
                 <DialogFooter className="gap-4">
-                    <Button className="hover:bg-rose-600 bg-red-600" onClick={() => setOpen(false)}>Cancelar</Button>
-                    <Button className="hover:bg-emerald-500 bg-green-600" type="submit" disabled={isLoading || nomeMusica === "" || linkMusica === ""}
+                    <Button variant={"cancel"} onClick={() => setOpen(false)}>Cancelar</Button>
+                    <Button variant={"save"} type="submit" disabled={isLoading || nomeMusica === "" || linkMusica === ""}
                         onClick={() => {
                             setLoading(true)
                             postMethod<Musica>("v1/musicas", {

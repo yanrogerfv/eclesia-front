@@ -80,9 +80,11 @@ export function VideoText({
   as: Component = "div",
 }: VideoTextProps) {
   const [svgMask, setSvgMask] = useState("");
+  const [mounted, setMounted] = useState(false);
   const content = React.Children.toArray(children).join("");
 
   useEffect(() => {
+    setMounted(true);
     const updateSvgMask = () => {
       const responsiveFontSize =
         typeof fontSize === "number" ? `${fontSize}vw` : fontSize;
@@ -96,6 +98,15 @@ export function VideoText({
   }, [content, fontSize, fontWeight, textAnchor, dominantBaseline, fontFamily]);
 
   const dataUrlMask = `url("data:image/svg+xml,${encodeURIComponent(svgMask)}")`;
+
+  // Return placeholder during SSR
+  if (!mounted) {
+    return (
+      <Component className={cn(`relative size-full`, className)}>
+        <span className="sr-only">{content}</span>
+      </Component>
+    );
+  }
 
   return (
     <Component className={cn(`relative size-full`, className)}>

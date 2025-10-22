@@ -2,14 +2,15 @@
 import { convertDateFormat, Escala, EscalaResumida, Levita } from "@/lib/apiObjects";
 import { Badge } from "./ui/badge";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card";
+import compareDates from "@/util/compareDates";
 
-export function EscalaSimpleCard(escala: EscalaResumida) {
+export function EscalaSimpleCard({escala}:{escala: EscalaResumida}) {
     const day = escala.domingo ? "Domingo" : escala.quarta ? "Quarta" : "Especial"
     return (
-        <Card className={` border border-primary/40 ${new Date(escala.data) < new Date() ? 'opacity-60 grayscale' : ''}`} key={escala.id}>
+        <Card className={` border border-primary/40 ${compareDates(escala.data, new Date()) ? 'opacity-60 grayscale' : ''}`} key={escala.id}>
             <CardHeader>
                 {/* <CardTitle> */}
-                <CardTitle className={escala.domingo ? "text-secondary" : escala.quarta ? "text-subprimary" : "text-special"}>
+                <CardTitle className={escala.domingo ? "text-primary" : escala.quarta ? "text-secondary" : "text-special"}>
                     {convertDateFormat(escala.data)}</CardTitle>
                 <CardDescription>
                     {escala.titulo}
@@ -22,7 +23,7 @@ export function EscalaSimpleCard(escala: EscalaResumida) {
     )
 }
 
-export function LevitaSimpleCard(levita: Levita) {
+export function LevitaSimpleCard({levita}:{levita: Levita}) {
     return (
         <Card className="border border-primary/40" key={levita.id}>
             <CardHeader>

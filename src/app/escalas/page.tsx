@@ -17,6 +17,8 @@ import { publicGetMethod } from "@/lib/apiRequests";
 import { VerEscalaSomenteLeitura } from "@/components/modals/dialog-escala";
 import { convertDateFormat, EscalaResumida } from "@/lib/apiObjects";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import BackButton from "@/components/next-back";
+import compareDates from "@/util/compareDates";
 
 export default function ScheduleViewer() {
     const [domingoFilter, setDomingoFilter] = useState(false);
@@ -52,9 +54,7 @@ export default function ScheduleViewer() {
                 <nav className="w-full">
                     <div className="flex w-full justify-between items-center">
                         <div className="flex items-center">
-                            <Link href="/" className="w-auto text-2xl sm:text-4xl flex items-center p-2 cursor-pointer outline outline-1 outline-primary/50 hover:bg-secondary hover:text-black rounded-lg">
-                                <ChevronLeft className="h-6 w-6 sm:h-8 sm:w-8" />
-                            </Link>
+                            <BackButton />
                             <h1 className="ml-4 font-extrabold tracking-tight text-2xl sm:text-5xl">Escalas</h1>
                         </div>
                         <div className="flex justify-end gap-2 mt-4 sm:w-full">
@@ -108,7 +108,7 @@ export default function ScheduleViewer() {
                                     </div>
                                 </div>
                             ) : Array.isArray(filteredEscalas) && filteredEscalas.map((escala) => (
-                                <Card key={escala.id} className={`${new Date(escala.data) < new Date() ? 'opacity-60 grayscale' : ''}`}>
+                                <Card key={escala.id} className={`hover:scale-[1.02] hover:shadow-lg transition-transform duration-200 ${compareDates(escala.data, new Date()) ? 'opacity-60 grayscale' : ''}`}>
                                     <CardHeader className="items-center lg:items-start">
                                         <CardTitle className={escala.domingo ? "text-primary" : escala.quarta ? "text-secondary" : "text-special"}>
                                             {escala.titulo}
