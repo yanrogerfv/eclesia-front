@@ -24,7 +24,7 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import BackButton from "@/components/next-back";
 import { toast } from "sonner";
 
-export default function Home() {
+export default function LevitasPage() {
 
 	const [levitas, setLevitas] = useState<Levita[] | undefined>(undefined)
 	const [instrumentos, setInstrumentos] = useState<Instrumento[] | undefined>(undefined)
@@ -34,11 +34,13 @@ export default function Home() {
 	const [filteredInstruments, setFilteredInstruments] = useState<Instrumento[]>([])
 	const [filteredLevitas, setFilteredLevita] = useState<Levita[] | undefined>(undefined)
 	const [isAdminOrLeader, setLeader] = useState(false)
+	const [loggedLevitaId, setLoggedLevitaId] = useState<string | null>(null)
 
 	useEffect(() => {
 		if (sessionStorage.getItem("role") == "Líder" || sessionStorage.getItem("role") == "ADMIN") {
 			setLeader(true)
 		}
+		setLoggedLevitaId(sessionStorage.getItem("levita"))
 	}, [])
 
 	useEffect(() => {
@@ -152,7 +154,7 @@ export default function Home() {
 							<Card
 								key={levita.id}
 								className={`relative flex flex-col h-full lg:items-start hover:scale-[1.02] hover:shadow-lg transition-all ${removeOverlay ? "animate-pulse" : "duration-200"
-									} ${Cookies.get("levitaname") == levita.nome ? "border-special/30 bg-special/10" : ""
+									} ${loggedLevitaId === levita.id ? "border-special/30 bg-special/10" : ""
 									}`}
 							>
 								<X className={removeOverlay ? "absolute hover:cursor-pointer sm:hidden bg-rose-500/80 rounded-br-xl p-1" : "absolute invisible"}

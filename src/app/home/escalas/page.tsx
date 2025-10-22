@@ -95,11 +95,11 @@ export default function Home() {
 				</nav>
 				<div>
 					<div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-2 sm:gap-4 md:gap-6">
-						<Button variant="outline" className={"md:flex-1 w-full text-lg hover:text-colortext rounded-lg text-primary hover:bg-primary".concat(domingoFilter ? " bg-primary text-foreground" : "")}
+						<Button variant="outline" className={"md:flex-1 w-full text-lg hover:text-colortext text-primary hover:bg-primary".concat(domingoFilter ? " bg-primary text-foreground" : "")}
 							onClick={() => setDomingoFilter(!domingoFilter)} disabled={isLoading}>Domingos</Button>
-						<Button variant="outline" className={"md:flex-1 w-full text-lg hover:text-colortext rounded-lg text-secondary hover:bg-secondary".concat(quartaFilter ? " bg-secondary text-foreground" : "")}
+						<Button variant="outline" className={"md:flex-1 w-full text-lg hover:text-colortext text-secondary hover:bg-secondary".concat(quartaFilter ? " bg-secondary text-foreground" : "")}
 							onClick={() => setQuartaFilter(!quartaFilter)} disabled={isLoading}>Quartas</Button>
-						<Button variant="outline" className={"md:flex-1 w-full text-lg hover:text-colortext rounded-lg text-special hover:bg-special".concat(especialFilter ? " bg-special text-foreground" : "")}
+						<Button variant="outline" className={"md:flex-1 w-full text-lg hover:text-colortext text-special hover:bg-special".concat(especialFilter ? " bg-special text-foreground" : "")}
 							onClick={() => setEspecialFilter(!especialFilter)} disabled={isLoading}>Especiais</Button>
 					</div>
 
@@ -134,7 +134,6 @@ export default function Home() {
 												.then(() => toast.success("Escala " + escala.titulo + " removida com sucesso!"))
 												.then(() => {
 													setEscalasData(undefined);
-													setRemoveOverlay(false);
 												})
 										}}
 									/>
@@ -152,17 +151,17 @@ export default function Home() {
 										</CardDescription>
 									</CardHeader>
 									<CardContent>
-										<p><span className="text-primary">Ministro:</span> <span className="text-specialtext">{escala.ministro}</span>
+										<p><span className="text-special">Ministro:</span> {escala.ministro ? <span className="text-primary">{escala.ministro}</span> : <span className="text-colortext/40">Não inserido.</span>}
 										</p>
-										<p><span className="text-subprimary">Violão:</span> {escala.violao || <span className="text-secondary/40">Não inserido.</span>}
+										<p><span className="text-subprimary">Violão:</span> {escala.violao || <span className="text-colortext/40">Não inserido.</span>}
 										</p>
-										<p><span className="text-subprimary">Teclado:</span> {escala.teclado || <span className="text-secondary/40">Não inserido.</span>}
+										<p><span className="text-subprimary">Teclado:</span> {escala.teclado || <span className="text-colortext/40">Não inserido.</span>}
 										</p>
-										<p><span className="text-subprimary">Bateria:</span> {escala.bateria || <span className="text-secondary/40">Não inserido.</span>}
+										<p><span className="text-subprimary">Bateria:</span> {escala.bateria || <span className="text-colortext/40">Não inserido.</span>}
 										</p>
-										<p><span className="text-subprimary">Baixo:</span> {escala.baixo || <span className="text-secondary/40">Não inserido.</span>}
+										<p><span className="text-subprimary">Baixo:</span> {escala.baixo || <span className="text-colortext/40">Não inserido.</span>}
 										</p>
-										<p><span className="text-subprimary">Guitarra:</span> {escala.guitarra || <span className="text-secondary/40">Não inserido.</span>}
+										<p><span className="text-subprimary">Guitarra:</span> {escala.guitarra || <span className="text-colortext/40">Não inserido.</span>}
 										</p>
 									</CardContent>
 									<CardFooter className="flex items-center justify-between">

@@ -7,6 +7,7 @@ const publicRoutes = ['/', '/login', '/escalas'];
 
 export async function middleware(request: NextRequest) {
 
+    const baseURL = process.env.NEXT_PUBLIC_API_URL;
     const { pathname } = request.nextUrl;
 
     // Check if the current path is a public route
@@ -17,8 +18,6 @@ export async function middleware(request: NextRequest) {
         return NextResponse.next();
     }
 
-    const baseURL = process.env.NEXT_PUBLIC_API_URL;
-
     // Get the token from cookies
     const token = request.cookies.get('token');
     
@@ -28,7 +27,7 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL('/login', request.url));
     }
 
-    const response = await fetch(`${baseURL}v1/instrumento`, {
+    const response = await fetch(`${baseURL}auth/validate-token`, {
         method: "GET",
         headers: {
             "Authorization": `Bearer ${token.value}`,
@@ -42,10 +41,11 @@ export async function middleware(request: NextRequest) {
         }
     });
 
+    
     if (response?.ok === false) {
+        console.log("Token inválido ou expirado. Redirecionando para login.");
         const loginUrl = new URL('/login', request.url);
         const redirectResponse = NextResponse.redirect(loginUrl);
-        // Clear the invalid token
         redirectResponse.cookies.delete('token');
         return redirectResponse;
     } else {
