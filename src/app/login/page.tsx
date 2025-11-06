@@ -11,26 +11,78 @@ import { z } from "zod";
 import Cookies from "js-cookie";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const formSchema = z.object({
     username: z.string(),
     password: z.string().min(5),
+    accessCode: z.string().optional(),
 })
 
 type FormData = z.infer<typeof formSchema>
 
 export default function LoginPage() {
+
+    const router = useRouter();
+
+    return (
+        <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-tr from-primary via-secondary to-violet-600">
+            {/* <Card className=" max-w-xs mx-4 sm:mx-0"> */}
+            <Tabs defaultValue="login" className="w-1/3">
+                <TabsList className="flex justify-center">
+                    <TabsTrigger value="login" className="w-full">Login</TabsTrigger>
+                    <TabsTrigger value="register" className="w-full">Register</TabsTrigger>
+                </TabsList>
+                <TabsContent value="login">
+                    <Card>
+                        <CardHeader className="text-center p-4">
+                            <div className="flex flex-row justify-between">
+                                <ArrowLeftCircle className="cursor-pointer text-secondary hover:text-current/20" onClick={() => router.push("/")} />
+                                <span className="text-lg sm:text-xl">Login</span>
+                                <ArrowLeftCircle color="transparent" />
+                            </div>
+                            <Separator className="mt-4" />
+                        </CardHeader>
+                        <CardContent>
+                            <LoginForm />
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+                <TabsContent value="register">
+                    <Card>
+                        <CardHeader className="text-center p-4">
+                            <div className="flex flex-row justify-between">
+                                <ArrowLeftCircle className="cursor-pointer text-secondary hover:text-current/20" onClick={() => router.push("/")} />
+                                <span className="text-lg sm:text-xl">Register</span>
+                                <ArrowLeftCircle color="transparent" />
+                            </div>
+                            <Separator className="mt-4" />
+                        </CardHeader>
+                        <CardContent>
+                            <RegisterForm />
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+            </Tabs>
+
+        </div>
+    );
+}
+
+const LoginForm = () => {
     var expireMinutes = 150;
     var expireTime = new Date(new Date().getTime() + expireMinutes * 60 * 1000);
-    const router = useRouter();
+    const [isLoading, setIsLoading] = useState(false)
+    const [seePass, setSeePass] = useState(false)
+
+    const promise = () => new Promise((resolve) => setTimeout(() => resolve({ name: "Sonner" }), 1000))
+
     const form = useForm<FormData>({
         defaultValues: {
             username: "",
             password: ""
         }
     })
-
-    const promise = () => new Promise((resolve) => setTimeout(() => resolve({ name: "Sonner" }), 1000))
 
     const handleLogin = async (data: FormData) => {
         try {
@@ -66,108 +118,94 @@ export default function LoginPage() {
         }
     }
 
-    const [isLoading, setIsLoading] = useState(false)
-    const [seePass, setSeePass] = useState(false)
-
     return (
-        <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-tr from-primary via-secondary to-violet-600">
-            <Card className=" max-w-xs mx-4 sm:mx-0">
-                <CardHeader className="text-center p-4">
-                    <div className="flex flex-row justify-between">
-                        <ArrowLeftCircle className="cursor-pointer text-secondary hover:text-current/20" onClick={() => router.push("/")} />
-                        <span className="text-lg sm:text-xl">Login</span>
-                        <ArrowLeftCircle color="transparent" />
-                    </div>
-                    <Separator className="mt-4" />
-                </CardHeader>
-                <CardContent>
-                    <Form {...form}>
-                        <form onSubmit={form.handleSubmit(handleLogin)}
-                            className="space-y-6"
-                        >
-                            <FormField
-                                control={form.control}
-                                name="username"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Usuário</FormLabel>
-                                        <FormControl>
-                                            <div className="relative">
-                                                <Input
-                                                    placeholder="Insira o Usuário"
-                                                    {...field}
-                                                    className="pl-10 rounded-lg"
-                                                />
-                                                <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-                                                    <User size={20} />
-                                                </span>
-                                            </div>
-                                        </FormControl>
-                                    </FormItem>
-                                )}
-                            />
+        <Form {...form}>
+            <form onSubmit={form.handleSubmit(handleLogin)}
+                className="space-y-6"
+            >
+                <FormField
+                    control={form.control}
+                    name="username"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Usuário</FormLabel>
+                            <FormControl>
+                                <div className="relative">
+                                    <Input
+                                        placeholder="Insira o Usuário"
+                                        {...field}
+                                        className="pl-10 rounded-lg"
+                                    />
+                                    <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+                                        <User size={20} />
+                                    </span>
+                                </div>
+                            </FormControl>
+                        </FormItem>
+                    )}
+                />
 
-                            <FormField
-                                control={form.control}
-                                name="password"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Senha</FormLabel>
-                                        <FormControl>
-                                            <div className="relative">
-                                                <Input
-                                                    type={seePass ? "text" : "password"}
-                                                    placeholder="Insira a Senha"
-                                                    className="pl-10 rounded-lg"
-                                                    {...field}
-                                                />
-                                                <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-                                                    <RectangleEllipsis size={20} />
-                                                </span>
+                <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Senha</FormLabel>
+                            <FormControl>
+                                <div className="relative">
+                                    <Input
+                                        type={seePass ? "text" : "password"}
+                                        placeholder="Insira a Senha"
+                                        className="pl-10 rounded-lg"
+                                        {...field}
+                                    />
+                                    <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+                                        <RectangleEllipsis size={20} />
+                                    </span>
 
-                                                {seePass ? (
-                                                    <span className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer">
-                                                        <Eye
-                                                            onClick={() => setSeePass(false)}
-                                                            size={20}
-                                                        />
-                                                    </span>
-                                                ) : (
-                                                    <span className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer">
-                                                        <EyeOff
-                                                            onClick={() => setSeePass(true)}
-                                                            size={20}
-                                                        />
-                                                    </span>
-                                                )}
-                                            </div>
-                                        </FormControl>
-                                    </FormItem>
-                                )}
-                            />
-
-                            <div className="flex flex-row items-end justify-between">
-                                <Button
-                                    type="submit"
-                                    variant="default"
-                                    className="px-5 mt-10 w-full rounded-lg"
-                                    disabled={isLoading}
-                                >
-                                    {isLoading ? (
-                                        <div className="flex items-center justify-center gap-1">
-                                            <Loader className="animate-spin" size={20} />
-                                            <span className="ml-2">Carregando...</span>
-                                        </div>
+                                    {seePass ? (
+                                        <span className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer">
+                                            <Eye
+                                                onClick={() => setSeePass(false)}
+                                                size={20}
+                                            />
+                                        </span>
                                     ) : (
-                                        <div className="flex items-center justify-center gap-1">
-                                            <LogIn size={20} />
-                                            Entrar
-                                        </div>
+                                        <span className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer">
+                                            <EyeOff
+                                                onClick={() => setSeePass(true)}
+                                                size={20}
+                                            />
+                                        </span>
                                     )}
-                                </Button>
+                                </div>
+                            </FormControl>
+                        </FormItem>
+                    )}
+                />
+
+                <div className="flex flex-row items-end justify-between">
+                    <Button
+                        type="submit"
+                        variant="default"
+                        className="px-5 mt-10 w-full rounded-lg"
+                        disabled={isLoading}
+                    >
+                        {isLoading ? (
+                            <div className="flex items-center justify-center gap-1">
+                                <Loader className="animate-spin" size={20} />
+                                <span className="ml-2">Carregando...</span>
                             </div>
-                            <div className="flex justify-center">
-                                {/* patchMethod<UserDTO>(`auth/user/${user.id}`, () => {
+                        ) : (
+                            <div className="flex items-center justify-center gap-1">
+                                <LogIn size={20} />
+                                Entrar
+                            </div>
+                        )}
+                    </Button>
+                </div>
+                <div className="flex justify-center">
+                    {/* patchMethod<UserDTO>(`auth/user/${user.id}`, () => {
                                         setUsers(users?.map(u => u.id === user.id ? { ...u, username: user.username, role: user.role } : u));
                                         toast.success("Usuário editado com sucesso!");
                                                 }
@@ -175,13 +213,97 @@ export default function LoginPage() {
                                             toast.error("Erro ao editar usuário: ", error);
                                         console.error("Erro ao editar usuário: ", error);
                                                 }) */}
-                                <a href="https://mail.google.com/mail/u/0/?fs=1&to=yanrogerfv@gmail.com&su=Esqueci%20Minha%20Senha%20-%20Eclesia%20Software&tf=cm"
-                                    className="text-sm text-zinc-400/80 hover:text-zinc-200/80">Esqueci minha senha</a>
-                            </div>
-                        </form>
-                    </Form>
-                </CardContent>
-            </Card>
-        </div>
-    );
+                    <a href="https://mail.google.com/mail/u/0/?fs=1&to=yanrogerfv@gmail.com&su=Esqueci%20Minha%20Senha%20-%20Eclesia%20Software&tf=cm"
+                        className="text-sm text-zinc-400/80 hover:text-zinc-200/80">Esqueci minha senha</a>
+                </div>
+            </form>
+        </Form>
+    )
+}
+
+const RegisterForm = () => {
+    
+    const promise = () => new Promise((resolve) => setTimeout(() => resolve({ name: "Sonner" }), 1000))
+
+    const form = useForm<FormData>({
+        defaultValues: {
+            username: "",
+            password: "",
+            accessCode: ""
+        }
+    })
+
+    const handleRegister = async (data: FormData) => {
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}auth/register`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data)
+            })
+
+            if (response.ok) {
+                let resp = await response.json();
+                toast.success(`Usuário registrado com sucesso! Bem-vindo, ${data.username}.`)
+                await promise();
+                window.location.href = "/home";
+            }
+            if (!response.ok) {
+                let resp = await response.json();
+                toast.error("Erro ao registrar usuário: " + resp.error[0])
+            }
+        } catch (error) {
+            console.error("Erro na comunicação com a api: ", error);
+        }
+    }
+    return (
+        <Form {...form}>
+            <form onSubmit={form.handleSubmit(handleRegister)}
+                className="space-y-6"
+            >
+                <FormField
+                    control={form.control}
+                    name="username"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Usuário</FormLabel>
+                            <FormControl>
+                                <Input placeholder="Digite seu usuário" {...field} />
+                            </FormControl>
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Senha</FormLabel>
+                            <FormControl>
+                                <Input type="password" placeholder="Digite sua senha" {...field} />
+                            </FormControl>
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="accessCode"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Código de Acesso</FormLabel>
+                            <FormControl>
+                                <Input placeholder="Digite seu código de acesso" {...field} />
+                            </FormControl>
+                        </FormItem>
+                    )}
+                />
+                <div className="flex justify-end">
+                    <Button type="submit" variant="default">
+                        Registrar
+                    </Button>
+                </div>
+            </form>
+        </Form>
+    )
 }
