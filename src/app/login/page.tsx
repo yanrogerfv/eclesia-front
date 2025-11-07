@@ -11,6 +11,7 @@ import { z } from "zod";
 import Cookies from "js-cookie";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
+import AnimatedTabsDemo from "@/components/tabs";
 
 const formSchema = z.object({
     username: z.string(),
@@ -71,6 +72,7 @@ export default function LoginPage() {
 
     return (
         <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-tr from-primary via-secondary to-violet-600">
+            <AnimatedTabsDemo />
             <Card className=" max-w-xs mx-4 sm:mx-0">
                 <CardHeader className="text-center p-4">
                     <div className="flex flex-row justify-between">
