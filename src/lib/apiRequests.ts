@@ -24,6 +24,7 @@ export async function publicGetMethod<T>(url: string, setState: React.Dispatch<R
 	}
 	const data = await req?.json();
 	setState(data);
+	return data;
 }
 
 /**
