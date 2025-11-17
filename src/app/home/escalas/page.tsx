@@ -134,6 +134,7 @@ export default function Home() {
 												.then(() => toast.success("Escala " + escala.titulo + " removida com sucesso!"))
 												.then(() => {
 													setEscalasData(undefined);
+													location.reload();
 												})
 										}}
 									/>

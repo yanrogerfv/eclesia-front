@@ -412,6 +412,7 @@ export function EditEscala(pp: addEditDialogProps) {
 										resetEditFields();
 										pp.setEscala && pp.setEscala(undefined);
 										setOpen(false);
+										location.reload();
 									})
 									.catch((error) => {
 										setIsLoading(false);
@@ -644,6 +645,7 @@ export function AddEscala(props: DialogAddEscalaProps) {
 									resetCreateFields();
 									setIsLoading(false);
 									setOpen(false);
+									location.reload();
 								})
 								.catch((error) => {
 									setIsLoading(false);
