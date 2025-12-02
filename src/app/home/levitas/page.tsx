@@ -188,7 +188,7 @@ export default function LevitasPage() {
 											{levita.instrumentos.length > 0 ? (
 												<Carousel className="w-fit max-w-[140px] sm:max-w-48 lg:w-full lg:justify-self-start justify-self-center">
 													<CarouselContent className="-ml-1">
-														{levita.instrumentos.map(instrumento => (
+														{levita.instrumentos.sort((a, b) => a.id - b.id).map(instrumento => (
 															<CarouselItem key={instrumento.id} className="basis-auto pl-1">
 																<Badge variant="outline" className="text-xs whitespace-nowrap">
 																	{instrumento.nome}

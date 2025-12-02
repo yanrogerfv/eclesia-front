@@ -43,7 +43,6 @@ export default function Home() {
 	useEffect(() => {
 		if (escalasData) return;
 		getMethod<EscalaResumida[] | undefined>("v1/escala/resumed", setEscalasData);
-		// deleteMethod("escala/clean");
 	}, [escalasData, levitasDisponiveis])
 
 	useEffect(() => {
@@ -108,9 +107,7 @@ export default function Home() {
 							<p className="p-6 sm:p-10 text-lg sm:text-2xl text-zinc-400/80">
 								{
 									domingoFilter || quartaFilter || especialFilter
-									//concatenando strings de filtros ativos, dando um join em vírgula
-										? `Nenhuma escala encontrada para ${
-											[domingoFilter && "domingos", quartaFilter && "quartas", especialFilter && " datas especiais"].filter(Boolean).join(" ou ")
+										? `Nenhuma escala encontrada para ${[domingoFilter && "domingos", quartaFilter && "quartas", especialFilter && " datas especiais"].filter(Boolean).join(" ou ")
 										}.`
 										: "Nenhuma escala cadastrada."
 								}
@@ -124,9 +121,21 @@ export default function Home() {
 										<div className="size-64 border-4 border-transparent text-subprimary/40 text-2xl animate-spin flex items-center justify-center border-t-subprimary rounded-full" />
 									</div>
 								</div>
-							) : Array.isArray(filteredEscalas) && filteredEscalas.map((escala) => (
-                                <Card key={escala.id} className={`hover:scale-[1.02] hover:shadow-lg transition-transform ${removeOverlay ? "animate-pulse" : "duration-200"} ${compareDates(escala.data, new Date()) ? 'opacity-60 grayscale' : ''}`}>
-								{/* <Card key={escala.id} className={`${removeOverlay ? "animate-pulse" : ""} ${compareDates(escala.data, new Date()) ? 'opacity-60 grayscale' : ''}`}> */}
+							) : Array.isArray(filteredEscalas) && filteredEscalas.sort((a, b) => {
+								// Sort escalas by date, with past dates at the end
+								const today = new Date();
+								const dateA = new Date(a.data);
+								const dateB = new Date(b.data);
+								const isPastA = compareDates(a.data, today);
+								const isPastB = compareDates(b.data, today);
+
+								if (isPastA && !isPastB) return 1;
+								if (!isPastA && isPastB) return -1;
+
+								return dateA.getTime() - dateB.getTime();
+							}).map((escala) => (
+								<Card key={escala.id} className={`hover:scale-[1.02] hover:shadow-lg transition-transform ${removeOverlay ? "animate-pulse" : "duration-200"} ${compareDates(escala.data, new Date()) ? 'opacity-60 grayscale' : ''}`}>
+									{/* <Card key={escala.id} className={`${removeOverlay ? "animate-pulse" : ""} ${compareDates(escala.data, new Date()) ? 'opacity-60 grayscale' : ''}`}> */}
 									<X className={removeOverlay ? "absolute hover:cursor-pointer bg-rose-500/80 rounded-br-xl p-1" : "absolute invisible"}
 										onClick={() => {
 											deleteMethod(`v1/escala/${escala.id}`)

@@ -111,10 +111,10 @@ export default function LoginPage() {
             <Tabs defaultValue="login" className="max-w-xs md:max-w-2xl m-4 gap-0 flex items-center">
                 <TabsList className="p-1 max-w-xs md:max-w-xl w-2/3 rounded-t-2xl" activeClassName="rounded-t-2xl">
                     <TabsTrigger value="login">
-                        Acessar
+                        Entrar
                     </TabsTrigger>
                     <TabsTrigger value="register">
-                        Registrar
+                        Atualizar
                     </TabsTrigger>
                 </TabsList>
                 <Card className="">
@@ -197,8 +197,8 @@ export default function LoginPage() {
                                             </Button>
                                         </div>
                                         <div className="flex justify-center">
-                                            <a href="https://mail.google.com/mail/u/0/?fs=1&to=yanrogerfv@gmail.com&su=Esqueci%20Minha%20Senha%20-%20Eclesia%20Software&tf=cm"
-                                                className="text-sm text-zinc-400/80 hover:text-zinc-200/80">Esqueci minha senha</a>
+                                            <a href="https://mail.google.com/mail/u/0/?fs=1&to=yanrogerfv@gmail.com&su=Esqueci%20Meu%20Código%20-%20Eclesia%20Software&tf=cm"
+                                                className="text-sm text-zinc-400/80 hover:text-zinc-200/80">Esqueci meu código</a>
                                         </div>
                                     </form>
                                 </Form>

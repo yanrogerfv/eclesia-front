@@ -61,7 +61,7 @@ export function DialogVerLevita(props: {
                 <DialogHeader>
                     <DialogTitle className="text-primary">{props.levita.nome}</DialogTitle>
                     <DialogDescription className="flex border-b">
-                        {props.levita.instrumentos.map(i => i.nome).join(" - ")}
+                        {props.levita.instrumentos.sort((a, b) => a.id - b.id).map(i => i.nome).join(" - ")}
                     </DialogDescription>
                 </DialogHeader>
                 <p className="text-colortext text-center">{props.levita.descricao ? props.levita.descricao : "Nenhuma descrição inserida para este levita."}</p>

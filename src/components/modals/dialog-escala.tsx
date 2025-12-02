@@ -267,7 +267,7 @@ export function EditEscala(pp: addEditDialogProps) {
 			</DialogTrigger>
 			<DialogContent className="w-[85%]">
 				{isLoading ?
-					<div className="absolute w-full h-[85%] bg-black/50 z-50 flex justify-center items-center">
+					<div className="absolute w-full h-full bg-black/50 z-50 flex justify-center items-center">
 						<div className="h-16 w-16 border-4 border-subprimary rounded-3xl animate-spin" />
 					</div>
 					: <></>}

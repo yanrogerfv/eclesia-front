@@ -20,7 +20,7 @@ export default function Home() {
 
     useEffect(() => {
         setIsClient(true)
-        if (nextEscalas && levitasData) return;
+        if (nextEscalas) return;
         getMethod<EscalaResumida[] | undefined>("v1/escala/resumed", setNextEscalas)
         getMethod<Levita[] | undefined>("v1/levita/resumed", setLevitasData)
     }, [])
@@ -28,9 +28,7 @@ export default function Home() {
     return (
         <SidebarProvider defaultOpen>
             <AppSidebar side="left" />
-			{/* <main className="max-w-3xl xl:max-w-7xl w-fit px-4 sm:px-8 lg:px-6 mx-auto my-6 sm:my-12 space-y-6"> */}
             <main className="flex-1 w-full max-w-3xl xl:max-w-6xl max-h-screen mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
-                {/* Navigation Header */}
                 <nav className="space-y-4">
                     <div className="flex justify-between items-center">
                         <div className="flex items-center gap-3 sm:gap-4">
@@ -51,41 +49,31 @@ export default function Home() {
                     </div>
                 </nav>
 
-                {/* Quick Action Buttons */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-                    <Link
-                        href="home/escalas"
-                        className="flex border hover:bg-primary/90 hover:text-colortext justify-center items-center h-12 sm:h-14 text-sm sm:text-base md:text-lg rounded-lg transition-colors font-medium"
-                    >
+                    <Link className="flex border hover:bg-primary/90 hover:text-colortext justify-center items-center h-12 sm:h-14 text-sm sm:text-base md:text-lg rounded-lg transition-colors font-medium"
+                        href="home/escalas" >
                         Escalas
                     </Link>
-                    <Link
-                        href="home/levitas"
-                        className="flex border hover:bg-primary/90 hover:text-colortext justify-center items-center h-12 sm:h-14 text-sm sm:text-base md:text-lg rounded-lg transition-colors font-medium"
-                    >
+                    <Link className="flex border hover:bg-primary/90 hover:text-colortext justify-center items-center h-12 sm:h-14 text-sm sm:text-base md:text-lg rounded-lg transition-colors font-medium"
+                        href="home/levitas" >
                         Levitas
                     </Link>
-                    <Link
-                        href="home/musicas"
-                        className="flex border hover:bg-primary/90 hover:text-colortext justify-center items-center h-12 sm:h-14 text-sm sm:text-base md:text-lg rounded-lg transition-colors font-medium"
-                    >
+                    <Link className="flex border hover:bg-primary/90 hover:text-colortext justify-center items-center h-12 sm:h-14 text-sm sm:text-base md:text-lg rounded-lg transition-colors font-medium"
+                        href="home/musicas" >
                         Músicas
                     </Link>
-                    <Link
-                        href="home/instrumentos"
-                        className="flex border hover:bg-primary/90 hover:text-colortext justify-center items-center h-12 sm:h-14 text-sm sm:text-base md:text-lg rounded-lg transition-colors font-medium"
-                    >
+                    <Link className="flex border hover:bg-primary/90 hover:text-colortext justify-center items-center h-12 sm:h-14 text-sm sm:text-base md:text-lg rounded-lg transition-colors font-medium"
+                        href="home/instrumentos" >
                         Instrumentos
                     </Link>
                 </div>
 
-                {/* Content Cards */}
                 <div className="space-y-6">
                     <Card className="p-3 sm:p-6 lg:p-8 bg-current/30">
                         {/* Próximas Escalas Section */}
                         <Card className="p-3 sm:p-4 mb-6">
                             <CardTitle className="text-primary p-3 sm:p-4 text-lg sm:text-xl">
-                                Próximas escalas:
+                                Próximas Escalas:
                             </CardTitle>
 
                             {!isClient || !nextEscalas ? (
@@ -127,7 +115,7 @@ export default function Home() {
                         {/* Levitas Section */}
                         <Card className="p-3 sm:p-4">
                             <CardTitle className="text-primary p-3 sm:p-4 text-lg sm:text-xl">
-                                Levitas Disponíveis:
+                                Levitas Cadastrados:
                             </CardTitle>
 
                             {!isClient || !levitasData ? (
