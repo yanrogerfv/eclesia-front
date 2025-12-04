@@ -479,7 +479,7 @@ export function SidebarMyProfile({ icon, title, style }: SidebarModalsProps) {
                                     id: self?.id,
                                     role: self?.role.id,
                                     username: username,
-                                    passcode: password,
+                                    password: password,
                                     levitaId: currentLevita?.id
                                 }, () => { }).then(() => {
                                     setOpen(false)
