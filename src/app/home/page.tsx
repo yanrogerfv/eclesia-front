@@ -11,6 +11,7 @@ import { ChevronLeft } from "lucide-react";
 import { getMethod } from "@/lib/apiRequests";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import compareDates from "@/util/compareDates";
 
 export default function Home() {
 
@@ -86,7 +87,18 @@ export default function Home() {
                                 <div className="px-2 sm:px-4">
                                     <Carousel className="w-full">
                                         <CarouselContent className="-ml-2 sm:-ml-1">
-                                            {nextEscalas.map(escala => (
+                                            {nextEscalas.sort((a, b) => {
+                                                const today = new Date();
+                                                const dateA = new Date(a.data);
+                                                const dateB = new Date(b.data);
+                                                const isPastA = compareDates(a.data, today);
+                                                const isPastB = compareDates(b.data, today);
+
+                                                if (isPastA && !isPastB) return 1;
+                                                if (!isPastA && isPastB) return -1;
+
+                                                return dateA.getTime() - dateB.getTime();
+                                            }).map(escala => (
                                                 <CarouselItem key={escala.id} className="pl-2 sm:pl-1 basis-full sm:basis-1/2 xl:basis-1/3 select-none">
                                                     <div className="p-1">
                                                         <EscalaSimpleCard
