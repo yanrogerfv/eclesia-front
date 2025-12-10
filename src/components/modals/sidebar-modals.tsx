@@ -550,7 +550,7 @@ export function SidebarAddUser({ icon, title, style }: SidebarModalsProps) {
                 <Label>Selecione o Levita para criar o acesso:</Label>
                 <ScrollArea className="md:max-h-[35vh] w-full">
                     <Card className="bg-transparent grid lg:grid-cols-4 md:grid-cols-2 grid-cols-2">
-                        {levitas?.map((levita) => (
+                        {Array.isArray(levitas) && levitas.map((levita) => (
                             <Button key={levita.id} variant={"outline"} type="submit"
                                 className={`p-2 rounded-lg m-2 ${levitaToAdd?.id == levita.id ? "bg-primary/80" : ""}`}
                                 onClick={() => setLevitaToAdd(levita)}>
@@ -564,7 +564,7 @@ export function SidebarAddUser({ icon, title, style }: SidebarModalsProps) {
                 <div className={isUserAdmin ? "" : "hidden"}>
                     <Label>Cargo:</Label>
                     <RadioGroup onValueChange={(value) => setSelectedRole(value)} className="flex gap-4 m-2 justify-between mx-4">
-                        {roles?.map((role) => (
+                        {Array.isArray(roles) && roles.map((role) => (
                             <div className="flex items-center space-x-2" key={role.id}>
                                 <RadioGroupItem id={role.id} value={role.id} disabled={isLoading} />
                                 <Label htmlFor={role.role}>{role.role}</Label>
