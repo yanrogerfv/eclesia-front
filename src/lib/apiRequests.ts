@@ -4,6 +4,7 @@ import Cookies from "js-cookie";
 import { toast } from "sonner";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+const token = Cookies.get("token") || null;
 
 const promise = () => new Promise((resolve) => setTimeout(() => resolve({ name: "Sonner" }), 1000))
 
@@ -70,7 +71,7 @@ export async function getMethod<T>(url: string, setState: React.Dispatch<React.S
 		method: "GET",
 		headers: {
 			"Content-Type": "application/json",
-			"Authorization": `${Cookies.get("token")}`
+			"Authorization": `${token}`
 		}
 	}).catch((error) => {
 		if (error instanceof TypeError) {
@@ -101,7 +102,7 @@ export async function postMethod<T>(url: string, body: body, setState?: React.Di
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
-			"Authorization": `${Cookies.get("token")}`
+			"Authorization": `${token}`
 		},
 		body: JSON.stringify(body)
 	})
@@ -135,14 +136,14 @@ export async function patchMethod<T>(url: string, body?: body, setState?: React.
 		method: "PATCH",
 		headers: {
 			"Content-Type": "application/json",
-			"Authorization": `${Cookies.get("token")}`
+			"Authorization": `${token}`
 		},
 		body: JSON.stringify(body)
 	} : {
 		method: "PATCH",
 		headers: {
 			"Content-Type": "application/json",
-			"Authorization": `${Cookies.get("token")}`
+			"Authorization": `${token}`
 		}
 	}
 	const req = await fetch(`${apiUrl}${url}`, reqHeaders).catch((error) => {
@@ -176,7 +177,7 @@ export async function putMethod<T>(url: string, body: body, setState?: React.Dis
 		method: "PUT",
 		headers: {
 			"Content-Type": "application/json",
-			"Authorization": `${Cookies.get("token")}`
+			"Authorization": `${token}`
 		},
 		body: JSON.stringify(body)
 	}).catch((error) => {
@@ -206,7 +207,7 @@ export async function deleteMethod<T>(url: string) {
 	const req = await fetch(`${apiUrl}${url}`, {
 		method: "DELETE",
 		headers: {
-			"Authorization": `${Cookies.get("token")}`
+			"Authorization": `${token}`
 		},
 	}).catch((error) => {
 		console.error("Erro na comunicação com a api: ", error);
