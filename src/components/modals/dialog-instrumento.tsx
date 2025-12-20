@@ -107,7 +107,6 @@ export function DialogRemoveInstrumento(props: { allInstrumentos: Instrumento[] 
                             })
                             .finally(() => {
                                 setLoading(false)
-                                toast.success("Instrumento removido com sucesso!")
                             });
                     }}>Remover</Button>
                 </DialogFooter>

@@ -80,12 +80,17 @@ export async function getMethod<T>(url: string, setState: React.Dispatch<React.S
 			toast.error("Erro na comunicação com a api: ", error.error);
 		}
 	});
-	if (req?.status !== 200 && req?.status) {
-		console.error(`Erro na comunicação com a api: ${req}`);
-		toast.error(`Erro na comunicação com a api: ${req.status}`);
+	if (req) {
+		const status = req.status;
+		const data = await req.json();
+		if (status >= 400) {
+			data.error.forEach((error: string) => {
+				toast.error(error);
+			})
+		}
+		if (setState)
+			setState(data);
 	}
-	const data = await req?.json();
-	setState(data);
 }
 
 /**
@@ -107,9 +112,9 @@ export async function postMethod<T>(url: string, body: body, setState?: React.Di
 		body: JSON.stringify(body)
 	})
 	if (req) {
-		const isOk = req.ok;
+		const status = req.status;
 		const data = await req.json();
-		if (!isOk) {
+		if (status >= 400) {
 			data.error.forEach((error: string) => {
 				toast.error(errorMessage ? `${errorMessage}: ${error}` : error);
 			})
@@ -153,11 +158,12 @@ export async function patchMethod<T>(url: string, body?: body, setState?: React.
 	);
 	if (req) {
 		const status = req.status;
-		if (status !== 200) {
-			toast.error(`Erro na comunicação com a api: ${status}`);
-			console.error(`Erro na comunicação com a api: ${status}`);
-		}
 		const data = await req.json();
+		if (status >= 400) {
+			data.error.forEach((error: string) => {
+				toast.error(error);
+			})
+		}
 		if (setState)
 			setState(data);
 	}
@@ -186,11 +192,12 @@ export async function putMethod<T>(url: string, body: body, setState?: React.Dis
 	});
 	if (req) {
 		const status = req.status;
-		if (status !== 200) {
-			toast.error(`Erro na comunicação com a api: ${status}`);
-			console.error(`Erro na comunicação com a api: ${status}`);
-		}
 		const data = await req.json();
+		if (status >= 400) {
+			data.error.forEach((error: string) => {
+				toast.error(error);
+			})
+		}
 		if (setState)
 			setState(data);
 	}
@@ -215,9 +222,13 @@ export async function deleteMethod<T>(url: string) {
 	});
 	if (req) {
 		const status = req.status;
-		if (status !== 200) {
-			console.error(`Erro na comunicação com a api: ${status}`);
-			toast.error(`Erro na comunicação com a api: ${status}`);
+		if (status >= 400) {
+			const data = await req.json();
+			data.error.forEach((error: string) => {
+				toast.error(error);
+			})
+		} else {
+			toast.success("Removido(a) com sucesso!");
 		}
 	}
 } 

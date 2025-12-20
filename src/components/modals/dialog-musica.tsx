@@ -23,6 +23,12 @@ export function DialogAddMusica({ setState, disabled }: { setState: React.Dispat
     const [cifraMusica, setCifraMusica] = useState("");
     const [open, setOpen] = useState(false);
     const [isLoading, setLoading] = useState(false);
+    
+    function clearFields() {
+        setNomeMusica("");
+        setLinkMusica("");
+        setCifraMusica("");
+    }
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -64,7 +70,8 @@ export function DialogAddMusica({ setState, disabled }: { setState: React.Dispat
                             })
                             .finally(() => {
                                 setLoading(false)
-                                toast.success("Música inserida com sucesso!")
+                                clearFields();
+                                toast.success("Música " + nomeMusica + " inserida com sucesso!")
                             });
                         }}>Salvar</Button>
                 </DialogFooter>

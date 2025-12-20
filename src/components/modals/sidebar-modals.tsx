@@ -20,6 +20,7 @@ import Cookies from "js-cookie";
 import { RadioGroup, RadioGroupItem } from "../ui/motion-radio-group";
 import { Skeleton } from "../ui/skeleton";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "../ui/input-otp";
+import compareDates from "@/util/compareDates";
 
 interface SidebarModalsProps {
     icon: ReactElement,
@@ -86,8 +87,20 @@ export function SidebarNextEvents({ icon, title, style }: SidebarModalsProps) {
                     </Card>
                 ) : (
                     <div className={"grid grid-cols-1 md:grid-cols-2 gap-4"}>
-                        {Array.isArray(special) && special.map((escala) => (
-                            <Card key={escala.id} className="col-span-1">
+                        {Array.isArray(special) && special.sort((a, b) => {
+                            // Sort escalas by date, with past dates at the end
+                            const today = new Date();
+                            const dateA = new Date(a.data);
+                            const dateB = new Date(b.data);
+                            const isPastA = compareDates(a.data, today);
+                            const isPastB = compareDates(b.data, today);
+
+                            if (isPastA && !isPastB) return 1;
+                            if (!isPastA && isPastB) return -1;
+
+                            return dateA.getTime() - dateB.getTime();
+                        }).map((escala) => (
+                            <Card key={escala.id} className={`col-span-1 w-full ${new Date(escala.data) < new Date() ? 'opacity-60 grayscale' : ''}`}>
                                 <CardHeader className="items-center lg:items-start">
                                     <CardTitle className={escala.domingo ? "text-primary" : escala.quarta ? "text-secondary" : "text-special"}>
                                         {escala.titulo}
@@ -181,10 +194,15 @@ export function SidebarMyAgenda({ icon, title }: SidebarModalsProps) {
         postMethod<undefined>(
             `v1/levita/agenda/${sessionStorage.getItem("levita")}`,
             dataBody
-        ).then(() => {
-            toast.info("Agenda atualizada com sucesso!")
-            setLoading(false);
+        ).catch((error) => {
+            toast.error("Erro ao atualizar agenda: ", error);
+            console.error("Erro ao atualizar agenda: ", error);
         })
+            .then(() => {
+                toast.success("Agenda atualizada!")
+                setOpen(false);
+                setLoading(false);
+            })
     }
 
     return (
@@ -270,11 +288,11 @@ export function SidebarMyEscalas({ icon, title }: SidebarModalsProps) {
         <Dialog>
             <DialogTrigger asChild className="w-full">
                 <SidebarMenuButton>
-                    <span className={`${!escalas ? `hidden` : ``} ${!escalas?.some(escala => {
+                    <span className={`${!escalas ? `hidden` : ``} ${Array.isArray(escalas) && !escalas?.some(escala => {
                         const escalaDate = new Date(escala.data);
                         const today = new Date();
                         const sevenDaysFromNow = new Date();
-                        sevenDaysFromNow.setDate(today.getDate() + 7);
+                        sevenDaysFromNow.setDate(today.getDate() + 14);
                         return escalaDate >= today && escalaDate <= sevenDaysFromNow;
                     }) ? 'hidden' : ''} absolute inline-flex [animation-time:3s] top-1 left-5 size-2 bg-special rounded-full`}>
                         <span className="size-2 animate-ping rounded-full bg-special opacity-75" />
@@ -304,7 +322,19 @@ export function SidebarMyEscalas({ icon, title }: SidebarModalsProps) {
                         </p>
                     </Card>
                 ) : (<div className={"grid grid-cols-1 md:grid-cols-2 gap-4"}>
-                    {Array.isArray(escalas) && escalas.map((escala) => (
+                    {Array.isArray(escalas) && escalas.sort((a, b) => {
+                        // Sort escalas by date, with past dates at the end
+                        const today = new Date();
+                        const dateA = new Date(a.data);
+                        const dateB = new Date(b.data);
+                        const isPastA = compareDates(a.data, today);
+                        const isPastB = compareDates(b.data, today);
+
+                        if (isPastA && !isPastB) return 1;
+                        if (!isPastA && isPastB) return -1;
+
+                        return dateA.getTime() - dateB.getTime();
+                    }).map((escala) => (
                         <Card key={escala.id} className={`w-full md:col-span-1 ${new Date(escala.data) < new Date() ? 'opacity-60 grayscale' : ''}`}>
                             <CardHeader className="items-center lg:items-start">
                                 <CardTitle className={escala.domingo ? "text-primary" : escala.quarta ? "text-secondary" : "text-special"}>

@@ -123,7 +123,7 @@ export default function Home() {
 											onClick={() => {
 												deleteMethod(`v1/musicas/${musica.id}`)
 													.then(() => {
-														toast.success("Música excluída com sucesso!")
+														toast.success("Música " + musica.nome + " excluída com sucesso!")
 														setLoading(true)
 														setFilteredMusicas(undefined)
 														setMusicas(undefined)
