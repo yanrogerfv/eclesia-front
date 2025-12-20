@@ -30,7 +30,7 @@ export async function middleware(request: NextRequest) {
     const response = await fetch(`${baseURL}auth/validate-token`, {
         method: "GET",
         headers: {
-            "Authorization": `Bearer ${token.value}`,
+            "Authorization": `${token.value}`,
             "Content-Type": "application/json",
         },
     }).catch((error) => {

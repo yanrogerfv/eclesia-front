@@ -107,7 +107,19 @@ export default function ScheduleViewer() {
                                         <div className="size-64 border-4 border-transparent text-subprimary/40 text-2xl animate-spin flex items-center justify-center border-t-subprimary rounded-full" />
                                     </div>
                                 </div>
-                            ) : Array.isArray(filteredEscalas) && filteredEscalas.map((escala) => (
+                            ) : Array.isArray(filteredEscalas) && filteredEscalas.sort((a, b) => {
+                                // Sort escalas by date, with past dates at the end
+                                const today = new Date();
+                                const dateA = new Date(a.data);
+                                const dateB = new Date(b.data);
+                                const isPastA = compareDates(a.data, today);
+                                const isPastB = compareDates(b.data, today);
+
+                                if (isPastA && !isPastB) return 1;
+                                if (!isPastA && isPastB) return -1;
+
+                                return dateA.getTime() - dateB.getTime();
+                            }).map((escala) => (
                                 <Card key={escala.id} className={`hover:scale-[1.02] hover:shadow-lg transition-transform duration-200 ${compareDates(escala.data, new Date()) ? 'opacity-60 grayscale' : ''}`}>
                                     <CardHeader className="items-center lg:items-start">
                                         <CardTitle className={escala.domingo ? "text-primary" : escala.quarta ? "text-secondary" : "text-special"}>
@@ -121,7 +133,7 @@ export default function ScheduleViewer() {
                                         </CardDescription>
                                     </CardHeader>
                                     <CardContent>
-										<p><span className="text-primary">Ministro:</span> {escala.ministro ? <span className="text-specialtext">{escala.ministro}</span> : <span className="text-colortext/40">Não inserido.</span>}
+                                        <p><span className="text-primary">Ministro:</span> {escala.ministro ? <span className="text-specialtext">{escala.ministro}</span> : <span className="text-colortext/40">Não inserido.</span>}
                                         </p>
                                         <p><span className="text-subprimary">Violão:</span> {escala.violao || <span className="text-colortext/40">Não inserido.</span>}
                                         </p>

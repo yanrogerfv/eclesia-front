@@ -16,7 +16,7 @@ import { Church, PencilLine, UserPlus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Levita, Instrumento } from "@/lib/apiObjects";
 import { Checkbox } from "../ui/checkbox";
-import { getMethod, postMethod } from "@/lib/apiRequests";
+import { getMethod, postMethod, putMethod } from "@/lib/apiRequests";
 import { Textarea } from "../ui/textarea";
 import Cookies from "js-cookie";
 import { toast } from "sonner";
@@ -61,7 +61,7 @@ export function DialogVerLevita(props: {
                 <DialogHeader>
                     <DialogTitle className="text-primary">{props.levita.nome}</DialogTitle>
                     <DialogDescription className="flex border-b">
-                        {props.levita.instrumentos.map(i => i.nome).join(" - ")}
+                        {props.levita.instrumentos.sort((a, b) => a.id - b.id).map(i => i.nome).join(" - ")}
                     </DialogDescription>
                 </DialogHeader>
                 <p className="text-colortext text-center">{props.levita.descricao ? props.levita.descricao : "Nenhuma descrição inserida para este levita."}</p>
@@ -104,14 +104,19 @@ export function DialogAddLevita({ disable, setLevitas }: DialogAddLevitaProps) {
         setInstrumentos(instrumentosLevita.filter((currentInstrument) => currentInstrument.id !== instrumento.id))
     }
 
-
     const handleSubmitLevita = () => {
         setLoading(true)
         if (!nomeLevita || nomeLevita.length < 3) {
             toast.warning("Insira um nome válido para o Levita.")
             setLoading(false)
-        } else if ((!emailLevita || emailLevita.length < 5) && (!contatoLevita || contatoLevita.length < 5)) {
+        } else if (!emailLevita && !contatoLevita) {
             toast.warning("Insira um email e/ou contato válidos para o Levita.")
+            setLoading(false)
+        } else if (emailLevita && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(emailLevita)) {
+            toast.warning("Insira um email válido para o Levita.")
+            setLoading(false)
+        } else if (contatoLevita && formatNumberToBRL(contatoLevita)[0].length < 10) {
+            toast.warning("Insira um contato válido para o Levita.")
             setLoading(false)
         } else if (instrumentosLevita.length === 0) {
             toast.warning("Selecione pelo menos um instrumento.")
@@ -232,6 +237,40 @@ export function DialogEditLevita({ levita, setLevitas }: DialogEditLevitaProps) 
         getMethod<Instrumento[] | undefined>("v1/instrumento", setAllInstrumentos)
     }, [])
 
+    const handleUpdateLevita = () => {
+        setLoading(true)
+        if (!nomeLevita || nomeLevita.length < 3) {
+            toast.warning("Insira um nome válido para o Levita.")
+            setLoading(false)
+        } else if (!emailLevita && !contatoLevita) {
+            toast.warning("Insira um email e/ou contato válidos para o Levita.")
+            setLoading(false)
+        } else if (emailLevita && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(emailLevita)) {
+            toast.warning("Insira um email válido para o Levita.")
+            setLoading(false)
+        } else if (contatoLevita && formatNumberToBRL(contatoLevita)[0].length < 10) {
+            toast.warning("Insira um contato válido para o Levita.")
+            setLoading(false)
+        } else if (instrumentosLevita.length === 0) {
+            toast.warning("Selecione pelo menos um instrumento.")
+            setLoading(false)
+        } else {
+            putMethod("v1/levita", {
+                id: levita.id,
+                nome: nomeLevita.trim(),
+                email: emailLevita.trim(),
+                contato: contatoLevita.trim(),
+                descricao: descricaoLevita.trim(),
+                instrumentos: instrumentosLevita.map((instrumento) => instrumento.id)
+            }).finally(() => {
+                toast.success("Levita atualizado com sucesso!")
+                setLoading(false)
+                setLevitas && setLevitas(undefined)
+                setOpen(false)
+            })
+        }
+    }
+
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
@@ -297,24 +336,7 @@ export function DialogEditLevita({ levita, setLevitas }: DialogEditLevitaProps) 
                 <DialogFooter className={`gap-4 ${isLoading && "opacity-50"}`}>
                     <Button variant={"cancel"} onClick={() => setOpen(false)}>Cancelar</Button>
                     <Button variant={"save"} disabled={isLoading} type="submit" onClick={() => {
-                        setLoading(true)
-                        postMethod("v1/levita", {
-                            id: levita.id,
-                            nome: nomeLevita.trim(),
-                            email: emailLevita.trim(),
-                            contato: contatoLevita.trim(),
-                            descricao: descricaoLevita.trim(),
-                            instrumentos: instrumentosLevita.map((instrumento) => instrumento.id)
-                        }).catch((error) => {
-                            console.error("Erro na comunicação com a api: ", error);
-                            toast.error("Erro ao editar Levita.")
-                        }).finally(() => {
-                            toast.success("Levita editado com sucesso!")
-                            setLoading(false)
-                            setLevitas && setLevitas(undefined)
-                            window.location.reload();
-                            setOpen(false)
-                        })
+                        handleUpdateLevita()
                     }}>Salvar</Button>
                 </DialogFooter>
             </DialogContent>

@@ -5,6 +5,7 @@ export interface UserDTO {
     username: string,
     role: RoleDTO,
     levita: Levita,
+    accessCode: string | null
 }
 
 export interface RoleDTO {

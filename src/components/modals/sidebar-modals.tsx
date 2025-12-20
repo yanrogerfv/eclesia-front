@@ -18,6 +18,9 @@ import { Eye, EyeOff, PencilLine, Trash2 } from "lucide-react";
 import { TooltipProvider, TooltipTrigger, Tooltip, TooltipContent } from "../ui/tooltip";
 import Cookies from "js-cookie";
 import { RadioGroup, RadioGroupItem } from "../ui/motion-radio-group";
+import { Skeleton } from "../ui/skeleton";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "../ui/input-otp";
+import compareDates from "@/util/compareDates";
 
 interface SidebarModalsProps {
     icon: ReactElement,
@@ -27,59 +30,77 @@ interface SidebarModalsProps {
 
 export function SidebarNextEvents({ icon, title, style }: SidebarModalsProps) {
     const [open, setOpen] = useState(false);
-    const [loading, setLoading] = useState(false);
+    const [isLoading, setLoading] = useState(true);
     const [escalas, setEscala] = useState<EscalaResumida[] | undefined>(undefined);
     const [levitas, setLevitas] = useState<Levita[] | undefined>(undefined);
 
     const [special, setSpecial] = useState<EscalaResumida[] | undefined>(undefined);
 
     useEffect(() => {
-        if (escalas) return;
-        setLoading(true);
+        if (!open) return;
+        if (escalas) {
+            setLoading(false);
+            return;
+        }
         getMethod<EscalaResumida[] | undefined>("v1/escala/resumed", setEscala)
         getMethod<Levita[] | undefined>("v1/levita", setLevitas)
-        setLoading(false);
-    }, [escalas])
+    }, [escalas, open])
 
     useEffect(() => {
         setSpecial(escalas?.filter(escala => escala.especial))
     }, [escalas])
 
     return (
-        <Dialog>
-            <DialogTrigger asChild className={`${!escalas ? `text-zinc-500` : ``} w-full`} disabled={!escalas}>
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild className="w-full">
                 <SidebarMenuButton>
                     {icon}
                     <span>{title}</span>
                 </SidebarMenuButton>
             </DialogTrigger>
-            <DialogContent className="w-[90%] md:w-xl md:max-w-xl max-h-[90vh] overflow-y-auto">
+            <DialogContent className="w-[90%] md:w-xl md:max-w-xl max-h-[90vh] min-h-[20vh] overflow-y-auto">
+                {isLoading ?
+                    <div className="absolute w-full h-full bg-black/50 z-50 flex justify-center items-center">
+                        <div className="h-16 w-16 border-4 border-subprimary rounded-3xl animate-spin" />
+                    </div>
+                    : <></>}
                 <DialogHeader>
                     <DialogTitle>
                         {title}
                     </DialogTitle>
                     <DialogDescription className="border-b-2 border-black/25">
-                        {loading ? "Carregando..." : escalas ? "Escalas programadas para os próximos eventos especiais!" : "Erro ao carregar escalas"}
+                        {isLoading ? "Carregando..." : escalas ? "Escalas programadas para os próximos eventos especiais!" : "Erro ao carregar escalas"}
                     </DialogDescription>
                 </DialogHeader>
-                {/* Content aqui */}
 
-                <div className={"grid grid-cols-1 md:grid-cols-2 gap-4"}>
-                    {!escalas ? (
-                        <Card className="text-center">
-                            <p className="p-6 sm:p-10 text-lg sm:text-xl text-zinc-400/80">
-                                Nenhuma escala encontrada.
-                            </p>
-                        </Card>
-                    ) : !special || special.length == 0 ? (
-                        <Card className="text-center">
-                            <p className="p-6 sm:p-10 text-lg sm:text-xl text-zinc-400/80">
-                                Nenhum evento especial encontrado nos próximos dias.
-                            </p>
-                        </Card>
-                    ) : (
-                        Array.isArray(special) && special.map((escala) => (
-                            <Card key={escala.id} className="col-span-1">
+                {escalas?.length === 0 ? (
+                    <Card className="text-center">
+                        <p className="p-6 sm:p-10 text-lg sm:text-xl text-zinc-400/80">
+                            Nenhuma escala encontrada.
+                        </p>
+                    </Card>
+                ) : special?.length == 0 ? (
+                    <Card className="text-center">
+                        <p className="p-6 sm:p-10 text-lg sm:text-xl text-zinc-400/80">
+                            Nenhum evento especial encontrado nos próximos dias.
+                        </p>
+                    </Card>
+                ) : (
+                    <div className={"grid grid-cols-1 md:grid-cols-2 gap-4"}>
+                        {Array.isArray(special) && special.sort((a, b) => {
+                            // Sort escalas by date, with past dates at the end
+                            const today = new Date();
+                            const dateA = new Date(a.data);
+                            const dateB = new Date(b.data);
+                            const isPastA = compareDates(a.data, today);
+                            const isPastB = compareDates(b.data, today);
+
+                            if (isPastA && !isPastB) return 1;
+                            if (!isPastA && isPastB) return -1;
+
+                            return dateA.getTime() - dateB.getTime();
+                        }).map((escala) => (
+                            <Card key={escala.id} className={`col-span-1 w-full ${new Date(escala.data) < new Date() ? 'opacity-60 grayscale' : ''}`}>
                                 <CardHeader className="items-center lg:items-start">
                                     <CardTitle className={escala.domingo ? "text-primary" : escala.quarta ? "text-secondary" : "text-special"}>
                                         {escala.titulo}
@@ -123,8 +144,9 @@ export function SidebarNextEvents({ icon, title, style }: SidebarModalsProps) {
                                     </div>
                                 </CardFooter>
                             </Card>
-                        )))}
-                </div>
+                        ))}
+                    </div>
+                )}
                 <DialogFooter>
 
                 </DialogFooter>
@@ -133,11 +155,11 @@ export function SidebarNextEvents({ icon, title, style }: SidebarModalsProps) {
     )
 }
 
-export function SidebarMyAgenda({ icon, title, style }: SidebarModalsProps) {
+export function SidebarMyAgenda({ icon, title }: SidebarModalsProps) {
     const [userDates, setUserDates] = useState<Date[] | undefined>(undefined);
     const [dates, setDates] = useState<Date[] | undefined>(undefined);
     const [open, setOpen] = useState(false);
-    const [isLoading, setLoading] = useState(false);
+    const [isLoading, setLoading] = useState(true);
 
     /* Sorting of dates for better organization when sending to backend */
     useEffect(() => {
@@ -146,9 +168,13 @@ export function SidebarMyAgenda({ icon, title, style }: SidebarModalsProps) {
 
     /* Used to fetch the current agenda of logged user */
     useEffect(() => {
-        if (userDates !== undefined) return;
+        if (!open) return;
+        if (userDates !== undefined) {
+            setLoading(false);
+            return;
+        }
         getMethod<Date[] | undefined>(`v1/levita/agenda/${sessionStorage.getItem("levita")}`, setUserDates)
-    }, [userDates])
+    }, [userDates, open])
 
     /* Setter of dates from the data fetched */
     useEffect(() => {
@@ -168,15 +194,20 @@ export function SidebarMyAgenda({ icon, title, style }: SidebarModalsProps) {
         postMethod<undefined>(
             `v1/levita/agenda/${sessionStorage.getItem("levita")}`,
             dataBody
-        ).then(() => {
-            toast.info("Agenda atualizada com sucesso!")
-            setLoading(false);
+        ).catch((error) => {
+            toast.error("Erro ao atualizar agenda: ", error);
+            console.error("Erro ao atualizar agenda: ", error);
         })
+            .then(() => {
+                toast.success("Agenda atualizada!")
+                setOpen(false);
+                setLoading(false);
+            })
     }
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild className="w-full" disabled={!userDates}>
+            <DialogTrigger asChild className="w-full">
                 <SidebarMenuButton>
                     {icon}
                     {title}
@@ -238,30 +269,30 @@ export function SidebarMyAgenda({ icon, title, style }: SidebarModalsProps) {
     )
 }
 
-export function SidebarMyEscalas({ icon, title, style }: SidebarModalsProps) {
-    const [open, setOpen] = useState(false);
-    const [loading, setLoading] = useState(false);
+export function SidebarMyEscalas({ icon, title }: SidebarModalsProps) {
+    const [isLoading, setLoading] = useState(true);
     const [escalas, setEscala] = useState<Escala[] | undefined>(undefined);
     const [levitas, setLevitas] = useState<Levita[] | undefined>(undefined);
 
     useEffect(() => {
-        if (escalas) return;
+        if (escalas) {
+            setLoading(false);
+            return;
+        }
         setLoading(true);
         getMethod<Escala[] | undefined>(`v1/escala?levita=${sessionStorage.getItem("levita")}`, setEscala)
         getMethod<Levita[] | undefined>("v1/levita", setLevitas)
-
-        setLoading(false);
     }, [escalas])
 
     return (
         <Dialog>
-            <DialogTrigger asChild className={`${!escalas ? `text-zinc-500` : ``} w-full`} disabled={!escalas}>
+            <DialogTrigger asChild className="w-full">
                 <SidebarMenuButton>
-                    <span className={`${!escalas ? `hidden` : ``} ${!escalas?.some(escala => {
+                    <span className={`${!escalas ? `hidden` : ``} ${Array.isArray(escalas) && !escalas?.some(escala => {
                         const escalaDate = new Date(escala.data);
                         const today = new Date();
                         const sevenDaysFromNow = new Date();
-                        sevenDaysFromNow.setDate(today.getDate() + 7);
+                        sevenDaysFromNow.setDate(today.getDate() + 14);
                         return escalaDate >= today && escalaDate <= sevenDaysFromNow;
                     }) ? 'hidden' : ''} absolute inline-flex [animation-time:3s] top-1 left-5 size-2 bg-special rounded-full`}>
                         <span className="size-2 animate-ping rounded-full bg-special opacity-75" />
@@ -270,28 +301,40 @@ export function SidebarMyEscalas({ icon, title, style }: SidebarModalsProps) {
                     {title}
                 </SidebarMenuButton>
             </DialogTrigger>
-            <DialogContent className="w-[90%] md:w-xl md:max-w-xl max-h-[90vh] overflow-y-auto">
+            <DialogContent className="w-[90%] md:w-xl md:max-w-xl max-h-[90vh] min-h-[20vh] overflow-y-auto">
+                {isLoading ?
+                    <div className="absolute w-full h-full bg-black/50 z-50 flex justify-center items-center">
+                        <div className="h-16 w-16 border-4 border-subprimary rounded-3xl animate-spin" />
+                    </div>
+                    : <></>}
                 <DialogHeader>
                     <DialogTitle>
                         {title}
                     </DialogTitle>
                     <DialogDescription>
-                        {loading ? "Carregando..." : escalas ? "Todas as suas escalas cadastradas abaixo" : "Erro ao carregar escalas"}
+                        {isLoading ? "Carregando..." : escalas ? "Todas as suas escalas cadastradas abaixo" : "Erro ao carregar escalas"}
                     </DialogDescription>
                 </DialogHeader>
-                {/* Content aqui */}
-                <div className={"grid grid-cols-1 md:grid-cols-2 gap-4"}>
-                    {loading || !escalas ? (
-                        <div className="flex justify-center items-center h-40">
-                            <div className="h-16 w-16 border-4 border-primary rounded-3xl animate-spin" />
-                        </div>
-                    ) : escalas.length === 0 ? (
-                        <Card className="text-center">
-                            <p className="p-6 sm:p-10 text-lg sm:text-xl text-zinc-400/80">
-                                Você não está em nenhuma escala no momento.
-                            </p>
-                        </Card>
-                    ) : Array.isArray(escalas) && escalas.map((escala) => (
+                {escalas?.length === 0 ? (
+                    <Card className="text-center">
+                        <p className="p-6 sm:p-10 text-lg sm:text-xl text-zinc-400/80">
+                            Você não está em nenhuma escala no momento.
+                        </p>
+                    </Card>
+                ) : (<div className={"grid grid-cols-1 md:grid-cols-2 gap-4"}>
+                    {Array.isArray(escalas) && escalas.sort((a, b) => {
+                        // Sort escalas by date, with past dates at the end
+                        const today = new Date();
+                        const dateA = new Date(a.data);
+                        const dateB = new Date(b.data);
+                        const isPastA = compareDates(a.data, today);
+                        const isPastB = compareDates(b.data, today);
+
+                        if (isPastA && !isPastB) return 1;
+                        if (!isPastA && isPastB) return -1;
+
+                        return dateA.getTime() - dateB.getTime();
+                    }).map((escala) => (
                         <Card key={escala.id} className={`w-full md:col-span-1 ${new Date(escala.data) < new Date() ? 'opacity-60 grayscale' : ''}`}>
                             <CardHeader className="items-center lg:items-start">
                                 <CardTitle className={escala.domingo ? "text-primary" : escala.quarta ? "text-secondary" : "text-special"}>
@@ -327,8 +370,7 @@ export function SidebarMyEscalas({ icon, title, style }: SidebarModalsProps) {
                                 </div>
                             </CardFooter>
                         </Card>
-                    ))}
-                </div>
+                    ))}</div>)}
                 <DialogFooter>
 
                 </DialogFooter>
@@ -340,7 +382,7 @@ export function SidebarMyEscalas({ icon, title, style }: SidebarModalsProps) {
 export function SidebarMyProfile({ icon, title, style }: SidebarModalsProps) {
 
     const [open, setOpen] = useState(false);
-    const [loading, setLoading] = useState(true);
+    const [isLoading, setLoading] = useState(true);
     const [self, setSelf] = useState<UserDTO | undefined>(undefined);
     const [currentLevita, setCurrentLevita] = useState<Levita | undefined>();
 
@@ -350,11 +392,14 @@ export function SidebarMyProfile({ icon, title, style }: SidebarModalsProps) {
     const [password, setPassword] = useState("");
 
     useEffect(() => {
-        if (self && currentLevita) return;
+        if (!open) return;
+        if (self && currentLevita) {
+            setLoading(false);
+            return;
+        }
         getMethod<Levita | undefined>(`v1/levita/${sessionStorage.getItem("levita")}`, setCurrentLevita)
         getMethod<UserDTO | undefined>(`auth/user/active`, setSelf)
-        setLoading(false);
-    }, [self, currentLevita])
+    }, [self, currentLevita, open])
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -365,6 +410,11 @@ export function SidebarMyProfile({ icon, title, style }: SidebarModalsProps) {
                 </SidebarMenuButton>
             </DialogTrigger>
             <DialogContent className="w-[85%] max-h-[90vh] overflow-y-auto">
+                {isLoading ?
+                    <div className="absolute w-full h-full bg-black/50 z-50 flex justify-center items-center">
+                        <div className="h-16 w-16 border-4 border-subprimary rounded-3xl animate-spin" />
+                    </div>
+                    : <></>}
                 <DialogHeader>
                     <DialogTitle>
                         {title}
@@ -385,14 +435,14 @@ export function SidebarMyProfile({ icon, title, style }: SidebarModalsProps) {
                     />
                     {seePass ? (
                         <span className="absolute inset-y-0 right-0 flex items-center justify-center pr-3 cursor-pointer">
-                            <Eye
+                            <Eye className="text-special"
                                 onClick={() => setSeePass(false)}
                                 size={20}
                             />
                         </span>
                     ) : (
                         <span className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer">
-                            <EyeOff
+                            <EyeOff className="text-subprimary"
                                 onClick={() => setSeePass(true)}
                                 size={20}
                             />
@@ -405,16 +455,20 @@ export function SidebarMyProfile({ icon, title, style }: SidebarModalsProps) {
                         <CardTitle>
                             Levita:
                         </CardTitle>
-                        <CardDescription className="mb-0">
+                        <CardDescription>
                             As suas informações como levita
                         </CardDescription>
                     </CardHeader>
-                    <CardContent>
-                        <p className="mb-1"><span className="text-subprimary">Nome:</span>{" " + currentLevita?.nome}</p>
-                        <p className="mb-1"><span className="text-subprimary">Telefone:</span>{` ${currentLevita?.contato ?? "Nenhum telefone inserido."}`}</p>
-                        <p className="mb-1"><span className="text-subprimary">Email:</span>{` ${currentLevita?.email ?? "Nenhum email inserido."}`}</p>
-                        <p className="mb-1"><span className="text-subprimary">Descrição:</span>{` ${currentLevita?.descricao ?? "Nenhuma descrição inserida."}`}</p>
-                        <p><span className="text-subprimary">Instrumentos:</span> <span>
+                    <CardContent className="flex flex-col gap-1">
+                        <p><span className="text-subprimary">Nome: </span>{
+                            isLoading ? "Carregando dados..." : currentLevita?.nome ?? "Nenhum nome inserido."}</p>
+                        <p><span className="text-subprimary">Telefone: </span>{
+                            isLoading ? "Carregando dados..." : currentLevita?.contato ?? "Nenhum telefone inserido."}</p>
+                        <p><span className="text-subprimary">Email: </span>{
+                            isLoading ? "Carregando dados..." : currentLevita?.email ?? "Nenhum email inserido."}</p>
+                        <p><span className="text-subprimary">Descrição: </span>{
+                            isLoading ? "Carregando dados..." : currentLevita?.descricao ?? "Nenhuma descrição inserida."}</p>
+                        <p><span className="text-subprimary">Instrumentos: </span> <span>
                             {currentLevita?.instrumentos.map((instrumento) => (
                                 <Badge key={instrumento.id} variant={"outline"} className="gap-1">{instrumento.nome}</Badge>
                             ))}
@@ -455,7 +509,7 @@ export function SidebarMyProfile({ icon, title, style }: SidebarModalsProps) {
                                     id: self?.id,
                                     role: self?.role.id,
                                     username: username,
-                                    passcode: password,
+                                    password: password,
                                     levitaId: currentLevita?.id
                                 }, () => { }).then(() => {
                                     setOpen(false)
@@ -478,18 +532,20 @@ export function SidebarAddUser({ icon, title, style }: SidebarModalsProps) {
     const [levitas, setLevitas] = useState<Levita[] | undefined>(undefined);
     const [roles, setRoles] = useState<RoleDTO[] | undefined>(undefined);
     const [levitaToAdd, setLevitaToAdd] = useState<Levita | undefined>(undefined);
+    const [returnUser, setReturnUser] = useState<UserDTO | undefined>(undefined);
     const [open, setOpen] = useState(false);
 
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
     const [selectedRole, setSelectedRole] = useState("levita");
 
     useEffect(() => {
-        if (levitas) return;
+        if (!open) return;
+        if (levitas) {
+            setIsLoading(false);
+            return;
+        }
         getMethod<Levita[] | undefined>("auth/user/levita-x", setLevitas)
         getMethod<RoleDTO[] | undefined>("auth/role", setRoles)
-        setIsLoading(false);
-    }, [levitas])
+    }, [levitas, open])
 
     const [isUserAdmin, setUserAdmin] = useState(false)
 
@@ -500,13 +556,18 @@ export function SidebarAddUser({ icon, title, style }: SidebarModalsProps) {
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild className={"w-full text-green-600 hover:text-green-600"} disabled={!levitas}>
+            <DialogTrigger asChild className={"w-full text-green-600 hover:text-green-600"}>
                 <SidebarMenuButton>
                     {icon}
                     {title}
                 </SidebarMenuButton>
             </DialogTrigger>
             <DialogContent className="w-[85%] max-h-[90vh] overflow-y-auto">
+                {isLoading ?
+                    <div className="absolute w-full h-full bg-black/50 z-50 flex justify-center items-center">
+                        <div className="h-16 w-16 border-4 border-subprimary rounded-3xl animate-spin" />
+                    </div>
+                    : <></>}
                 <DialogHeader>
                     <DialogTitle>
                         {title}
@@ -515,17 +576,25 @@ export function SidebarAddUser({ icon, title, style }: SidebarModalsProps) {
                         Aqui você pode adicionar um novo usuário.
                     </DialogDescription>
                 </DialogHeader>
-                <Label>Usuário:</Label>
-                <Input onChange={(e) => setUsername(e.target.value)} value={username} type="text"
-                    placeholder="Insira o usuário que será usado para login." />
-                <Label>Senha:</Label>
-                <Input onChange={(e) => setPassword(e.target.value)} value={password} type="text"
-                    placeholder="Insira a senha que será usada para login." />
+
+                <Label>Selecione o Levita para criar o acesso:</Label>
+                <ScrollArea className="md:max-h-[35vh] w-full">
+                    <Card className="bg-transparent grid lg:grid-cols-4 md:grid-cols-2 grid-cols-2">
+                        {Array.isArray(levitas) && levitas.map((levita) => (
+                            <Button key={levita.id} variant={"outline"} type="submit"
+                                className={`p-2 rounded-lg m-2 ${levitaToAdd?.id == levita.id ? "bg-primary/80" : ""}`}
+                                onClick={() => setLevitaToAdd(levita)}>
+                                {levita.nome.split(" ").length > 1 ?
+                                    levita.nome.split(" ")[0].concat(" ").concat(levita.nome.split(" ")[1].charAt(0)).concat(".") : levita.nome}</Button>
+                        ))
+                        }
+                    </Card>
+                </ScrollArea>
 
                 <div className={isUserAdmin ? "" : "hidden"}>
                     <Label>Cargo:</Label>
                     <RadioGroup onValueChange={(value) => setSelectedRole(value)} className="flex gap-4 m-2 justify-between mx-4">
-                        {roles?.map((role) => (
+                        {Array.isArray(roles) && roles.map((role) => (
                             <div className="flex items-center space-x-2" key={role.id}>
                                 <RadioGroupItem id={role.id} value={role.id} disabled={isLoading} />
                                 <Label htmlFor={role.role}>{role.role}</Label>
@@ -534,41 +603,38 @@ export function SidebarAddUser({ icon, title, style }: SidebarModalsProps) {
                     </RadioGroup>
                 </div>
 
-                <Label>Selecione o Levita para associar o login:</Label>
-                <ScrollArea className="md:max-h-[35vh] w-full">
-                    <Card className="bg-transparent grid lg:grid-cols-4 md:grid-cols-2 grid-cols-2">
-                        {isLoading || levitas == undefined ?
-                            <div className="flex justify-center items-center h-40">
-                                <div className="h-16 w-16 border-4 border-primary rounded-3xl animate-spin" />
-                            </div>
-                            :
-
-                            levitas.map((levita) => (
-                                <Button key={levita.id} variant={"outline"} type="submit"
-                                    className={`p-2 rounded-lg m-2 ${levitaToAdd?.id == levita.id ? "bg-primary/80" : ""}`}
-                                    onClick={() => setLevitaToAdd(levita)}>
-                                    {levita.nome.split(" ").length > 1 ?
-                                        levita.nome.split(" ")[0].concat(" ").concat(levita.nome.split(" ")[1].charAt(0)).concat(".") : levita.nome}</Button>
-                            ))
-                        }
-                    </Card>
-                </ScrollArea>
+                <div className={`flex flex-col items-center justify-center gap-2 ${returnUser?.accessCode ?? "hidden"}`}>
+                    <Label>Código de Acesso Gerado:</Label>
+                    <InputOTP className="items-center justify-center"
+                        maxLength={6}
+                        value={returnUser?.accessCode?.toUpperCase()}
+                    >
+                        <InputOTPGroup>
+                            <InputOTPSlot index={0} />
+                            <InputOTPSlot index={1} />
+                            <InputOTPSlot index={2} />
+                            <InputOTPSlot index={3} />
+                            <InputOTPSlot index={4} />
+                            <InputOTPSlot index={5} />
+                        </InputOTPGroup>
+                    </InputOTP>
+                </div>
 
                 <DialogFooter className="flex justify-end gap-4">
                     <Button variant={"cancel"} disabled={isLoading} onClick={() => setOpen(false)}>Cancelar</Button>
-                    <Button variant={"save"} disabled={isLoading || !levitaToAdd || username.length < 3 || password.length < 8}
+                    <Button variant={"save"} disabled={isLoading || !levitaToAdd}
                         onClick={() => {
-                            postMethod<UserDTO>("auth/user", {
-                                username: username,
-                                passcode: password,
-                                levitaId: levitaToAdd?.id
-                            }, () => { }).then(() => {
-                                setOpen(false)
-                                toast.success("Usuário adicionado com sucesso!")
-                            }).catch((error) => {
-                                toast.error("Erro na comunicação com a api: ", error);
-                                console.error("Erro na comunicação com a api: ", error);
-                            })
+                            postMethod<UserDTO | undefined>("auth/user", {
+                                levitaId: levitaToAdd?.id,
+                                role: selectedRole
+                            }, setReturnUser)
+                                .then(() => {
+                                    toast.success("Usuário adicionado com sucesso!")
+                                    setOpen(false)
+                                }).catch((error) => {
+                                    toast.error("Erro na comunicação com a api: ", error);
+                                    console.error("Erro na comunicação com a api: ", error);
+                                })
                         }}>Adicionar</Button>
                 </DialogFooter>
             </DialogContent>
@@ -576,20 +642,28 @@ export function SidebarAddUser({ icon, title, style }: SidebarModalsProps) {
     )
 }
 
-export function SidebarManageUsers({ icon, title, style }: SidebarModalsProps) {
+export function SidebarManageUsers({ icon, title }: SidebarModalsProps) {
     const [open, setOpen] = useState(false);
     const [users, setUsers] = useState<UserDTO[] | undefined>(undefined);
-    const [loading, setLoading] = useState(true);
+    const [isLoading, setLoading] = useState(true);
 
     useEffect(() => {
-        if (users) return;
+        if (!open) return;
+        if (users) {
+            setLoading(false);
+            return;
+        }
         getMethod<UserDTO[] | undefined>("auth/user", setUsers)
-        setLoading(false);
-    }, [users])
+    }, [users, open])
+
+    function setOpenAndReload(value: boolean) {
+        setOpen(value);
+        setUsers(undefined);
+    }
 
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild className="w-full text-indigo-400 hover:text-indigo-400" disabled={!users}>
+        <Dialog open={open} onOpenChange={setOpenAndReload}>
+            <DialogTrigger asChild className="w-full text-indigo-400 hover:text-indigo-400">
                 <SidebarMenuButton>
                     {icon}
                     {title}
@@ -605,81 +679,72 @@ export function SidebarManageUsers({ icon, title, style }: SidebarModalsProps) {
                     </DialogDescription>
                 </DialogHeader>
                 {/* Content aqui */}
-                <div className={"grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4"}>
-                    {loading || !users ? (
-                        <div className="flex justify-center items-center h-40">
-                            <div className="h-16 w-16 border-4 border-primary rounded-3xl animate-spin" />
-                        </div>
-                    ) : users.length === 0 ? (
-                        <Card className="text-center">
-                            <p className="p-6 sm:p-10 text-lg sm:text-2xl text-zinc-400/80">
-                                Nenhum usuário cadastrado no momento.
-                            </p>
-                        </Card>
-                    ) : Array.isArray(users) && users.map((user) => (
-                        <Card key={user.id} className={`${Cookies.get("username") == user.username ? "border-special/30 bg-special/10 " : ""} col-span-1`}>
-                            <CardHeader className="items-center lg:items-start">
-                                <CardTitle className={Cookies.get("username") == user.username ? "text-special" : ""}>{user.username}</CardTitle>
-                                <CardDescription>{user.role.role}</CardDescription>
-                            </CardHeader>
-                            {/* <CardContent>
-                                {user.levita ?
-                                    <>
-                                        <p><span className="text-subprimary">Levita:</span> {user.levita.nome}</p>
-                                        <p><span className="text-subprimary">Email:</span> {user.levita.email ?? "Nenhum email inserido."}</p>
-                                        <p><span className="text-subprimary">Telefone:</span> {user.levita.contato ?? "Nenhum telefone inserido."}</p>
-                                        <p><span className="text-subprimary">Descrição:</span> {user.levita.descricao ?? "Nenhuma descrição inserida."}</p>
-                                        <p><span className="text-subprimary">Instrumentos:</span> <span>
-                                            {user.levita.instrumentos.map((instrumento) => (
-                                                <Badge key={instrumento.id} variant={"outline"} className="gap-1">{instrumento.nome}</Badge>
-                                            ))}
-                                        </span></p>
-                                    </>
-                                    :
-                                    <p className="text-secondary">Nenhum levita associado.</p>
-                                }
-                            </CardContent> */}
-                            <CardFooter className="flex items-center justify-between">
-                                <div>
-                                    {user.levita ?
-                                        <DialogVerLevita levita={user.levita} disabled={false} />
-                                        : <Button variant="outline" disabled className="text-secondary/50">Nenhum levita associado</Button>
-                                    }
-                                </div>
-                                <div>
-                                    {Cookies.get("username") != user.username ?
-                                        <ConfirmationModal
-                                            onConfirm={() => {
-                                                deleteMethod(`auth/user/${user.id}`)
-                                                    .catch((error) => {
-                                                        toast.error("Erro ao remover usuário: ", error);
-                                                        console.error("Erro ao remover usuário: ", error);
-                                                    })
-                                                    .then(() => {
-                                                        toast.success("Usuário removido com sucesso!");
-                                                        setUsers(users?.filter(u => u.id !== user.id));
-                                                    })
-                                            }}
-                                            title={`Remover usuário: ${user.username}`}
-                                            trigger={
-                                                <Button variant={"destructive"}>
-                                                    <Trash2 size={16} />
-                                                </Button>
-                                            }
-                                            message={
-                                                <p className="text-red-500 font-semibold text-center">
-                                                    Você tem certeza que deseja remover este usuário? Esta ação não pode ser desfeita.
-                                                </p>
-                                            }
-                                        />
-                                        : <Button variant={"destructive"} className="grayscale border">
-                                            <Trash2 size={16} />
-                                        </Button>}
-                                </div>
-                            </CardFooter>
-                        </Card>
-                    ))}
-                </div>
+
+                {isLoading || !users ? (
+                    <div className="flex justify-center items-center h-40">
+                        <div className="h-16 w-16 border-4 border-indigo-700 rounded-3xl animate-spin" />
+                    </div>
+                ) : users.length === 0 ? (
+                    <Card className="text-center">
+                        <p className="p-6 sm:p-10 text-lg sm:text-2xl text-zinc-400/80">
+                            Nenhum usuário cadastrado no momento.
+                        </p>
+                    </Card>
+                ) :
+                    <div className={"grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4"}>
+                        {Array.isArray(users) && users.map((user) => (
+                            <Card key={user.id} className={`${Cookies.get("username") == user.username ? "border-special/30 bg-special/10 " : ""} col-span-1`}>
+                                <CardHeader className="items-center lg:items-start">
+                                    <CardTitle className={Cookies.get("username") == user.username ? "text-special" : ""}>{user.username}</CardTitle>
+                                    <CardDescription>{user.role.role}</CardDescription>
+                                </CardHeader>
+                                <CardContent>
+                                    <p>
+                                        {user.accessCode ? user.accessCode.toUpperCase() : <span className="text-colortext/40">Sem código de acesso.</span>}
+                                    </p>
+                                </CardContent>
+                                <CardFooter className="flex items-center justify-between">
+                                    <div>
+                                        {user.levita ?
+                                            <DialogVerLevita levita={user.levita} disabled={false} />
+                                            : <Button variant="outline" disabled className="text-secondary/50">Nenhum levita associado</Button>
+                                        }
+                                    </div>
+                                    <div>
+                                        {Cookies.get("username") != user.username ?
+                                            <ConfirmationModal
+                                                onConfirm={() => {
+                                                    deleteMethod(`auth/user/${user.id}`)
+                                                        .catch((error) => {
+                                                            toast.error("Erro ao remover usuário: ", error);
+                                                            console.error("Erro ao remover usuário: ", error);
+                                                        })
+                                                        .then(() => {
+                                                            toast.success("Usuário removido com sucesso!");
+                                                            setUsers(users?.filter(u => u.id !== user.id));
+                                                        })
+                                                }}
+                                                title={`Remover usuário: ${user.username}`}
+                                                trigger={
+                                                    <Button variant={"destructive"}>
+                                                        <Trash2 size={16} />
+                                                    </Button>
+                                                }
+                                                message={
+                                                    <p className="text-red-500 font-semibold text-center">
+                                                        Você tem certeza que deseja remover este usuário? Esta ação não pode ser desfeita.
+                                                    </p>
+                                                }
+                                            />
+                                            : <Button variant={"destructive"} className="grayscale border">
+                                                <Trash2 size={16} />
+                                            </Button>}
+                                    </div>
+                                </CardFooter>
+                            </Card>
+                        ))}
+                    </div>
+                }
             </DialogContent>
         </Dialog>
     )

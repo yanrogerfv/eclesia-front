@@ -4,7 +4,43 @@ import Cookies from "js-cookie";
 import { toast } from "sonner";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+const token = Cookies.get("token") || null;
 
+const promise = () => new Promise((resolve) => setTimeout(() => resolve({ name: "Sonner" }), 1000))
+
+async function checkErrors(req: void | Response) {
+	const status = req?.status;
+	if (!status || status == 200 || status == 201) return;
+	
+	if (status == 401) {
+		toast.error("Sessão expirada, redirecionando para o login...");
+		Cookies.remove("token");
+		await promise();
+		window.location.href = "/login";
+		return Promise.reject({ message: "Unauthorized", status: 401 });
+	} else if (status == 403) {
+		console.warn("Access forbidden.");
+		toast.error("Access forbidden.");
+		return Promise.reject({ message: "Forbidden", status: 403 });
+	} else if (status == 404) {
+		console.warn("Resource not found.");
+		toast.error("Resource not found.");
+		return Promise.reject({ message: "Not Found", status: 404 });
+	} else {
+		console.error(`Error ${status} occurred.`);
+		toast.error(`Error ${status} occurred.`);
+		return Promise.reject({ message: `Error ${status}`, status });
+	}
+}
+
+/**
+ * Function to perform a public GET request to the API
+ * @function 
+ * 
+ * 
+ * @param url - Request URL
+ * @param setState - SetStateAction to update the state with the response data
+ */
 export async function publicGetMethod<T>(url: string, setState: React.Dispatch<React.SetStateAction<T>>) {
 	const req = await fetch(`${apiUrl}${url}`, {
 		method: "GET",
@@ -12,18 +48,14 @@ export async function publicGetMethod<T>(url: string, setState: React.Dispatch<R
 			"Content-Type": "application/json",
 		}
 	}).catch((error) => {
-		if (error instanceof TypeError) {
-		} else {
-			console.error("Erro na comunicação com a api: ", error);
-			toast.error("Erro na comunicação com a api: ", error.error);
-		}
+		console.error("Erro na comunicação com a api: ", error);
+		toast.error("Erro na comunicação com a api: ", error.error);
 	});
-	if (req?.status !== 200 && req?.status) {
-		console.error(`Erro na comunicação com a api: ${req}`);
-		toast.error(`Erro na comunicação com a api: ${req.status}`);
-	}
+	await checkErrors(req);
+	
 	const data = await req?.json();
 	setState(data);
+	return data;
 }
 
 /**
@@ -39,7 +71,7 @@ export async function getMethod<T>(url: string, setState: React.Dispatch<React.S
 		method: "GET",
 		headers: {
 			"Content-Type": "application/json",
-			"Authorization": `Bearer ${Cookies.get("token")}`
+			"Authorization": `${token}`
 		}
 	}).catch((error) => {
 		if (error instanceof TypeError) {
@@ -48,12 +80,17 @@ export async function getMethod<T>(url: string, setState: React.Dispatch<React.S
 			toast.error("Erro na comunicação com a api: ", error.error);
 		}
 	});
-	if (req?.status !== 200 && req?.status) {
-		console.error(`Erro na comunicação com a api: ${req}`);
-		toast.error(`Erro na comunicação com a api: ${req.status}`);
+	if (req) {
+		const status = req.status;
+		const data = await req.json();
+		if (status >= 400) {
+			data.error.forEach((error: string) => {
+				toast.error(error);
+			})
+		}
+		if (setState)
+			setState(data);
 	}
-	const data = await req?.json();
-	setState(data);
 }
 
 /**
@@ -70,14 +107,14 @@ export async function postMethod<T>(url: string, body: body, setState?: React.Di
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
-			"Authorization": `Bearer ${Cookies.get("token")}`
+			"Authorization": `${token}`
 		},
 		body: JSON.stringify(body)
 	})
 	if (req) {
-		const isOk = req.ok;
+		const status = req.status;
 		const data = await req.json();
-		if (!isOk) {
+		if (status >= 400) {
 			data.error.forEach((error: string) => {
 				toast.error(errorMessage ? `${errorMessage}: ${error}` : error);
 			})
@@ -104,14 +141,14 @@ export async function patchMethod<T>(url: string, body?: body, setState?: React.
 		method: "PATCH",
 		headers: {
 			"Content-Type": "application/json",
-			"Authorization": `Bearer ${Cookies.get("token")}`
+			"Authorization": `${token}`
 		},
 		body: JSON.stringify(body)
 	} : {
 		method: "PATCH",
 		headers: {
 			"Content-Type": "application/json",
-			"Authorization": `Bearer ${Cookies.get("token")}`
+			"Authorization": `${token}`
 		}
 	}
 	const req = await fetch(`${apiUrl}${url}`, reqHeaders).catch((error) => {
@@ -121,11 +158,12 @@ export async function patchMethod<T>(url: string, body?: body, setState?: React.
 	);
 	if (req) {
 		const status = req.status;
-		if (status !== 200) {
-			toast.error(`Erro na comunicação com a api: ${status}`);
-			console.error(`Erro na comunicação com a api: ${status}`);
-		}
 		const data = await req.json();
+		if (status >= 400) {
+			data.error.forEach((error: string) => {
+				toast.error(error);
+			})
+		}
 		if (setState)
 			setState(data);
 	}
@@ -145,7 +183,7 @@ export async function putMethod<T>(url: string, body: body, setState?: React.Dis
 		method: "PUT",
 		headers: {
 			"Content-Type": "application/json",
-			"Authorization": `Bearer ${Cookies.get("token")}`
+			"Authorization": `${token}`
 		},
 		body: JSON.stringify(body)
 	}).catch((error) => {
@@ -154,11 +192,12 @@ export async function putMethod<T>(url: string, body: body, setState?: React.Dis
 	});
 	if (req) {
 		const status = req.status;
-		if (status !== 200) {
-			toast.error(`Erro na comunicação com a api: ${status}`);
-			console.error(`Erro na comunicação com a api: ${status}`);
-		}
 		const data = await req.json();
+		if (status >= 400) {
+			data.error.forEach((error: string) => {
+				toast.error(error);
+			})
+		}
 		if (setState)
 			setState(data);
 	}
@@ -175,7 +214,7 @@ export async function deleteMethod<T>(url: string) {
 	const req = await fetch(`${apiUrl}${url}`, {
 		method: "DELETE",
 		headers: {
-			"Authorization": `Bearer ${Cookies.get("token")}`
+			"Authorization": `${token}`
 		},
 	}).catch((error) => {
 		console.error("Erro na comunicação com a api: ", error);
@@ -183,9 +222,13 @@ export async function deleteMethod<T>(url: string) {
 	});
 	if (req) {
 		const status = req.status;
-		if (status !== 200) {
-			console.error(`Erro na comunicação com a api: ${status}`);
-			toast.error(`Erro na comunicação com a api: ${status}`);
+		if (status >= 400) {
+			const data = await req.json();
+			data.error.forEach((error: string) => {
+				toast.error(error);
+			})
+		} else {
+			toast.success("Removido(a) com sucesso!");
 		}
 	}
 } 
