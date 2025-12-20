@@ -91,6 +91,7 @@ export default function LoginPage() {
                 form.reset();
                 await promise();
                 router.refresh();
+                setTabValue("login");
             }
             if (!response.ok) {
                 let resp = await response.json();
@@ -105,10 +106,12 @@ export default function LoginPage() {
 
     const [isLoading, setIsLoading] = useState(false)
     const [seePass, setSeePass] = useState(false)
+    // const [_, setSetToken] = useState<string | undefined>(undefined);
+    const [tabValue, setTabValue] = useState("login");
 
     return (
         <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-tr from-primary via-secondary to-violet-600">
-            <Tabs defaultValue="login" className="max-w-xs md:max-w-2xl m-4 gap-0 flex items-center">
+            <Tabs value={tabValue} onValueChange={setTabValue} className="max-w-xs md:max-w-2xl m-4 gap-0 flex items-center">
                 <TabsList className="p-1 max-w-xs md:max-w-xl w-2/3 rounded-t-2xl" activeClassName="rounded-t-2xl">
                     <TabsTrigger value="login">
                         Entrar
