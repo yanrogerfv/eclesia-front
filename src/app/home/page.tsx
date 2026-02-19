@@ -7,11 +7,11 @@ import { EscalaSimpleCard, LevitaSimpleCard } from "@/components/customCards";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
-import { ChevronLeft } from "lucide-react";
 import { getMethod } from "@/lib/apiRequests";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import compareDates from "@/util/compareDates";
+import BackButton from "@/components/next-back";
 
 export default function Home() {
 
@@ -33,9 +33,7 @@ export default function Home() {
                 <nav className="space-y-4">
                     <div className="flex justify-between items-center">
                         <div className="flex items-center gap-3 sm:gap-4">
-                            <Link href="/" className="flex-shrink-0 flex items-center justify-center p-2 sm:p-3 border hover:bg-primary hover:text-black rounded-lg transition-colors">
-                                <ChevronLeft className="size-6 sm:size-8" />
-                            </Link>
+                            <BackButton />
                             <h1 className="font-extrabold tracking-tight text-2xl sm:text-3xl md:text-4xl lg:text-5xl truncate">
                                 Planejador
                             </h1>

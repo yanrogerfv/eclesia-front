@@ -143,11 +143,12 @@ export function HomepageThemeSelector() {
                 <div className="text-center bg-card border rounded-t-lg text-lg font-semibold text-primary w-full">
                     Temas
                 </div>
-                <div className="w-full border-t-0 bg-card border rounded-b-lg p-2 grid grid-cols-4 items-center justify-center">
+                <div className="w-full border-t-0 bg-card border rounded-b-lg p-4 grid grid-cols-4 items-center justify-center">
                     {themes.map((selectedTheme) => {
                         const Icon = selectedTheme.icon as React.ComponentType<any>;
                         return (
-                            <Button key={selectedTheme.name} variant={selectedTheme.name === theme ? "default" : "outline"} size="sm" onClick={() => setTheme(selectedTheme.name)}>
+                            <Button key={selectedTheme.name} variant={selectedTheme.name === theme ? "default" : "outline"} size="sm" 
+                            className="w-full rounded-none" onClick={() => setTheme(selectedTheme.name)}>
                                 <Icon />
                             </Button>
                         )
