@@ -1,0 +1,35 @@
+{
+  "name": "Eclesia",
+  "short_name": "Eclesia",
+  "description": "Organização e planejamento de escalas para grupos de louvor.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "orientation": "portrait-primary",
+  "categories": ["productivity", "utilities"],
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-512x512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Ver Escalas",
+      "short_name": "Escalas",
+      "description": "Ver as próximas escalas",
+      "url": "/escalas",
+      "icons": [{ "src": "/icons/icon-192x192.svg", "sizes": "192x192" }]
+    }
+  ]
+}
