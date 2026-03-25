@@ -158,17 +158,17 @@ export function VerEscala(props: props) {
 				<Card className="bg-transparent grid md:p-2">
 					{escalaMusicas ? escalaMusicas.length > 0 ?
 						escalaMusicas.map((musica) => (
-							<Button key={musica.id} variant={"outline"} className="rounded-lg m-2">
-								<Link key={musica.id} href={musica.link} target="_blank" className="">
+							<Link key={musica.id} href={musica.link} target="_blank" className="p-2">
+								<Button key={musica.id} variant={"outline"} className="rounded-lg w-full">
 									<p className="sm:hidden">
 										{musica.nome.substring(0, 25) + (musica.nome.length > 25 ? "..." : "")}
 									</p>
 									<p className="hidden sm:block">
 										{musica.nome}
 									</p>
-								</Link>
-							</Button>
-						)) : <p className="text-colortext/50">Nenhuma música inserida.</p>
+								</Button>
+							</Link>
+						)) : <p className="text-colortext/50 px-2">Nenhuma música inserida.</p>
 						: <p className="text-colortext/50">Carregando músicas...</p>}
 				</Card>
 				<DialogFooter className="sm:justify-between gap-4">
@@ -195,7 +195,7 @@ export function listBacks(backs: Levita[]) {
 	return String(backNames.join(", ") + ".")
 }
 
-export function formatLevitaName(levita: Levita) : string {
+export function formatLevitaName(levita: Levita): string {
 	const name = levita.nome;
 	if (name.length > 11) {
 		if (name.split(" ").length > 1) {
@@ -299,7 +299,7 @@ export function EditEscala(pp: addEditDialogProps) {
 							message={pp.isEdit && pp.escala?.ministro ? pp.escala?.ministro.nome : "Selecione um ministro."}
 							setLevitaInInstrumento={setMinistro}
 							filteredLevitas={filterByInstrumento(0)}
-							alreadySelectedLevitaIds={[violao, teclado, bateria, baixo, guitarra]}
+							alreadySelectedLevitaIds={new Array<string>()}
 							disableFields={pp.escala?.data.toString().length == 0}
 						/>
 
@@ -362,7 +362,7 @@ export function EditEscala(pp: addEditDialogProps) {
 						<div className="w-full space-y-1 my-4">
 							<Label>Backs:</Label>
 							<Card className="bg-transparent grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1">
-								{filterByInstrumento(0)?.filter(l => 
+								{filterByInstrumento(0)?.filter(l =>
 									ministro != l.id && violao != l.id && teclado != l.id && bateria != l.id && baixo != l.id && guitarra != l.id
 								).map((levita) => (
 									<Button key={levita.id} variant={backs.includes(levita.id) ? "default" : "outline"} type="submit"
@@ -541,7 +541,7 @@ export function AddEscala(props: DialogAddEscalaProps) {
 								message="Escolha um ministro."
 								setLevitaInInstrumento={setMinistro}
 								filteredLevitas={filterByInstrumento(0)}
-								alreadySelectedLevitaIds={[violao, teclado, bateria, baixo, guitarra]}
+								alreadySelectedLevitaIds={new Array<string>()}
 								disableFields={disableFields}
 							/>
 
@@ -599,7 +599,7 @@ export function AddEscala(props: DialogAddEscalaProps) {
 							<div className="w-full space-y-1 my-4">
 								<Label>Backs:</Label>
 								<Card className="bg-transparent grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1">
-									{filterByInstrumento(0)?.filter(l => 
+									{filterByInstrumento(0)?.filter(l =>
 										ministro != l.id && violao != l.id && teclado != l.id && bateria != l.id && baixo != l.id && guitarra != l.id
 									).map((levita) => (
 										<Button key={levita.id} variant={backs.includes(levita.id) ? "default" : "outline"} type="submit"

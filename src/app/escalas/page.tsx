@@ -12,7 +12,7 @@ import {
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { useEffect, useState } from "react";
-import { ChevronLeft, PanelLeftOpen, X } from "lucide-react";
+import { ChevronLeft, PanelLeftOpen, X, WifiOff } from "lucide-react";
 import { publicGetMethod } from "@/lib/apiRequests";
 import { VerEscalaSomenteLeitura } from "@/components/modals/dialog-escala";
 import { convertDateFormat, EscalaResumida } from "@/lib/apiObjects";
@@ -28,6 +28,23 @@ export default function ScheduleViewer() {
     const [isLoading, setIsLoading] = useState(true);
     const [escalasData, setEscalasData] = useState<EscalaResumida[] | undefined>(undefined);
     const [filteredEscalas, setFilteredEscalas] = useState<EscalaResumida[] | undefined>(undefined);
+    const [isOffline, setIsOffline] = useState(false);
+
+    useEffect(() => {
+        const handleOnline = () => setIsOffline(false);
+        const handleOffline = () => setIsOffline(true);
+
+        if (typeof window !== 'undefined') {
+            setIsOffline(!navigator.onLine);
+            window.addEventListener('online', handleOnline);
+            window.addEventListener('offline', handleOffline);
+
+            return () => {
+                window.removeEventListener('online', handleOnline);
+                window.removeEventListener('offline', handleOffline);
+            };
+        }
+    }, []);
 
     useEffect(() => {
         if (escalasData) return;
@@ -52,10 +69,18 @@ export default function ScheduleViewer() {
         <>
             <main className="max-w-6xl w-full px-4 sm:px-8 lg:px-6 mx-auto my-6 sm:my-12">
                 <nav className="w-full">
-                    <div className="flex w-full justify-between items-center">
-                        <div className="flex items-center">
-                            <BackButton />
-                            <h1 className="ml-4 font-extrabold tracking-tight text-2xl sm:text-5xl">Escalas</h1>
+                    <div className="flex flex-wrap md:flex-nowrap justify-between items-center">
+                        <div className="flex items-center justify-between w-full">
+                            <div className="flex items-center">
+                                <BackButton />
+                                <h1 className="ml-4 font-extrabold tracking-tight text-2xl sm:text-5xl">Escalas</h1>
+                                {isOffline && Array.isArray(escalasData) && escalasData.length > 0 && (
+                                    <Badge variant="destructive" className="ml-4 mt-2 sm:mt-0 flex gap-1 items-center bg-red-500 hover:bg-red-600 cursor-default">
+                                        <WifiOff className="w-3 h-3" />
+                                        Dessincronizado
+                                    </Badge>
+                                )}
+                            </div>
                         </div>
                         <div className="flex justify-end gap-2 mt-4 sm:w-full">
                             <Link href="/home" >
@@ -88,7 +113,19 @@ export default function ScheduleViewer() {
                     </div>
                     <br />
 
-                    {Array.isArray(filteredEscalas) && filteredEscalas.length === 0 ? (
+                    {isOffline && !escalasData ? (
+                        <Card className="text-center border-red-900/20 bg-red-500/5 mt-4">
+                            <CardHeader className="items-center">
+                                <WifiOff className="h-16 w-16 text-red-500/80 mb-4" />
+                                <CardTitle className="text-2xl text-red-500">Sem Conexão</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <p className="text-zinc-500 dark:text-zinc-400 pb-6 text-lg px-4 md:px-10">
+                                    Você está offline e não possui escalas salvas. Conecte-se à internet para visualizar as escalas.
+                                </p>
+                            </CardContent>
+                        </Card>
+                    ) : Array.isArray(filteredEscalas) && filteredEscalas.length === 0 ? (
                         <Card className="text-center">
                             <p className="p-6 sm:p-10 text-lg sm:text-2xl text-zinc-400/80">
                                 {

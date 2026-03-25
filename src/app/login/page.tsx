@@ -111,20 +111,21 @@ export default function LoginPage() {
 
     return (
         <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-tr from-primary via-secondary to-violet-600">
-            <Tabs value={tabValue} onValueChange={setTabValue} className="max-w-xs md:max-w-2xl m-4 gap-0 flex items-center">
-                <TabsList className="p-1 max-w-xs md:max-w-xl w-2/3 rounded-t-2xl" activeClassName="rounded-t-2xl">
+            <Tabs value={tabValue} onValueChange={setTabValue} className="max-w-xs md:max-w-2xl m-4 gap-0 flex items-center justify-center">
+                <TabsList className="p-1 max-w-xs md:max-w-xl w-2/3 rounded-b-none" activeClassName="">
                     <TabsTrigger value="login">
                         Entrar
                     </TabsTrigger>
+                    <Separator orientation="vertical" className="m-2 bg-colortext/50 h-6" />
                     <TabsTrigger value="register">
                         Atualizar
                     </TabsTrigger>
                 </TabsList>
-                <Card className="">
+                <Card className="max-w-xs md:max-w-md w-full">
                     <CardHeader className="text-center p-4">
                         <div className="flex flex-row justify-between">
                             <ArrowLeftCircle className="cursor-pointer text-secondary hover:text-current/20" onClick={() => router.push("/")} />
-                            <span className="text-lg sm:text-xl">Login</span>
+                            <span className="text-lg sm:text-xl">Acesse o Eclesia</span>
                             <ArrowLeftCircle color="transparent" />
                         </div>
                         <Separator className="mt-4" />
@@ -184,6 +185,10 @@ export default function LoginPage() {
                                             )}
                                         />
 
+                                        <div className="flex justify-center">
+                                            <a href="https://mail.google.com/mail/u/0/?fs=1&to=yanrogerfv@gmail.com&su=Esqueci%20Meu%20Código%20-%20Eclesia%20Software&tf=cm"
+                                                className="text-sm text-zinc-400/80 hover:text-zinc-200/80">Esqueci minha senha</a>
+                                        </div>
                                         <div className="flex flex-row items-end justify-between">
                                             <Button type="submit" variant="default" className="px-5 mt-10 w-full rounded-lg" disabled={isLoading} >
                                                 {isLoading ? (
@@ -198,10 +203,6 @@ export default function LoginPage() {
                                                     </div>
                                                 )}
                                             </Button>
-                                        </div>
-                                        <div className="flex justify-center">
-                                            <a href="https://mail.google.com/mail/u/0/?fs=1&to=yanrogerfv@gmail.com&su=Esqueci%20Meu%20Código%20-%20Eclesia%20Software&tf=cm"
-                                                className="text-sm text-zinc-400/80 hover:text-zinc-200/80">Esqueci meu código</a>
                                         </div>
                                     </form>
                                 </Form>
