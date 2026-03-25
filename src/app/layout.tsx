@@ -22,10 +22,20 @@ const notosansjp = Noto_Sans_JP({
 
 export const metadata: Metadata = {
 	icons: {
-		icon: "/favicon.ico"
+		icon: "/favicon.ico",
+		apple: "/icons/icon-192x192.svg",
 	},
 	title: "Eclesia",
 	description: "Organização e planejamento de escalas para grupos de louvor.",
+	manifest: "/manifest.json",
+	appleWebApp: {
+		capable: true,
+		statusBarStyle: "default",
+		title: "Eclesia",
+	},
+	formatDetection: {
+		telephone: false,
+	},
 };
 
 export default function RootLayout({
@@ -35,6 +45,10 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="pt-br" suppressHydrationWarning>
+			<head>
+				<meta name="theme-color" content="#1a1a2e" />
+				<meta name="mobile-web-app-capable" content="yes" />
+			</head>
 			<body className={notosansjp.className}>
 				<ThemeProvider attribute="class" defaultTheme={"creamy"} enableSystem={false} disableTransitionOnChange>
 					{children}
