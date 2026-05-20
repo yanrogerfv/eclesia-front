@@ -10,7 +10,7 @@ import {
 	CardTitle
 } from "@/components/ui/card";
 import { useEffect, useState } from "react";
-import { ListFilter, Trash2, UserMinus, X } from "lucide-react";
+import { ListFilter, Trash2, UserMinus, X, WifiOff } from "lucide-react";
 import { DialogAddLevita, DialogVerLevita } from "@/components/modals/dialog-levita";
 import { Input } from "@/components/ui/input";
 import { Levita, Instrumento } from "@/lib/apiObjects";
@@ -35,6 +35,23 @@ export default function LevitasPage() {
 	const [filteredLevitas, setFilteredLevita] = useState<Levita[] | undefined>(undefined)
 	const [isAdminOrLeader, setLeader] = useState(false)
 	const [loggedLevitaId, setLoggedLevitaId] = useState<string | null>(null)
+	const [isOffline, setIsOffline] = useState(false)
+
+	useEffect(() => {
+		const handleOnline = () => setIsOffline(false);
+		const handleOffline = () => setIsOffline(true);
+
+		if (typeof window !== 'undefined') {
+			setIsOffline(!navigator.onLine);
+			window.addEventListener('online', handleOnline);
+			window.addEventListener('offline', handleOffline);
+
+			return () => {
+				window.removeEventListener('online', handleOnline);
+				window.removeEventListener('offline', handleOffline);
+			};
+		}
+	}, []);
 
 	useEffect(() => {
 		if (sessionStorage.getItem("role") == "Líder" || sessionStorage.getItem("role") == "ADMIN") {
@@ -84,9 +101,15 @@ export default function LevitasPage() {
 				<div>
 					<div className="flex flex-wrap md:flex-nowrap justify-between items-center">
 						<div className="flex items-center justify-between w-full">
-							<div className="flex items-center">
+							<div className="flex items-center flex-wrap">
 								<BackButton />
 								<h1 className="ml-4 font-extrabold tracking-tight text-2xl sm:text-5xl">Levitas</h1>
+								{isOffline && Array.isArray(levitas) && levitas.length > 0 && (
+									<Badge variant="destructive" className="ml-4 mt-2 sm:mt-0 flex gap-1 items-center bg-red-500 hover:bg-red-600 cursor-default">
+										<WifiOff className="w-3 h-3" />
+										Dessincronizado
+									</Badge>
+								)}
 							</div>
 							<SidebarTrigger className="border md:hidden" />
 						</div>
@@ -142,112 +165,126 @@ export default function LevitasPage() {
 				</div>
 
 				{/* Content Grid */}
-				<div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
-					{isLoading ? (
-						<div className="col-span-full flex items-center justify-center py-16 sm:py-20">
-							<div className="size-32 sm:size-48 lg:size-80 border-4 border-transparent text-primary/40 animate-spin flex items-center justify-center border-t-primary rounded-full">
-								<div className="size-24 sm:size-36 lg:size-64 border-4 border-transparent text-subprimary/40 animate-spin flex items-center justify-center border-t-subprimary rounded-full" />
+				{isOffline && !levitas ? (
+					<Card className="text-center border-red-900/20 bg-red-500/5 mt-4">
+						<CardHeader className="items-center">
+							<WifiOff className="h-16 w-16 text-red-500/80 mb-4" />
+							<CardTitle className="text-2xl text-red-500">Sem Conexão</CardTitle>
+						</CardHeader>
+						<CardContent>
+							<p className="text-zinc-500 dark:text-zinc-400 pb-6 text-lg px-4 md:px-10">
+								Você está offline e não possui levitas salvos em cache. Conecte-se à internet para visualizar os levitas.
+							</p>
+						</CardContent>
+					</Card>
+				) : (
+					<div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+						{isLoading ? (
+							<div className="col-span-full flex items-center justify-center py-16 sm:py-20">
+								<div className="size-32 sm:size-48 lg:size-80 border-4 border-transparent text-primary/40 animate-spin flex items-center justify-center border-t-primary rounded-full">
+									<div className="size-24 sm:size-36 lg:size-64 border-4 border-transparent text-subprimary/40 animate-spin flex items-center justify-center border-t-subprimary rounded-full" />
+								</div>
 							</div>
-						</div>
-					) : filteredLevitas && filteredLevitas.length > 0 ? (
-						filteredLevitas.map(levita => (
-							<Card
-								key={levita.id}
-								className={`relative flex flex-col h-full lg:items-start hover:scale-[1.02] hover:shadow-lg transition-all ${removeOverlay ? "animate-pulse" : "duration-200"
-									} ${loggedLevitaId === levita.id ? "border-special/30 bg-special/10" : ""
-									}`}
-							>
-								<X className={removeOverlay ? "absolute hover:cursor-pointer sm:hidden bg-rose-500/80 rounded-br-xl p-1" : "absolute invisible"}
-									onClick={() => {
-										deleteMethod(`v1/levita/${levita.id}`)
-											.catch((error) => {
-												toast.error("Erro ao remover o Levita!")
-												console.error("Erro na comunicação com a api: ", error);
-											})
-											.finally(() => clearStates());
-									}}/>
-									<CardHeader className="pb-3 items-center text-center lg:items-start lg:text-start">
-										<CardTitle className={`text-base sm:text-lg ${Cookies.get("username") == levita.nome ? "text-special" : "text-primary"
-											} leading-tight`}>
-											{levita.nome}
-										</CardTitle>
-										<CardDescription className="text-xs sm:text-sm line-clamp-1">
-											<p className="sm:hidden">
-												{levita.contato ? levita.contato : levita.email.length > 18 ? levita.email.substring(0, 18) + "..." : levita.email}
-											</p>
-											<p className="hidden sm:block">
-												{levita.contato ? levita.contato : levita.email}
-											</p>
-										</CardDescription>
-									</CardHeader>
+						) : filteredLevitas && filteredLevitas.length > 0 ? (
+							filteredLevitas.map(levita => (
+								<Card
+									key={levita.id}
+									className={`relative flex flex-col h-full lg:items-start hover:scale-[1.02] hover:shadow-lg transition-all ${removeOverlay ? "animate-pulse" : "duration-200"
+										} ${loggedLevitaId === levita.id ? "border-special/30 bg-special/10" : ""
+										}`}
+								>
+									<X className={removeOverlay ? "absolute hover:cursor-pointer sm:hidden bg-rose-500/80 rounded-br-xl p-1" : "absolute invisible"}
+										onClick={() => {
+											deleteMethod(`v1/levita/${levita.id}`)
+												.catch((error) => {
+													toast.error("Erro ao remover o Levita!")
+													console.error("Erro na comunicação com a api: ", error);
+												})
+												.finally(() => clearStates());
+										}}/>
+										<CardHeader className="pb-3 items-center text-center lg:items-start lg:text-start">
+											<CardTitle className={`text-base sm:text-lg ${Cookies.get("username") == levita.nome ? "text-special" : "text-primary"
+												} leading-tight`}>
+												{levita.nome}
+											</CardTitle>
+											<CardDescription className="text-xs sm:text-sm line-clamp-1">
+												<p className="sm:hidden">
+													{levita.contato ? levita.contato : levita.email.length > 18 ? levita.email.substring(0, 18) + "..." : levita.email}
+												</p>
+												<p className="hidden sm:block">
+													{levita.contato ? levita.contato : levita.email}
+												</p>
+											</CardDescription>
+										</CardHeader>
 
-									<CardContent className="flex-1 pb-3 space-y-3 w-full">
-										{/* Instruments Carousel */}
-										<div className="min-h-[2rem]">
-											{levita.instrumentos.length > 0 ? (
-												<Carousel className="w-fit max-w-[140px] sm:max-w-48 lg:w-full lg:justify-self-start justify-self-center">
-													<CarouselContent className="-ml-1">
-														{levita.instrumentos.sort((a, b) => a.id - b.id).map(instrumento => (
-															<CarouselItem key={instrumento.id} className="basis-auto pl-1">
-																<Badge variant="outline" className="text-xs whitespace-nowrap">
-																	{instrumento.nome}
-																</Badge>
-															</CarouselItem>
-														))}
-													</CarouselContent>
-												</Carousel>
-											) : (
-												<p className="text-xs text-muted-foreground">Sem instrumentos</p>
-											)}
-										</div>
+										<CardContent className="flex-1 pb-3 space-y-3 w-full">
+											{/* Instruments Carousel */}
+											<div className="min-h-[2rem]">
+												{levita.instrumentos.length > 0 ? (
+													<Carousel className="w-fit max-w-[140px] sm:max-w-48 lg:w-full lg:justify-self-start justify-self-center">
+														<CarouselContent className="-ml-1">
+															{levita.instrumentos.sort((a, b) => a.id - b.id).map(instrumento => (
+																<CarouselItem key={instrumento.id} className="basis-auto pl-1">
+																	<Badge variant="outline" className="text-xs whitespace-nowrap">
+																		{instrumento.nome}
+																	</Badge>
+																</CarouselItem>
+															))}
+														</CarouselContent>
+													</Carousel>
+												) : (
+													<p className="text-xs text-muted-foreground">Sem instrumentos</p>
+												)}
+											</div>
 
-										{/* Description */}
-										<div className="min-h-[3rem] sm:min-h-[4rem] justify-self-center">
-											{levita.descricao ? (
-												<CardDescription className="text-xs sm:text-sm text-subprimary line-clamp-3">
-													{levita.descricao}
-												</CardDescription>
-											) : (
-												<CardDescription className="text-xs sm:text-sm line-clamp-3">
-													Levita sem descrição.
-												</CardDescription>
-											)}
-										</div>
-									</CardContent>
+											{/* Description */}
+											<div className="min-h-[3rem] sm:min-h-[4rem] justify-self-center">
+												{levita.descricao ? (
+													<CardDescription className="text-xs sm:text-sm text-subprimary line-clamp-3">
+														{levita.descricao}
+													</CardDescription>
+												) : (
+													<CardDescription className="text-xs sm:text-sm line-clamp-3">
+														Levita sem descrição.
+													</CardDescription>
+												)}
+											</div>
+										</CardContent>
 
-									<CardFooter className="pt-3 justify-between w-full">
-										<DialogVerLevita
-											key={levita.id}
-											levita={levita}
-											disabled={removeOverlay}
-											setLevitas={setLevitas}
-										/>
-										<Button variant={"destructive"} size={"sm"} disabled={!removeOverlay || isLoading}
-											className={`transition-all duration-200 ease-in-out hidden sm:block ${removeOverlay ? "hover:cursor-pointer animate-none" : "invisible"}`}
-											onClick={() => {
-												deleteMethod(`v1/levita/${levita.id}`)
-													.catch((error) => {
-														toast.error("Erro ao remover o Levita!")
-														console.error("Erro na comunicação com a api: ", error);
-													})
-													.finally(() => clearStates());
-											}}>
-											<Trash2 />
-										</Button>
-									</CardFooter>
-							</Card>
-						))
-					) : (
-						<div className="col-span-full flex flex-col items-center justify-center py-16 sm:py-20 text-center">
-							<p className="text-lg sm:text-xl text-muted-foreground mb-2">
-								Nenhum levita encontrado
-							</p>
-							<p className="text-sm text-muted-foreground mx-8">
-								Tente ajustar os filtros ou buscar por outro nome.
-							</p>
-						</div>
-					)}
-				</div>
+										<CardFooter className="pt-3 justify-between w-full">
+											<DialogVerLevita
+												key={levita.id}
+												levita={levita}
+												disabled={removeOverlay}
+												setLevitas={setLevitas}
+											/>
+											<Button variant={"destructive"} size={"sm"} disabled={!removeOverlay || isLoading}
+												className={`transition-all duration-200 ease-in-out hidden sm:block ${removeOverlay ? "hover:cursor-pointer animate-none" : "invisible"}`}
+												onClick={() => {
+													deleteMethod(`v1/levita/${levita.id}`)
+														.catch((error) => {
+															toast.error("Erro ao remover o Levita!")
+															console.error("Erro na comunicação com a api: ", error);
+														})
+														.finally(() => clearStates());
+												}}>
+												<Trash2 />
+											</Button>
+										</CardFooter>
+								</Card>
+							))
+						) : (
+							<div className="col-span-full flex flex-col items-center justify-center py-16 sm:py-20 text-center">
+								<p className="text-lg sm:text-xl text-muted-foreground mb-2">
+									Nenhum levita encontrado
+								</p>
+								<p className="text-sm text-muted-foreground mx-8">
+									Tente ajustar os filtros ou buscar por outro nome.
+								</p>
+							</div>
+						)}
+					</div>
+				)}
 			</main>
 			<AppSidebar side="right" />
 		</SidebarProvider>
