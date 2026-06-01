@@ -10,7 +10,7 @@ import { Button } from "../ui/button";
 import { is, ptBR } from "date-fns/locale";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
-import { deleteMethod, getMethod, postMethod, putMethod } from "@/lib/apiRequests";
+import { deleteMethod, getMethod, postMethod, putMethod, patchMethod } from "@/lib/apiRequests";
 import { toast } from "sonner";
 import { ScrollArea } from "../ui/scroll-area";
 import { DialogEditLevita, DialogVerLevita } from "./dialog-levita";
@@ -645,6 +645,7 @@ export function SidebarAddUser({ icon, title, style }: SidebarModalsProps) {
 export function SidebarManageUsers({ icon, title }: SidebarModalsProps) {
     const [open, setOpen] = useState(false);
     const [users, setUsers] = useState<UserDTO[] | undefined>(undefined);
+    const [roles, setRoles] = useState<RoleDTO[] | undefined>(undefined);
     const [isLoading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -654,6 +655,7 @@ export function SidebarManageUsers({ icon, title }: SidebarModalsProps) {
             return;
         }
         getMethod<UserDTO[] | undefined>("auth/user", setUsers)
+        getMethod<RoleDTO[] | undefined>("auth/role", setRoles)
     }, [users, open])
 
     function setOpenAndReload(value: boolean) {
@@ -711,34 +713,41 @@ export function SidebarManageUsers({ icon, title }: SidebarModalsProps) {
                                         }
                                     </div>
                                     <div>
-                                        {Cookies.get("username") != user.username ?
-                                            <ConfirmationModal
-                                                onConfirm={() => {
-                                                    deleteMethod(`auth/user/${user.id}`)
-                                                        .catch((error) => {
-                                                            toast.error("Erro ao remover usuário: ", error);
-                                                            console.error("Erro ao remover usuário: ", error);
-                                                        })
-                                                        .then(() => {
-                                                            toast.success("Usuário removido com sucesso!");
-                                                            setUsers(users?.filter(u => u.id !== user.id));
-                                                        })
-                                                }}
-                                                title={`Remover usuário: ${user.username}`}
-                                                trigger={
-                                                    <Button variant={"destructive"}>
-                                                        <Trash2 size={16} />
-                                                    </Button>
-                                                }
-                                                message={
-                                                    <p className="text-red-500 font-semibold text-center">
-                                                        Você tem certeza que deseja remover este usuário? Esta ação não pode ser desfeita.
-                                                    </p>
-                                                }
-                                            />
-                                            : <Button variant={"destructive"} className="grayscale border">
-                                                <Trash2 size={16} />
-                                            </Button>}
+                                        {Cookies.get("username") != user.username && roles ?
+                                            <div className="flex gap-2">
+                                                <DialogEditUserAdmin user={user} setUsers={setUsers} users={users} roles={roles} />
+                                                <ConfirmationModal
+                                                    onConfirm={() => {
+                                                        deleteMethod(`auth/user/${user.id}`)
+                                                            .catch((error) => {
+                                                                toast.error("Erro ao remover usuário: ", error);
+                                                                console.error("Erro ao remover usuário: ", error);
+                                                            })
+                                                            .then(() => {
+                                                                setUsers(users?.filter(u => u.id !== user.id));
+                                                            })
+                                                    }}
+                                                    title={`Remover usuário: ${user.username}`}
+                                                    trigger={
+                                                        <Button variant={"destructive"} size="icon">
+                                                            <Trash2 size={16} />
+                                                        </Button>
+                                                    }
+                                                    message={
+                                                        <p className="text-red-500 font-semibold text-center">
+                                                            Você tem certeza que deseja remover este usuário? Esta ação não pode ser desfeita.
+                                                        </p>
+                                                    }
+                                                />
+                                            </div>
+                                            : <div className="flex gap-2">
+                                                <Button variant={"outline"} size="icon" disabled className="grayscale border">
+                                                    <PencilLine size={16} />
+                                                </Button>
+                                                <Button variant={"destructive"} size="icon" className="grayscale border">
+                                                    <Trash2 size={16} />
+                                                </Button>
+                                            </div>}
                                     </div>
                                 </CardFooter>
                             </Card>
@@ -789,4 +798,70 @@ function ConfirmationModal({ onConfirm, title, description, message, trigger, po
             </DialogContent>
         </Dialog>
     );
+}
+
+function DialogEditUserAdmin({ user, setUsers, users, roles }: { user: UserDTO, setUsers: any, users: UserDTO[], roles: RoleDTO[] }) {
+    const [open, setOpen] = useState(false);
+    const [selectedRole, setSelectedRole] = useState<string>(user.role.id as any);
+    const [isLoading, setLoading] = useState(false);
+
+    const handleSave = () => {
+        setLoading(true);
+        putMethod<any>(`auth/user/${user.id}`, { role: selectedRole, username: user.username, levitaId: user.levita?.id }).then(() => {
+            toast.success("Usuário atualizado com sucesso!");
+            setOpen(false);
+            setUsers(users.map(u => u.id === user.id ? { ...u, role: roles.find(r => r.id === selectedRole) } : u));
+        }).catch((err) => {
+            console.error(err);
+        }).finally(() => setLoading(false));
+    };
+
+    const handleDeactivate = () => {
+        setLoading(true);
+        patchMethod<any>(`auth/user/deactivate/${user.id}`).then(() => {
+            toast.success("Usuário desativado com sucesso!");
+            setUsers(users.map(u => u.id === user.id ? { ...u, active: false } : u));
+        }).catch(err => console.error(err)).finally(() => setLoading(false));
+    };
+
+    return (
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                <Button variant="outline" size="icon"><PencilLine size={16} /></Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-md">
+                <DialogHeader>
+                    <DialogTitle>Editar {user.username}</DialogTitle>
+                </DialogHeader>
+                <div className="flex flex-col gap-4 py-4">
+                    <div>
+                        <Label>Cargo:</Label>
+                        <RadioGroup value={selectedRole} onValueChange={setSelectedRole} className="flex gap-4 mt-2">
+                            {roles.map((role) => (
+                                <div className="flex items-center space-x-2" key={role.id}>
+                                    <RadioGroupItem id={`role-${role.id}`} value={role.id as any} disabled={isLoading} />
+                                    <Label htmlFor={`role-${role.id}`}>{role.role}</Label>
+                                </div>
+                            ))}
+                        </RadioGroup>
+                    </div>
+                    
+                    <div>
+                        <Label>Status do Usuário:</Label>
+                        <div className="flex items-center justify-between mt-2">
+                            <span className={user.active ? "text-green-500 font-semibold" : "text-red-500 font-semibold"}>
+                                {user.active ? "Ativo" : "Inativo"}
+                            </span>
+                            {user.active && <Button variant="destructive" size="sm" onClick={handleDeactivate} disabled={isLoading}>Desativar Usuário</Button>}
+                        </div>
+                    </div>
+                </div>
+
+                <DialogFooter>
+                    <Button variant="cancel" onClick={() => setOpen(false)}>Cancelar</Button>
+                    <Button variant="save" onClick={handleSave} disabled={isLoading}>Salvar</Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    )
 }   

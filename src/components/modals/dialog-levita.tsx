@@ -20,6 +20,8 @@ import { getMethod, postMethod, putMethod } from "@/lib/apiRequests";
 import { Textarea } from "../ui/textarea";
 import Cookies from "js-cookie";
 import { toast } from "sonner";
+import { Calendar } from "../ui/calendar";
+import { ptBR } from "date-fns/locale";
 
 // Helper to format Brazilian phone numbers while typing
 function formatNumberToBRL(value: string): [string, string] {
@@ -66,7 +68,8 @@ export function DialogVerLevita(props: {
                 </DialogHeader>
                 <p className="text-colortext text-center">{props.levita.descricao ? props.levita.descricao : "Nenhuma descrição inserida para este levita."}</p>
                 <DialogFooter className="w-full flex">
-                    <div className="flex gap-4 w-full justify-end">
+                    <div className="flex gap-4 w-full justify-end items-center">
+                        {isUserLeaderOrAdmin && <DialogEditAgenda levita={props.levita} />}
                         {levitaId === props.levita.id || isUserLeaderOrAdmin ?
                             <DialogEditLevita levita={props.levita} setLevitas={props.setLevitas} />
                             : <Church size={20} />}
@@ -338,6 +341,90 @@ export function DialogEditLevita({ levita, setLevitas }: DialogEditLevitaProps) 
                     <Button variant={"save"} disabled={isLoading} type="submit" onClick={() => {
                         handleUpdateLevita()
                     }}>Salvar</Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    )
+}
+
+export function DialogEditAgenda({ levita }: { levita: Levita }) {
+    const [userDates, setUserDates] = useState<Date[] | undefined>(undefined);
+    const [dates, setDates] = useState<Date[] | undefined>(undefined);
+    const [open, setOpen] = useState(false);
+    const [isLoading, setLoading] = useState(true);
+
+    useEffect(() => {
+        setDates(dates?.sort((a, b) => a.getTime() - b.getTime()))
+    }, [dates])
+
+    useEffect(() => {
+        if (!open) return;
+        if (userDates !== undefined) {
+            setLoading(false);
+            return;
+        }
+        getMethod<Date[] | undefined>(`v1/levita/agenda/${levita.id}`, setUserDates)
+    }, [userDates, open, levita.id])
+
+    useEffect(() => {
+        const aux = userDates?.map(date => new Date(date))
+        setDates(aux?.map(date => new Date(date.getTime() + 1000 * 60 * 60 * 3)))
+    }, [userDates])
+
+    const postAgenda = () => {
+        setLoading(true);
+        const dataBody = Array.isArray(dates)
+            ? dates
+                .filter(date => date >= new Date(Date.now() - 1000 * 60 * 60 * 24))
+                .map(date => date.toISOString().split("T")[0])
+            : []
+        postMethod<undefined>(
+            `v1/levita/agenda/${levita.id}`,
+            dataBody
+        ).catch((error) => {
+            toast.error("Erro ao atualizar agenda.");
+            console.error(error);
+        })
+        .then(() => {
+            toast.success("Agenda atualizada!")
+            setOpen(false);
+            setLoading(false);
+        })
+    }
+
+    return (
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                <Button variant={"outline"} className="border">Editar Agenda</Button>
+            </DialogTrigger>
+            <DialogContent className={`max-w-fit lg:max-w-fit w-[85%] max-h-[90vh] overflow-y-auto`}>
+                {isLoading ?
+                    <div className="absolute w-full h-[85%] z-50 flex justify-center items-center">
+                        <div className="h-16 w-16 border-4 border-subprimary rounded-3xl animate-spin" />
+                    </div>
+                    : <></>}
+                <DialogHeader className={`${isLoading ? "pointer-events-none select-none blur-sm" : ""}`}>
+                    <DialogTitle>
+                        Editar Agenda de {levita.nome}
+                    </DialogTitle>
+                    <DialogDescription>
+                    </DialogDescription>
+                </DialogHeader>
+                <div className={`flex flex-col gap-4 lg:flex-row lg:justify-between ${isLoading ? "pointer-events-none select-none blur-sm" : ""}`}>
+                    <Calendar
+                        lang="pt-BR"
+                        locale={ptBR}
+                        title="Agenda"
+                        mode="multiple"
+                        selected={Array.isArray(dates) ? dates : []}
+                        onSelect={setDates}
+                        disabled={(data) => data < new Date(Date.now() - 1000 * 60 * 60 * 24)}
+                        className="border rounded-lg w-fit"
+                    />
+                </div>
+                <DialogFooter>
+                    <Button variant={"cancel"} onClick={() => setOpen(false)}>Cancelar</Button>
+                    <Button variant={"save"} onClick={postAgenda}>Confirmar agenda</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
