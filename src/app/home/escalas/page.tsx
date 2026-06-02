@@ -15,6 +15,7 @@ import { CircleMinus, X, WifiOff } from "lucide-react";
 import { AppSidebar } from "@/components/app-sidebar";
 import { deleteMethod, getMethod } from "@/lib/apiRequests";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { usePermission } from "@/context/permissionContext";
 import { AddEscala, VerEscala } from "@/components/modals/dialog-escala";
 import { convertDateFormat, EscalaResumida, Levita } from "@/lib/apiObjects";
 import { toast } from "sonner";
@@ -32,7 +33,8 @@ export default function Home() {
 	const [filteredEscalas, setFilteredEscalas] = useState<EscalaResumida[] | undefined>(undefined);
 	const [levitasDisponiveis, setLevitasDisponiveis] = useState<Levita[] | undefined>(undefined);
 
-	const [isLeader, setLeader] = useState(false)
+	const { role } = usePermission();
+	const isLeader = role === "Líder" || role === "ADMIN";
 	const [isOffline, setIsOffline] = useState(false)
 
 	useEffect(() => {
@@ -51,11 +53,7 @@ export default function Home() {
 		}
 	}, []);
 
-	useEffect(() => {
-		if (sessionStorage.getItem("role") == "Líder" || sessionStorage.getItem("role") == "ADMIN") {
-			setLeader(true)
-		}
-	}, [])
+
 
 	useEffect(() => {
 		if (escalasData) return;

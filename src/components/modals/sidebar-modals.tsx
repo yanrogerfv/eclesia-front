@@ -21,6 +21,7 @@ import { RadioGroup, RadioGroupItem } from "../ui/motion-radio-group";
 import { Skeleton } from "../ui/skeleton";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "../ui/input-otp";
 import compareDates from "@/util/compareDates";
+import { usePermission } from "@/context/permissionContext";
 
 interface SidebarModalsProps {
     icon: ReactElement,
@@ -156,6 +157,7 @@ export function SidebarNextEvents({ icon, title, style }: SidebarModalsProps) {
 }
 
 export function SidebarMyAgenda({ icon, title }: SidebarModalsProps) {
+    const { levitaId } = usePermission();
     const [userDates, setUserDates] = useState<Date[] | undefined>(undefined);
     const [dates, setDates] = useState<Date[] | undefined>(undefined);
     const [open, setOpen] = useState(false);
@@ -168,13 +170,13 @@ export function SidebarMyAgenda({ icon, title }: SidebarModalsProps) {
 
     /* Used to fetch the current agenda of logged user */
     useEffect(() => {
-        if (!open) return;
+        if (!open || !levitaId) return;
         if (userDates !== undefined) {
             setLoading(false);
             return;
         }
-        getMethod<Date[] | undefined>(`v1/levita/agenda/${sessionStorage.getItem("levita")}`, setUserDates)
-    }, [userDates, open])
+        getMethod<Date[] | undefined>(`v1/levita/agenda/${levitaId}`, setUserDates)
+    }, [userDates, open, levitaId])
 
     /* Setter of dates from the data fetched */
     useEffect(() => {
@@ -184,6 +186,7 @@ export function SidebarMyAgenda({ icon, title }: SidebarModalsProps) {
 
     /* Function to post the agenda of the logged user to backend */
     const postAgenda = () => {
+        if (!levitaId) return;
         setLoading(true);
         const dataBody = Array.isArray(dates)
             ? dates
@@ -192,7 +195,7 @@ export function SidebarMyAgenda({ icon, title }: SidebarModalsProps) {
             : []
         // Don't set dates with the API response to avoid passing a non-array to Calendar
         postMethod<undefined>(
-            `v1/levita/agenda/${sessionStorage.getItem("levita")}`,
+            `v1/levita/agenda/${levitaId}`,
             dataBody
         ).catch((error) => {
             toast.error("Erro ao atualizar agenda: ", error);
@@ -270,19 +273,21 @@ export function SidebarMyAgenda({ icon, title }: SidebarModalsProps) {
 }
 
 export function SidebarMyEscalas({ icon, title }: SidebarModalsProps) {
+    const { levitaId } = usePermission();
     const [isLoading, setLoading] = useState(true);
     const [escalas, setEscala] = useState<Escala[] | undefined>(undefined);
     const [levitas, setLevitas] = useState<Levita[] | undefined>(undefined);
 
     useEffect(() => {
+        if (!levitaId) return;
         if (escalas) {
             setLoading(false);
             return;
         }
         setLoading(true);
-        getMethod<Escala[] | undefined>(`v1/escala?levita=${sessionStorage.getItem("levita")}`, setEscala)
+        getMethod<Escala[] | undefined>(`v1/escala?levita=${levitaId}`, setEscala)
         getMethod<Levita[] | undefined>("v1/levita", setLevitas)
-    }, [escalas])
+    }, [escalas, levitaId])
 
     return (
         <Dialog>
@@ -380,7 +385,7 @@ export function SidebarMyEscalas({ icon, title }: SidebarModalsProps) {
 }
 
 export function SidebarMyProfile({ icon, title, style }: SidebarModalsProps) {
-
+    const { levitaId } = usePermission();
     const [open, setOpen] = useState(false);
     const [isLoading, setLoading] = useState(true);
     const [self, setSelf] = useState<UserDTO | undefined>(undefined);
@@ -392,14 +397,14 @@ export function SidebarMyProfile({ icon, title, style }: SidebarModalsProps) {
     const [password, setPassword] = useState("");
 
     useEffect(() => {
-        if (!open) return;
+        if (!open || !levitaId) return;
         if (self && currentLevita) {
             setLoading(false);
             return;
         }
-        getMethod<Levita | undefined>(`v1/levita/${sessionStorage.getItem("levita")}`, setCurrentLevita)
+        getMethod<Levita | undefined>(`v1/levita/${levitaId}`, setCurrentLevita)
         getMethod<UserDTO | undefined>(`auth/user/active`, setSelf)
-    }, [self, currentLevita, open])
+    }, [self, currentLevita, open, levitaId])
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -469,9 +474,7 @@ export function SidebarMyProfile({ icon, title, style }: SidebarModalsProps) {
                         <p><span className="text-subprimary">Descrição: </span>{
                             isLoading ? "Carregando dados..." : currentLevita?.descricao ?? "Nenhuma descrição inserida."}</p>
                         <p><span className="text-subprimary">Instrumentos: </span> <span>
-                            {currentLevita?.instrumentos.map((instrumento) => (
-                                <Badge key={instrumento.id} variant={"outline"} className="gap-1">{instrumento.nome}</Badge>
-                            ))}
+                            {currentLevita?.instrumentos.map((instrumento) => (instrumento.nome)).join(", ")}
                         </span></p>
                     </CardContent>
                 </Card>
@@ -535,7 +538,7 @@ export function SidebarAddUser({ icon, title, style }: SidebarModalsProps) {
     const [returnUser, setReturnUser] = useState<UserDTO | undefined>(undefined);
     const [open, setOpen] = useState(false);
 
-    const [selectedRole, setSelectedRole] = useState("levita");
+    const [selectedRole, setSelectedRole] = useState<string | null>(null);
 
     useEffect(() => {
         if (!open) return;
@@ -547,16 +550,12 @@ export function SidebarAddUser({ icon, title, style }: SidebarModalsProps) {
         getMethod<RoleDTO[] | undefined>("auth/role", setRoles)
     }, [levitas, open])
 
-    const [isUserAdmin, setUserAdmin] = useState(false)
-
-    useEffect(() => {
-        const userAdmin = sessionStorage.getItem("role") === "ADMIN";
-        setUserAdmin(userAdmin);
-    }, []);
+    const { role } = usePermission();
+    const isUserAdmin = role === "ADMIN";
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild className={"w-full text-green-600 hover:text-green-600"}>
+            <DialogTrigger asChild className={"w-full text-green-600 hover:text-green-600"} onClick={() => { setOpen(true); setLevitas(undefined); setReturnUser(undefined); }}>
                 <SidebarMenuButton>
                     {icon}
                     {title}
@@ -618,6 +617,15 @@ export function SidebarAddUser({ icon, title, style }: SidebarModalsProps) {
                             <InputOTPSlot index={5} />
                         </InputOTPGroup>
                     </InputOTP>
+                    <p onClick={() => {
+                        navigator.clipboard.writeText(returnUser?.accessCode ?? "")
+                            .then(() => {
+                                toast.success("Código copiado com sucesso!")
+                            }).catch((error) => {
+                                toast.error("Erro ao copiar código: ", error);
+                                console.error("Erro ao copiar código: ", error);
+                            })
+                    }} className="text-primary text-sm tracking-wider cursor-pointer">Copiar código</p>
                 </div>
 
                 <DialogFooter className="flex justify-end gap-4">
@@ -630,7 +638,6 @@ export function SidebarAddUser({ icon, title, style }: SidebarModalsProps) {
                             }, setReturnUser)
                                 .then(() => {
                                     toast.success("Usuário adicionado com sucesso!")
-                                    setOpen(false)
                                 }).catch((error) => {
                                     toast.error("Erro na comunicação com a api: ", error);
                                     console.error("Erro na comunicação com a api: ", error);
@@ -845,7 +852,7 @@ function DialogEditUserAdmin({ user, setUsers, users, roles }: { user: UserDTO, 
                             ))}
                         </RadioGroup>
                     </div>
-                    
+
                     <div>
                         <Label>Status do Usuário:</Label>
                         <div className="flex items-center justify-between mt-2">

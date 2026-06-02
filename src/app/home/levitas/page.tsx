@@ -23,6 +23,7 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import BackButton from "@/components/next-back";
 import { toast } from "sonner";
+import { usePermission } from "@/context/permissionContext";
 
 export default function LevitasPage() {
 
@@ -33,8 +34,8 @@ export default function LevitasPage() {
 	const [searchItem, setSearchItem] = useState("");
 	const [filteredInstruments, setFilteredInstruments] = useState<Instrumento[]>([])
 	const [filteredLevitas, setFilteredLevita] = useState<Levita[] | undefined>(undefined)
-	const [isAdminOrLeader, setLeader] = useState(false)
-	const [loggedLevitaId, setLoggedLevitaId] = useState<string | null>(null)
+	const { role, levitaId: loggedLevitaId } = usePermission();
+	const isAdminOrLeader = role === "Líder" || role === "ADMIN";
 	const [isOffline, setIsOffline] = useState(false)
 
 	useEffect(() => {
@@ -53,12 +54,7 @@ export default function LevitasPage() {
 		}
 	}, []);
 
-	useEffect(() => {
-		if (sessionStorage.getItem("role") == "Líder" || sessionStorage.getItem("role") == "ADMIN") {
-			setLeader(true)
-		}
-		setLoggedLevitaId(sessionStorage.getItem("levita"))
-	}, [])
+
 
 	useEffect(() => {
 		if (!filteredLevitas)

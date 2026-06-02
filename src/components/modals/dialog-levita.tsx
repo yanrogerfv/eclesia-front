@@ -21,6 +21,7 @@ import { Textarea } from "../ui/textarea";
 import Cookies from "js-cookie";
 import { toast } from "sonner";
 import { Calendar } from "../ui/calendar";
+import { usePermission } from "@/context/permissionContext";
 import { ptBR } from "date-fns/locale";
 
 // Helper to format Brazilian phone numbers while typing
@@ -43,15 +44,8 @@ export function DialogVerLevita(props: {
 }
 ) {
 
-    const [levitaId, setLevitaId] = useState<string | null>();
-    const [isUserLeaderOrAdmin, setIsUserLeaderOrAdmin] = useState(false);
-
-    useEffect(() => {
-        // This code now runs only on the client side, avoiding the ReferenceError
-        const userLeaderOrAdmin = sessionStorage.getItem("role") === "Líder" || sessionStorage.getItem("role") === "ADMIN";
-        setIsUserLeaderOrAdmin(userLeaderOrAdmin);
-        setLevitaId(sessionStorage.getItem("levita"));
-    }, []);
+    const { role, levitaId } = usePermission();
+    const isUserLeaderOrAdmin = role === "Líder" || role === "ADMIN";
 
     return (
         <Dialog>

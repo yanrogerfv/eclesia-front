@@ -6,7 +6,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/themeProvider";
 import { Toaster } from "@/components/ui/sonner";
 import { randomThemeName } from "@/util/themes";
-// import { PermissionProvider } from "@/context/permissionContext";
+import { PermissionProvider } from "@/context/permissionContext";
 
 const inter = Inter({ subsets: ["latin"] });
 const poppins = Poppins({
@@ -51,10 +51,12 @@ export default function RootLayout({
 			</head>
 			<body className={notosansjp.className}>
 				<ThemeProvider attribute="class" defaultTheme={"creamy"} enableSystem={false} disableTransitionOnChange>
-					{children}
-					<Toaster />
-					<Analytics />
-					<SpeedInsights />
+					<PermissionProvider>
+						{children}
+						<Toaster />
+						<Analytics />
+						<SpeedInsights />
+					</PermissionProvider>
 				</ThemeProvider>
 			</body>
 		</html>

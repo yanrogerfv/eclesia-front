@@ -4,7 +4,10 @@ import Cookies from "js-cookie";
 import { toast } from "sonner";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-const token = Cookies.get("token") || null;
+const getAuthHeader = () => {
+	const token = Cookies.get("token");
+	return token ? `Bearer ${token}` : "";
+};
 
 const promise = () => new Promise((resolve) => setTimeout(() => resolve({ name: "Sonner" }), 1000))
 
@@ -73,7 +76,7 @@ export async function getMethod<T>(url: string, setState: React.Dispatch<React.S
 		method: "GET",
 		headers: {
 			"Content-Type": "application/json",
-			"Authorization": `${token}`
+			"Authorization": getAuthHeader()
 		}
 	}).catch((error) => {
 		console.error("Erro na comunicação com a api: ", error);
@@ -94,7 +97,7 @@ export async function postMethod<T>(url: string, body: body, setState?: React.Di
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
-			"Authorization": `${token}`
+			"Authorization": getAuthHeader()
 		},
 		body: JSON.stringify(body)
 	}).catch((error) => {
@@ -120,14 +123,14 @@ export async function patchMethod<T>(url: string, body?: body, setState?: React.
 		method: "PATCH",
 		headers: {
 			"Content-Type": "application/json",
-			"Authorization": `${token}`
+			"Authorization": getAuthHeader()
 		},
 		body: JSON.stringify(body)
 	} : {
 		method: "PATCH",
 		headers: {
 			"Content-Type": "application/json",
-			"Authorization": `${token}`
+			"Authorization": getAuthHeader()
 		}
 	};
 	const req = await fetch(`${apiUrl}${url}`, reqHeaders as RequestInit).catch((error) => {
@@ -149,7 +152,7 @@ export async function putMethod<T>(url: string, body: body, setState?: React.Dis
 		method: "PUT",
 		headers: {
 			"Content-Type": "application/json",
-			"Authorization": `${token}`
+			"Authorization": getAuthHeader()
 		},
 		body: JSON.stringify(body)
 	}).catch((error) => {
@@ -170,7 +173,7 @@ export async function deleteMethod<T>(url: string) {
 	const req = await fetch(`${apiUrl}${url}`, {
 		method: "DELETE",
 		headers: {
-			"Authorization": `${token}`
+			"Authorization": getAuthHeader()
 		},
 	}).catch((error) => {
 		console.error("Erro na comunicação com a api: ", error);

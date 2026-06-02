@@ -21,6 +21,7 @@ import { toast } from "sonner";
 import BackButton from "@/components/next-back";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
+import { usePermission } from "@/context/permissionContext";
 
 export default function Home() {
 
@@ -29,7 +30,8 @@ export default function Home() {
 	const [isLoading, setLoading] = useState(true)
 	const [searchItem, setSearchItem] = useState("");
 	const [update, setUpdate] = useState(false)
-	const [isLeader, setLeader] = useState(false)
+	const { role } = usePermission();
+	const isLeader = role === "Líder" || role === "ADMIN";
 	const [isOffline, setIsOffline] = useState(false)
 
 	useEffect(() => {
@@ -48,11 +50,7 @@ export default function Home() {
 		}
 	}, []);
 
-	useEffect(() => {
-		if (sessionStorage.getItem("role") == "Líder" || sessionStorage.getItem("role") == "ADMIN") {
-			setLeader(true)
-		}
-	}, [])
+
 
 	useEffect(() => {
 		if (!filteredMusicas)

@@ -10,11 +10,13 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { Badge } from "@/components/ui/badge";
 import { WifiOff } from "lucide-react";
+import { usePermission } from "@/context/permissionContext";
 
 export default function Home() {
 	const [isLoading, setLoading] = useState(true)
 	const [instrumentosData, setInstrumentosData] = useState<Instrumento[] | undefined>(undefined)
-	const [isLeader, setLeader] = useState(false)
+	const { role } = usePermission();
+	const isLeader = role === "Líder" || role === "ADMIN";
 	const [isOffline, setIsOffline] = useState(false)
 
 	useEffect(() => {
@@ -33,11 +35,7 @@ export default function Home() {
 		}
 	}, []);
 
-	useEffect(() => {
-		if (sessionStorage.getItem("role") == "Líder" || sessionStorage.getItem("role") == "ADMIN") {
-			setLeader(true)
-		}
-	}, [])
+
 
 	useEffect(() => {
 		setLoading(true)
