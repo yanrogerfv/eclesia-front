@@ -58,12 +58,8 @@ export default function Home() {
 		if (musicas) return;
 		setLoading(true)
 		getMethod<Musica[] | undefined>("v1/musicas", setMusicas)
+			.finally(() => setLoading(false))
 	}, [update, musicas])
-
-	useEffect(() => {
-		if (musicas)
-			setLoading(false)
-	}, [musicas])
 
 	useEffect(() => {
 		if (!musicas) return;
@@ -80,9 +76,8 @@ export default function Home() {
 								<BackButton />
 								<h1 className="ml-4 font-extrabold tracking-tight text-2xl sm:text-5xl">Músicas</h1>
 								{isOffline && Array.isArray(musicas) && musicas.length > 0 && (
-									<Badge variant="destructive" className="ml-4 mt-2 sm:mt-0 flex gap-1 items-center bg-red-500 hover:bg-red-600 cursor-default">
-										<WifiOff className="w-3 h-3" />
-										Dessincronizado
+									<Badge variant="destructive" className="ml-4 mt-2 sm:mt-0 flex items-center justify-center bg-red-500 hover:bg-red-600 cursor-default p-1.5 rounded-full" title="Dessincronizado">
+										<WifiOff className="w-3.5 h-3.5" />
 									</Badge>
 								)}
 							</div>

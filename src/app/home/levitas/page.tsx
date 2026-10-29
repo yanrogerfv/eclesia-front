@@ -60,20 +60,15 @@ export default function LevitasPage() {
 		if (!filteredLevitas)
 			setFilteredLevita(levitas)
 		if (levitas) return;
-		getMethod<Levita[] | undefined>("v1/levita/resumed", setLevitas);
+		setIsLoading(true)
+		getMethod<Levita[] | undefined>("v1/levita/resumed", setLevitas)
+			.finally(() => setIsLoading(false));
 	}, [levitas])
 
 	useEffect(() => {
 		if (instrumentos) return;
 		getMethod<Instrumento[] | undefined>("v1/instrumento", setInstrumentos);
 	}, [instrumentos])
-
-	useEffect(() => {
-		if (levitas && instrumentos) {
-			setIsLoading(false)
-			return;
-		}
-	}, [levitas, instrumentos])
 
 	function clearStates() {
 		setLevitas(undefined)
@@ -101,9 +96,8 @@ export default function LevitasPage() {
 								<BackButton />
 								<h1 className="ml-4 font-extrabold tracking-tight text-2xl sm:text-5xl">Levitas</h1>
 								{isOffline && Array.isArray(levitas) && levitas.length > 0 && (
-									<Badge variant="destructive" className="ml-4 mt-2 sm:mt-0 flex gap-1 items-center bg-red-500 hover:bg-red-600 cursor-default">
-										<WifiOff className="w-3 h-3" />
-										Dessincronizado
+									<Badge variant="destructive" className="ml-4 mt-2 sm:mt-0 flex items-center justify-center bg-red-500 hover:bg-red-600 cursor-default p-1.5 rounded-full" title="Dessincronizado">
+										<WifiOff className="w-3.5 h-3.5" />
 									</Badge>
 								)}
 							</div>

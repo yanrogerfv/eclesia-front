@@ -43,8 +43,11 @@ export function SidebarNextEvents({ icon, title, style }: SidebarModalsProps) {
             setLoading(false);
             return;
         }
-        getMethod<EscalaResumida[] | undefined>("v1/escala/resumed", setEscala)
-        getMethod<Levita[] | undefined>("v1/levita", setLevitas)
+        setLoading(true);
+        Promise.all([
+            getMethod<EscalaResumida[] | undefined>("v1/escala/resumed", setEscala),
+            getMethod<Levita[] | undefined>("v1/levita", setLevitas)
+        ]).finally(() => setLoading(false));
     }, [escalas, open])
 
     useEffect(() => {
@@ -175,7 +178,9 @@ export function SidebarMyAgenda({ icon, title }: SidebarModalsProps) {
             setLoading(false);
             return;
         }
+        setLoading(true);
         getMethod<Date[] | undefined>(`v1/levita/agenda/${levitaId}`, setUserDates)
+            .finally(() => setLoading(false));
     }, [userDates, open, levitaId])
 
     /* Setter of dates from the data fetched */
@@ -285,8 +290,10 @@ export function SidebarMyEscalas({ icon, title }: SidebarModalsProps) {
             return;
         }
         setLoading(true);
-        getMethod<Escala[] | undefined>(`v1/escala?levita=${levitaId}`, setEscala)
-        getMethod<Levita[] | undefined>("v1/levita", setLevitas)
+        Promise.all([
+            getMethod<Escala[] | undefined>(`v1/escala?levita=${levitaId}`, setEscala),
+            getMethod<Levita[] | undefined>("v1/levita", setLevitas)
+        ]).finally(() => setLoading(false));
     }, [escalas, levitaId])
 
     return (
@@ -402,9 +409,16 @@ export function SidebarMyProfile({ icon, title, style }: SidebarModalsProps) {
             setLoading(false);
             return;
         }
-        getMethod<Levita | undefined>(`v1/levita/${levitaId}`, setCurrentLevita)
-        getMethod<UserDTO | undefined>(`auth/user/active`, setSelf)
+        setLoading(true);
+        Promise.all([
+            getMethod<Levita | undefined>(`v1/levita/${levitaId}`, setCurrentLevita),
+            getMethod<UserDTO | undefined>(`auth/user/active`, setSelf)
+        ]).finally(() => setLoading(false));
     }, [self, currentLevita, open, levitaId])
+
+    useEffect(() => {
+        if (self) setUsername(self.username);
+    }, [self])
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -546,8 +560,11 @@ export function SidebarAddUser({ icon, title, style }: SidebarModalsProps) {
             setIsLoading(false);
             return;
         }
-        getMethod<Levita[] | undefined>("auth/user/levita-x", setLevitas)
-        getMethod<RoleDTO[] | undefined>("auth/role", setRoles)
+        setIsLoading(true);
+        Promise.all([
+            getMethod<Levita[] | undefined>("auth/user/levita-x", setLevitas),
+            getMethod<RoleDTO[] | undefined>("auth/role", setRoles)
+        ]).finally(() => setIsLoading(false));
     }, [levitas, open])
 
     const { role } = usePermission();
@@ -661,8 +678,11 @@ export function SidebarManageUsers({ icon, title }: SidebarModalsProps) {
             setLoading(false);
             return;
         }
-        getMethod<UserDTO[] | undefined>("auth/user", setUsers)
-        getMethod<RoleDTO[] | undefined>("auth/role", setRoles)
+        setLoading(true);
+        Promise.all([
+            getMethod<UserDTO[] | undefined>("auth/user", setUsers),
+            getMethod<RoleDTO[] | undefined>("auth/role", setRoles)
+        ]).finally(() => setLoading(false));
     }, [users, open])
 
     function setOpenAndReload(value: boolean) {
