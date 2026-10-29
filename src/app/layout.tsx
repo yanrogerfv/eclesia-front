@@ -20,13 +20,34 @@ const notosansjp = Noto_Sans_JP({
 	variable: "--font-notosansjp",
 });
 
+const siteUrl =
+	process.env.NEXT_PUBLIC_SITE_URL ??
+	(process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "http://localhost:3000");
+
+const shareTitle = "Eclesia · Escalas para grupos de louvor";
+const shareDescription =
+	"Organize escalas de cultos, levitas, instrumentos e músicas do seu grupo de louvor em um só lugar, direto do celular.";
+
 export const metadata: Metadata = {
+	metadataBase: new URL(siteUrl),
 	icons: {
 		icon: "/favicon.ico",
 		apple: "/icons/icon-192x192.svg",
 	},
 	title: "Eclesia",
 	description: "Organização e planejamento de escalas para grupos de louvor.",
+	openGraph: {
+		title: shareTitle,
+		description: shareDescription,
+		siteName: "Eclesia",
+		locale: "pt_BR",
+		type: "website",
+	},
+	twitter: {
+		card: "summary_large_image",
+		title: shareTitle,
+		description: shareDescription,
+	},
 	manifest: "/manifest.json",
 	appleWebApp: {
 		capable: true,
