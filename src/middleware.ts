@@ -30,7 +30,7 @@ export async function middleware(request: NextRequest) {
     const response = await fetch(`${baseURL}auth/validate-token`, {
         method: "GET",
         headers: {
-            "Authorization": `${token.value}`,
+            "Authorization": `Bearer ${token.value}`,
             "Content-Type": "application/json",
         },
     }).catch((error) => {
@@ -63,8 +63,9 @@ export const config = {
          * - _next/static (static files)
          * - _next/image (image optimization files)
          * - favicon.ico (favicon file)
+         * - opengraph-image / twitter-image (social cards, crawlers have no cookie)
          * - public files (public folder)
          */
-        '/((?!api|_next/static|_next/image|favicon.ico|.*\\..*|public).*)',
+        '/((?!api|_next/static|_next/image|favicon.ico|opengraph-image|twitter-image|.*\\..*|public).*)',
     ],
 };

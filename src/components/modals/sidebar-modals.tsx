@@ -10,7 +10,7 @@ import { Button } from "../ui/button";
 import { is, ptBR } from "date-fns/locale";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
-import { deleteMethod, getMethod, postMethod, putMethod } from "@/lib/apiRequests";
+import { deleteMethod, getMethod, postMethod, putMethod, patchMethod } from "@/lib/apiRequests";
 import { toast } from "sonner";
 import { ScrollArea } from "../ui/scroll-area";
 import { DialogEditLevita, DialogVerLevita } from "./dialog-levita";
@@ -21,6 +21,7 @@ import { RadioGroup, RadioGroupItem } from "../ui/motion-radio-group";
 import { Skeleton } from "../ui/skeleton";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "../ui/input-otp";
 import compareDates from "@/util/compareDates";
+import { usePermission } from "@/context/permissionContext";
 
 interface SidebarModalsProps {
     icon: ReactElement,
@@ -42,8 +43,11 @@ export function SidebarNextEvents({ icon, title, style }: SidebarModalsProps) {
             setLoading(false);
             return;
         }
-        getMethod<EscalaResumida[] | undefined>("v1/escala/resumed", setEscala)
-        getMethod<Levita[] | undefined>("v1/levita", setLevitas)
+        setLoading(true);
+        Promise.all([
+            getMethod<EscalaResumida[] | undefined>("v1/escala/resumed", setEscala),
+            getMethod<Levita[] | undefined>("v1/levita", setLevitas)
+        ]).finally(() => setLoading(false));
     }, [escalas, open])
 
     useEffect(() => {
@@ -156,6 +160,7 @@ export function SidebarNextEvents({ icon, title, style }: SidebarModalsProps) {
 }
 
 export function SidebarMyAgenda({ icon, title }: SidebarModalsProps) {
+    const { levitaId } = usePermission();
     const [userDates, setUserDates] = useState<Date[] | undefined>(undefined);
     const [dates, setDates] = useState<Date[] | undefined>(undefined);
     const [open, setOpen] = useState(false);
@@ -168,13 +173,15 @@ export function SidebarMyAgenda({ icon, title }: SidebarModalsProps) {
 
     /* Used to fetch the current agenda of logged user */
     useEffect(() => {
-        if (!open) return;
+        if (!open || !levitaId) return;
         if (userDates !== undefined) {
             setLoading(false);
             return;
         }
-        getMethod<Date[] | undefined>(`v1/levita/agenda/${sessionStorage.getItem("levita")}`, setUserDates)
-    }, [userDates, open])
+        setLoading(true);
+        getMethod<Date[] | undefined>(`v1/levita/agenda/${levitaId}`, setUserDates)
+            .finally(() => setLoading(false));
+    }, [userDates, open, levitaId])
 
     /* Setter of dates from the data fetched */
     useEffect(() => {
@@ -184,6 +191,7 @@ export function SidebarMyAgenda({ icon, title }: SidebarModalsProps) {
 
     /* Function to post the agenda of the logged user to backend */
     const postAgenda = () => {
+        if (!levitaId) return;
         setLoading(true);
         const dataBody = Array.isArray(dates)
             ? dates
@@ -192,7 +200,7 @@ export function SidebarMyAgenda({ icon, title }: SidebarModalsProps) {
             : []
         // Don't set dates with the API response to avoid passing a non-array to Calendar
         postMethod<undefined>(
-            `v1/levita/agenda/${sessionStorage.getItem("levita")}`,
+            `v1/levita/agenda/${levitaId}`,
             dataBody
         ).catch((error) => {
             toast.error("Erro ao atualizar agenda: ", error);
@@ -270,19 +278,23 @@ export function SidebarMyAgenda({ icon, title }: SidebarModalsProps) {
 }
 
 export function SidebarMyEscalas({ icon, title }: SidebarModalsProps) {
+    const { levitaId } = usePermission();
     const [isLoading, setLoading] = useState(true);
     const [escalas, setEscala] = useState<Escala[] | undefined>(undefined);
     const [levitas, setLevitas] = useState<Levita[] | undefined>(undefined);
 
     useEffect(() => {
+        if (!levitaId) return;
         if (escalas) {
             setLoading(false);
             return;
         }
         setLoading(true);
-        getMethod<Escala[] | undefined>(`v1/escala?levita=${sessionStorage.getItem("levita")}`, setEscala)
-        getMethod<Levita[] | undefined>("v1/levita", setLevitas)
-    }, [escalas])
+        Promise.all([
+            getMethod<Escala[] | undefined>(`v1/escala?levita=${levitaId}`, setEscala),
+            getMethod<Levita[] | undefined>("v1/levita", setLevitas)
+        ]).finally(() => setLoading(false));
+    }, [escalas, levitaId])
 
     return (
         <Dialog>
@@ -380,7 +392,7 @@ export function SidebarMyEscalas({ icon, title }: SidebarModalsProps) {
 }
 
 export function SidebarMyProfile({ icon, title, style }: SidebarModalsProps) {
-
+    const { levitaId } = usePermission();
     const [open, setOpen] = useState(false);
     const [isLoading, setLoading] = useState(true);
     const [self, setSelf] = useState<UserDTO | undefined>(undefined);
@@ -392,14 +404,21 @@ export function SidebarMyProfile({ icon, title, style }: SidebarModalsProps) {
     const [password, setPassword] = useState("");
 
     useEffect(() => {
-        if (!open) return;
+        if (!open || !levitaId) return;
         if (self && currentLevita) {
             setLoading(false);
             return;
         }
-        getMethod<Levita | undefined>(`v1/levita/${sessionStorage.getItem("levita")}`, setCurrentLevita)
-        getMethod<UserDTO | undefined>(`auth/user/active`, setSelf)
-    }, [self, currentLevita, open])
+        setLoading(true);
+        Promise.all([
+            getMethod<Levita | undefined>(`v1/levita/${levitaId}`, setCurrentLevita),
+            getMethod<UserDTO | undefined>(`auth/user/active`, setSelf)
+        ]).finally(() => setLoading(false));
+    }, [self, currentLevita, open, levitaId])
+
+    useEffect(() => {
+        if (self) setUsername(self.username);
+    }, [self])
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -469,9 +488,7 @@ export function SidebarMyProfile({ icon, title, style }: SidebarModalsProps) {
                         <p><span className="text-subprimary">Descrição: </span>{
                             isLoading ? "Carregando dados..." : currentLevita?.descricao ?? "Nenhuma descrição inserida."}</p>
                         <p><span className="text-subprimary">Instrumentos: </span> <span>
-                            {currentLevita?.instrumentos.map((instrumento) => (
-                                <Badge key={instrumento.id} variant={"outline"} className="gap-1">{instrumento.nome}</Badge>
-                            ))}
+                            {currentLevita?.instrumentos.map((instrumento) => (instrumento.nome)).join(", ")}
                         </span></p>
                     </CardContent>
                 </Card>
@@ -535,7 +552,7 @@ export function SidebarAddUser({ icon, title, style }: SidebarModalsProps) {
     const [returnUser, setReturnUser] = useState<UserDTO | undefined>(undefined);
     const [open, setOpen] = useState(false);
 
-    const [selectedRole, setSelectedRole] = useState("levita");
+    const [selectedRole, setSelectedRole] = useState<string | null>(null);
 
     useEffect(() => {
         if (!open) return;
@@ -543,20 +560,19 @@ export function SidebarAddUser({ icon, title, style }: SidebarModalsProps) {
             setIsLoading(false);
             return;
         }
-        getMethod<Levita[] | undefined>("auth/user/levita-x", setLevitas)
-        getMethod<RoleDTO[] | undefined>("auth/role", setRoles)
+        setIsLoading(true);
+        Promise.all([
+            getMethod<Levita[] | undefined>("auth/user/levita-x", setLevitas),
+            getMethod<RoleDTO[] | undefined>("auth/role", setRoles)
+        ]).finally(() => setIsLoading(false));
     }, [levitas, open])
 
-    const [isUserAdmin, setUserAdmin] = useState(false)
-
-    useEffect(() => {
-        const userAdmin = sessionStorage.getItem("role") === "ADMIN";
-        setUserAdmin(userAdmin);
-    }, []);
+    const { role } = usePermission();
+    const isUserAdmin = role === "ADMIN";
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild className={"w-full text-green-600 hover:text-green-600"}>
+            <DialogTrigger asChild className={"w-full text-green-600 hover:text-green-600"} onClick={() => { setOpen(true); setLevitas(undefined); setReturnUser(undefined); }}>
                 <SidebarMenuButton>
                     {icon}
                     {title}
@@ -618,6 +634,15 @@ export function SidebarAddUser({ icon, title, style }: SidebarModalsProps) {
                             <InputOTPSlot index={5} />
                         </InputOTPGroup>
                     </InputOTP>
+                    <p onClick={() => {
+                        navigator.clipboard.writeText(returnUser?.accessCode ?? "")
+                            .then(() => {
+                                toast.success("Código copiado com sucesso!")
+                            }).catch((error) => {
+                                toast.error("Erro ao copiar código: ", error);
+                                console.error("Erro ao copiar código: ", error);
+                            })
+                    }} className="text-primary text-sm tracking-wider cursor-pointer">Copiar código</p>
                 </div>
 
                 <DialogFooter className="flex justify-end gap-4">
@@ -630,7 +655,6 @@ export function SidebarAddUser({ icon, title, style }: SidebarModalsProps) {
                             }, setReturnUser)
                                 .then(() => {
                                     toast.success("Usuário adicionado com sucesso!")
-                                    setOpen(false)
                                 }).catch((error) => {
                                     toast.error("Erro na comunicação com a api: ", error);
                                     console.error("Erro na comunicação com a api: ", error);
@@ -645,6 +669,7 @@ export function SidebarAddUser({ icon, title, style }: SidebarModalsProps) {
 export function SidebarManageUsers({ icon, title }: SidebarModalsProps) {
     const [open, setOpen] = useState(false);
     const [users, setUsers] = useState<UserDTO[] | undefined>(undefined);
+    const [roles, setRoles] = useState<RoleDTO[] | undefined>(undefined);
     const [isLoading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -653,7 +678,11 @@ export function SidebarManageUsers({ icon, title }: SidebarModalsProps) {
             setLoading(false);
             return;
         }
-        getMethod<UserDTO[] | undefined>("auth/user", setUsers)
+        setLoading(true);
+        Promise.all([
+            getMethod<UserDTO[] | undefined>("auth/user", setUsers),
+            getMethod<RoleDTO[] | undefined>("auth/role", setRoles)
+        ]).finally(() => setLoading(false));
     }, [users, open])
 
     function setOpenAndReload(value: boolean) {
@@ -711,34 +740,41 @@ export function SidebarManageUsers({ icon, title }: SidebarModalsProps) {
                                         }
                                     </div>
                                     <div>
-                                        {Cookies.get("username") != user.username ?
-                                            <ConfirmationModal
-                                                onConfirm={() => {
-                                                    deleteMethod(`auth/user/${user.id}`)
-                                                        .catch((error) => {
-                                                            toast.error("Erro ao remover usuário: ", error);
-                                                            console.error("Erro ao remover usuário: ", error);
-                                                        })
-                                                        .then(() => {
-                                                            toast.success("Usuário removido com sucesso!");
-                                                            setUsers(users?.filter(u => u.id !== user.id));
-                                                        })
-                                                }}
-                                                title={`Remover usuário: ${user.username}`}
-                                                trigger={
-                                                    <Button variant={"destructive"}>
-                                                        <Trash2 size={16} />
-                                                    </Button>
-                                                }
-                                                message={
-                                                    <p className="text-red-500 font-semibold text-center">
-                                                        Você tem certeza que deseja remover este usuário? Esta ação não pode ser desfeita.
-                                                    </p>
-                                                }
-                                            />
-                                            : <Button variant={"destructive"} className="grayscale border">
-                                                <Trash2 size={16} />
-                                            </Button>}
+                                        {Cookies.get("username") != user.username && roles ?
+                                            <div className="flex gap-2">
+                                                <DialogEditUserAdmin user={user} setUsers={setUsers} users={users} roles={roles} />
+                                                <ConfirmationModal
+                                                    onConfirm={() => {
+                                                        deleteMethod(`auth/user/${user.id}`)
+                                                            .catch((error) => {
+                                                                toast.error("Erro ao remover usuário: ", error);
+                                                                console.error("Erro ao remover usuário: ", error);
+                                                            })
+                                                            .then(() => {
+                                                                setUsers(users?.filter(u => u.id !== user.id));
+                                                            })
+                                                    }}
+                                                    title={`Remover usuário: ${user.username}`}
+                                                    trigger={
+                                                        <Button variant={"destructive"} size="icon">
+                                                            <Trash2 size={16} />
+                                                        </Button>
+                                                    }
+                                                    message={
+                                                        <p className="text-red-500 font-semibold text-center">
+                                                            Você tem certeza que deseja remover este usuário? Esta ação não pode ser desfeita.
+                                                        </p>
+                                                    }
+                                                />
+                                            </div>
+                                            : <div className="flex gap-2">
+                                                <Button variant={"outline"} size="icon" disabled className="grayscale border">
+                                                    <PencilLine size={16} />
+                                                </Button>
+                                                <Button variant={"destructive"} size="icon" className="grayscale border">
+                                                    <Trash2 size={16} />
+                                                </Button>
+                                            </div>}
                                     </div>
                                 </CardFooter>
                             </Card>
@@ -789,4 +825,70 @@ function ConfirmationModal({ onConfirm, title, description, message, trigger, po
             </DialogContent>
         </Dialog>
     );
+}
+
+function DialogEditUserAdmin({ user, setUsers, users, roles }: { user: UserDTO, setUsers: any, users: UserDTO[], roles: RoleDTO[] }) {
+    const [open, setOpen] = useState(false);
+    const [selectedRole, setSelectedRole] = useState<string>(user.role.id as any);
+    const [isLoading, setLoading] = useState(false);
+
+    const handleSave = () => {
+        setLoading(true);
+        putMethod<any>(`auth/user/${user.id}`, { role: selectedRole, username: user.username, levitaId: user.levita?.id }).then(() => {
+            toast.success("Usuário atualizado com sucesso!");
+            setOpen(false);
+            setUsers(users.map(u => u.id === user.id ? { ...u, role: roles.find(r => r.id === selectedRole) } : u));
+        }).catch((err) => {
+            console.error(err);
+        }).finally(() => setLoading(false));
+    };
+
+    const handleDeactivate = () => {
+        setLoading(true);
+        patchMethod<any>(`auth/user/deactivate/${user.id}`).then(() => {
+            toast.success("Usuário desativado com sucesso!");
+            setUsers(users.map(u => u.id === user.id ? { ...u, active: false } : u));
+        }).catch(err => console.error(err)).finally(() => setLoading(false));
+    };
+
+    return (
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                <Button variant="outline" size="icon"><PencilLine size={16} /></Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-md">
+                <DialogHeader>
+                    <DialogTitle>Editar {user.username}</DialogTitle>
+                </DialogHeader>
+                <div className="flex flex-col gap-4 py-4">
+                    <div>
+                        <Label>Cargo:</Label>
+                        <RadioGroup value={selectedRole} onValueChange={setSelectedRole} className="flex gap-4 mt-2">
+                            {roles.map((role) => (
+                                <div className="flex items-center space-x-2" key={role.id}>
+                                    <RadioGroupItem id={`role-${role.id}`} value={role.id as any} disabled={isLoading} />
+                                    <Label htmlFor={`role-${role.id}`}>{role.role}</Label>
+                                </div>
+                            ))}
+                        </RadioGroup>
+                    </div>
+
+                    <div>
+                        <Label>Status do Usuário:</Label>
+                        <div className="flex items-center justify-between mt-2">
+                            <span className={user.active ? "text-green-500 font-semibold" : "text-red-500 font-semibold"}>
+                                {user.active ? "Ativo" : "Inativo"}
+                            </span>
+                            {user.active && <Button variant="destructive" size="sm" onClick={handleDeactivate} disabled={isLoading}>Desativar Usuário</Button>}
+                        </div>
+                    </div>
+                </div>
+
+                <DialogFooter>
+                    <Button variant="cancel" onClick={() => setOpen(false)}>Cancelar</Button>
+                    <Button variant="save" onClick={handleSave} disabled={isLoading}>Salvar</Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    )
 }   

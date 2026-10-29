@@ -48,13 +48,13 @@ export default function ScheduleViewer() {
 
     useEffect(() => {
         if (escalasData) return;
-        publicGetMethod<EscalaResumida[] | undefined>("v1/escala/resumed", setEscalasData);
+        publicGetMethod<EscalaResumida[] | undefined>("v1/escala/resumed", setEscalasData)
+            .finally(() => setIsLoading(false));
     }, [escalasData])
 
     useEffect(() => {
         if (!escalasData) return;
         setFilteredEscalas(escalasData);
-        setIsLoading(false);
     }, [escalasData]);
 
     useEffect(() => {
@@ -75,9 +75,8 @@ export default function ScheduleViewer() {
                                 <BackButton />
                                 <h1 className="ml-4 font-extrabold tracking-tight text-2xl sm:text-5xl">Escalas</h1>
                                 {isOffline && Array.isArray(escalasData) && escalasData.length > 0 && (
-                                    <Badge variant="destructive" className="ml-4 mt-2 sm:mt-0 flex gap-1 items-center bg-red-500 hover:bg-red-600 cursor-default">
-                                        <WifiOff className="w-3 h-3" />
-                                        Dessincronizado
+                                    <Badge variant="destructive" className="ml-4 mt-2 sm:mt-0 flex items-center justify-center bg-red-500 hover:bg-red-600 cursor-default p-1.5 rounded-full" title="Dessincronizado">
+                                        <WifiOff className="w-3.5 h-3.5" />
                                     </Badge>
                                 )}
                             </div>

@@ -2,77 +2,90 @@
 
 > *"Uma amiga na hora de organizar os Levitas!"*
 
-Eclesia is a web application for managing church worship team scheduling. It helps praise groups organize their weekly and special services by tracking members, instruments, songs, and service rosters.
+O Eclesia é uma aplicação web para gerenciamento e organização de escalas do ministério de louvor. Ele ajuda grupos de louvor a organizar seus cultos semanais e especiais rastreando membros (levitas), instrumentos, músicas e a própria escala dos cultos.
 
-## Features
+## Funcionalidades
 
-- **Levitas** — Manage worship team members, their instruments, and availability
-- **Escalas** — Create and manage service schedules (Wednesday, Sunday, Special), assigning members to each instrument role (ministro, baixo, bateria, guitarra, teclado, violão, backing vocals)
-- **Instrumentos** — Track the instruments available in the group
-- **Músicas** — Manage the song catalog used in services
-- **Public schedule view** — Anyone can view upcoming schedules without logging in
-- **Role-based access control** — Different permission levels for admins and regular members
-- **Multi-theme support** — Multiple visual themes selectable from the landing page
-- **PWA (Progressive Web App)** — Installable on mobile/desktop, works with offline caching via Service Worker
+- **Levitas** — Gerenciamento de membros da equipe de louvor, seus respectivos instrumentos e disponibilidade.
+- **Escalas** — Criação e organização de escalas de cultos (Quarta-feira, Domingo, Cultos Especiais), atribuindo levitas para cada função/instrumento (ministro, baixo, bateria, guitarra, teclado, violão, backing vocals).
+- **Instrumentos** — Cadastro e controle dos instrumentos disponíveis no grupo.
+- **Músicas** — Catálogo de músicas utilizadas nos cultos, com suporte a links para cifras e vídeos de referência.
+- **Visualização Pública** — Acesso livre às escalas agendadas sem necessidade de autenticação (ideal para a igreja acompanhar quem está escalado).
+- **Controle de Acesso (RBAC)** — Níveis de permissão diferenciados para administradores e levitas.
+- **Temas Customizáveis** — Seleção dinâmica de 8 temas visuais inspirados na natureza e paletas modernas (Sunrise, Dew, Leaflight, Creamy, Sunset, Serene, Forest, Lollipop) diretamente na tela inicial.
+- **Micro-animações Premium** — Componentes animados modernos via framer-motion/motion (ex: `VideoText`, `GridBeams`, `motion-highlight`, `motion-tabs`, etc.).
+- **PWA (Progressive Web App)** — Instalável em dispositivos móveis e desktop, com suporte a Service Worker e cache offline.
+- **Monitoramento de Performance** — Integração com Vercel Analytics e Vercel Speed Insights para monitorar a experiência dos usuários.
 
-## Tech Stack
+## Pilha Tecnológica (Tech Stack)
 
 - **Framework**: [Next.js](https://nextjs.org/) 14 (App Router, TypeScript)
-- **Styling**: Tailwind CSS
-- **UI**: Shadcn/ui + custom animated components
-- **Forms**: React Hook Form + Zod
-- **Notifications**: Sonner
-- **Auth**: JWT stored in cookies, validated server-side via middleware
-- **PWA**: `@ducanh2912/next-pwa` (Service Worker, installable, offline caching)
-- **Deployment**: Vercel
+- **Estilização**: Tailwind CSS
+- **Biblioteca de UI**: Shadcn/ui + componentes interativos animados com [Motion](https://motion.dev/) (framer-motion)
+- **Formulários e Validação**: React Hook Form + Zod
+- **Notificações**: Sonner & React Toastify
+- **Autenticação**: Tokens JWT persistidos em cookies e validados pelo Middleware do Next.js
+- **PWA**: `@ducanh2912/next-pwa` (Service Worker, instalação nativa e cache offline)
+- **Hospedagem & Analytics**: Vercel (Analytics e Speed Insights)
 
-## Getting Started
+## Primeiros Passos
 
-First, run the development server:
+Para rodar o servidor de desenvolvimento localmente, instale as dependências e execute:
 
 ```bash
 npm run dev
-# or
+# ou
 yarn dev
-# or
+# ou
 pnpm dev
-# or
+# ou
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abra [http://localhost:3000](http://localhost:3000) no seu navegador para ver o resultado.
 
-## Project Structure
+## Estrutura do Projeto
 
 ```
 src/
 ├── app/
-│   ├── page.tsx          # Landing page
-│   ├── login/            # Authentication page
-│   ├── escalas/          # Public schedule viewer
-│   └── home/             # Protected dashboard
-│       ├── escalas/      # Schedule management
-│       ├── levitas/      # Member management
-│       ├── instrumentos/ # Instrument management
-│       └── musicas/      # Song management
+│   ├── page.tsx            # Página inicial (Landing page com seletor de temas)
+│   ├── login/              # Página de login (usuário/senha ou código de acesso)
+│   ├── escalas/            # Visualização pública das escalas
+│   └── home/               # Painel administrativo protegido
+│       ├── escalas/        # Gerenciamento de escalas
+│       ├── levitas/        # Gerenciamento de levitas
+│       ├── instrumentos/   # Gerenciamento de instrumentos
+│       └── musicas/        # Gerenciamento do repertório de músicas
 ├── components/
-│   ├── modals/           # CRUD dialogs for each entity
-│   └── ui/               # UI component library
+│   ├── app-sidebar.tsx     # Menu lateral de navegação principal
+│   ├── themeSelector.tsx   # Seletor e gerenciador de temas visuais
+│   ├── modals/             # Caixas de diálogos CRUD para cada entidade do sistema
+│   └── ui/                 # Biblioteca de componentes visuais e animados (Shadcn/Motion)
+├── context/
+│   ├── AuthContext.tsx     # Contexto global de autenticação
+│   └── permissionContext.tsx # Contexto de controle de permissões do usuário
+├── hooks/
+│   └── use-mobile.tsx      # Hook utilitário para detecção de telas móveis
 ├── lib/
-│   ├── apiObjects.ts     # TypeScript interfaces for all domain models
-│   └── apiRequests.ts    # Generic REST API helpers
-└── middleware.ts          # JWT-based route protection
+│   ├── apiObjects.ts       # Definições de interfaces TypeScript das entidades
+│   └── apiRequests.ts      # Funções utilitárias de requisição HTTP (GET, POST, etc.)
+├── util/
+│   ├── auth.ts             # Funções utilitárias auxiliares de autenticação
+│   ├── compareDates.ts     # Comparadores de data para exibição de escalas
+│   ├── getUserPermission.ts # Validador de escopo de permissões do usuário
+│   └── themes.ts           # Definição e configuração dos 8 temas de cores do app
+└── middleware.ts            # Proteção de rotas privadas via validação de JWT cookies
 ```
 
-## Authentication
+## Autenticação
 
-- Public routes: `/`, `/login`, `/escalas`
-- All `/home/*` routes require a valid JWT cookie
-- Login supports both username/password and a 6-character access code
-- Tokens are validated against the backend API on every request via Next.js middleware
+- **Rotas Públicas**: `/`, `/login`, `/escalas`
+- **Rotas Privadas**: Qualquer rota sob `/home/*` exige um token JWT válido.
+- **Métodos de Login**: Suporta login via usuário/senha padrão ou por código de acesso de 6 caracteres.
+- **Validação**: Feita no servidor a cada requisição através do [middleware.ts](file:///c:/Users/id02810/Documents/Programming%20Projects/Eclesia/frontend/src/middleware.ts).
 
-## Deploy on Vercel
+## Créditos e Agradecimentos
 
-The easiest way to deploy this app is via the [Vercel Platform](https://vercel.com/new).
-
-Check out the [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+*   **Desenvolvedor**: [Yan Roger Fogaça Vieira](https://github.com/yanrogerfv)
+*   **Colaboradores & Testes**: Isabella Cassilhas e Gabriel Barros

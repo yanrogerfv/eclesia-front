@@ -4,7 +4,7 @@ import { Badge } from "./ui/badge";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card";
 import compareDates from "@/util/compareDates";
 
-export function EscalaSimpleCard({escala}:{escala: EscalaResumida}) {
+export function EscalaSimpleCard({ escala }: { escala: EscalaResumida }) {
     const day = escala.domingo ? "Domingo" : escala.quarta ? "Quarta" : "Especial"
     return (
         <Card className={` border border-primary/40 ${compareDates(escala.data, new Date()) ? 'opacity-60 grayscale' : ''}`} key={escala.id}>
@@ -17,13 +17,13 @@ export function EscalaSimpleCard({escala}:{escala: EscalaResumida}) {
                 </CardDescription>
             </CardHeader>
             <CardContent key={escala.id} className="flow-root text-subprimary">
-                Ministro: <a className="text-colortext">{escala.ministro?escala.ministro:"bo dia :D"}</a><br />
+                Ministro: <a className="text-colortext">{escala.ministro ? escala.ministro : "bo dia :D"}</a><br />
             </CardContent>
         </Card>
     )
 }
 
-export function LevitaSimpleCard({levita}:{levita: Levita}) {
+export function LevitaSimpleCard({ levita }: { levita: Levita }) {
     return (
         <Card className="border border-primary/40" key={levita.id}>
             <CardHeader>
@@ -33,10 +33,10 @@ export function LevitaSimpleCard({levita}:{levita: Levita}) {
                     {levita.email ? levita.email : levita.contato}
                 </CardDescription>
             </CardHeader>
-            <CardContent className="flow-root h-20">
+            <CardContent className="flow-root h-20 align-middle items-center">
                 {levita.instrumentos.map(instrumento => (
                     <Badge variant={"outline"} key={instrumento.id}>{instrumento.nome.toUpperCase()}</Badge>
-                        ))}
+                ))}
                 <br />
             </CardContent>
         </Card>

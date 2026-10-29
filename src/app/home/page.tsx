@@ -59,9 +59,8 @@ export default function Home() {
                                 Planejador
                             </h1>
                             {isOffline && ((nextEscalas && nextEscalas.length > 0) || (levitasData && levitasData.length > 0)) && (
-                                <Badge variant="destructive" className="ml-2 sm:ml-4 flex gap-1 items-center bg-red-500 hover:bg-red-600 cursor-default">
-                                    <WifiOff className="w-3 h-3" />
-                                    Dessincronizado
+                                <Badge variant="destructive" className="ml-2 sm:ml-4 flex items-center justify-center bg-red-500 hover:bg-red-600 cursor-default p-1.5 rounded-full" title="Dessincronizado">
+                                    <WifiOff className="w-3.5 h-3.5" />
                                 </Badge>
                             )}
                         </div>

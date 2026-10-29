@@ -15,23 +15,19 @@ import {
     SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { SidebarAddUser, SidebarManageUsers, SidebarMyAgenda, SidebarMyEscalas, SidebarMyProfile, SidebarNextEvents } from "./modals/sidebar-modals"
-import SidebarThemeSelector, { HomepageThemeSelector } from "./themeSelector"
+import { HomepageThemeSelector } from "./themeSelector"
 import { useEffect, useState } from "react"
 import Link from "next/link"
+import { usePermission } from "@/context/permissionContext"
 
 export function AppSidebar({ side, alwaysOpen }: { side: "left" | "right", alwaysOpen?: boolean }) {
 
-    const [isUserLeader, setUserLeader] = useState(false)
-    const [isUserAdmin, setUserAdmin] = useState(false)
-    const [username, setUsername] = useState("");
+    const { role, username } = usePermission();
+    const isUserLeader = role === "Líder";
+    const isUserAdmin = role === "ADMIN";
     const [mounted, setMounted] = useState(false)
 
     useEffect(() => {
-        const userLeader = sessionStorage.getItem("role") === "Líder";
-        const userAdmin = sessionStorage.getItem("role") === "ADMIN";
-        setUsername(Cookies.get("username") || "Usuário")
-        setUserAdmin(userAdmin);
-        setUserLeader(userLeader);
         setMounted(true)
     }, []);
 
@@ -41,7 +37,7 @@ export function AppSidebar({ side, alwaysOpen }: { side: "left" | "right", alway
                 <SidebarGroup>
                     <SidebarGroupLabel className="flex justify-between">
                         <div className="flex items-center">
-                            {!alwaysOpen && <SidebarTrigger className="text-primary hover:-rotate-180 transition-all duration-300 ease-in-out"/>}
+                            {!alwaysOpen && <SidebarTrigger className="text-primary hover:-rotate-180 transition-all duration-300 ease-in-out" />}
                             Eclesia
                         </div>
                         <UserCircle2 size={20} />

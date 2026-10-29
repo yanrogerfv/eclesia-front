@@ -25,6 +25,7 @@ import { getMethod, postMethod, publicGetMethod, putMethod } from "@/lib/apiRequ
 import Cookies from "js-cookie";
 import { Checkbox } from "../ui/checkbox";
 import { toast } from "sonner";
+import { usePermission } from "@/context/permissionContext";
 import SelectLevita from "../select-levita";
 import CheckboxConfetti from "../ui/checkbox-animated";
 
@@ -108,19 +109,10 @@ export function VerEscala(props: props) {
 		getMethod<Musica[] | undefined>(`v1/escala/musicas/${props.escalaId}`, setEscalaMusicas)
 	}, [escalaData, escalaMusicas, props.escalaId])
 
-	const [isUserAdmin, setUserAdmin] = useState(false)
-	const [isUserLeader, setUserLeader] = useState(false)
-	const [isUserMinistro, setUserMinistro] = useState(false)
-
-	useEffect(() => {
-		// This code now runs only on the client side, avoiding the ReferenceError
-		const userAdmin = sessionStorage.getItem("role") === "ADMIN";
-		setUserAdmin(userAdmin);
-		const userLeader = sessionStorage.getItem("role") === "Líder";
-		setUserLeader(userLeader);
-		const userMinistro = sessionStorage.getItem("levita") === escalaData?.ministro.id;
-		setUserMinistro(userMinistro);
-	}, [escalaData?.ministro?.id]);
+	const { role, levitaId } = usePermission();
+	const isUserAdmin = role === "ADMIN";
+	const isUserLeader = role === "Líder";
+	const isUserMinistro = levitaId === escalaData?.ministro?.id;
 
 	return (
 		<Dialog>

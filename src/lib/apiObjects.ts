@@ -5,7 +5,8 @@ export interface UserDTO {
     username: string,
     role: RoleDTO,
     levita: Levita,
-    accessCode: string | null
+    accessCode: string | null,
+    active: boolean
 }
 
 export interface RoleDTO {

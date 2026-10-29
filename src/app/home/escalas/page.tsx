@@ -15,6 +15,7 @@ import { CircleMinus, X, WifiOff } from "lucide-react";
 import { AppSidebar } from "@/components/app-sidebar";
 import { deleteMethod, getMethod } from "@/lib/apiRequests";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { usePermission } from "@/context/permissionContext";
 import { AddEscala, VerEscala } from "@/components/modals/dialog-escala";
 import { convertDateFormat, EscalaResumida, Levita } from "@/lib/apiObjects";
 import { toast } from "sonner";
@@ -32,7 +33,8 @@ export default function Home() {
 	const [filteredEscalas, setFilteredEscalas] = useState<EscalaResumida[] | undefined>(undefined);
 	const [levitasDisponiveis, setLevitasDisponiveis] = useState<Levita[] | undefined>(undefined);
 
-	const [isLeader, setLeader] = useState(false)
+	const { role } = usePermission();
+	const isLeader = role === "Líder" || role === "ADMIN";
 	const [isOffline, setIsOffline] = useState(false)
 
 	useEffect(() => {
@@ -51,15 +53,12 @@ export default function Home() {
 		}
 	}, []);
 
-	useEffect(() => {
-		if (sessionStorage.getItem("role") == "Líder" || sessionStorage.getItem("role") == "ADMIN") {
-			setLeader(true)
-		}
-	}, [])
+
 
 	useEffect(() => {
 		if (escalasData) return;
-		getMethod<EscalaResumida[] | undefined>("v1/escala/resumed", setEscalasData);
+		getMethod<EscalaResumida[] | undefined>("v1/escala/resumed", setEscalasData)
+			.finally(() => setIsLoading(false));
 	}, [escalasData, levitasDisponiveis])
 
 	useEffect(() => {
@@ -70,7 +69,6 @@ export default function Home() {
 	useEffect(() => {
 		if (!escalasData) return;
 		setFilteredEscalas(escalasData);
-		setIsLoading(false);
 	}, [escalasData]);
 
 	useEffect(() => {
@@ -91,9 +89,8 @@ export default function Home() {
 								<BackButton />
 								<h1 className="ml-4 font-extrabold tracking-tight text-2xl sm:text-5xl">Escalas</h1>
 								{isOffline && Array.isArray(escalasData) && escalasData.length > 0 && (
-									<Badge variant="destructive" className="ml-4 mt-2 sm:mt-0 flex gap-1 items-center bg-red-500 hover:bg-red-600 cursor-default">
-										<WifiOff className="w-3 h-3" />
-										Dessincronizado
+									<Badge variant="destructive" className="ml-4 mt-2 sm:mt-0 flex items-center justify-center bg-red-500 hover:bg-red-600 cursor-default p-1.5 rounded-full" title="Dessincronizado">
+										<WifiOff className="w-3.5 h-3.5" />
 									</Badge>
 								)}
 							</div>

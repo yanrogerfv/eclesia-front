@@ -10,11 +10,13 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { Badge } from "@/components/ui/badge";
 import { WifiOff } from "lucide-react";
+import { usePermission } from "@/context/permissionContext";
 
 export default function Home() {
 	const [isLoading, setLoading] = useState(true)
 	const [instrumentosData, setInstrumentosData] = useState<Instrumento[] | undefined>(undefined)
-	const [isLeader, setLeader] = useState(false)
+	const { role } = usePermission();
+	const isLeader = role === "Líder" || role === "ADMIN";
 	const [isOffline, setIsOffline] = useState(false)
 
 	useEffect(() => {
@@ -33,20 +35,13 @@ export default function Home() {
 		}
 	}, []);
 
-	useEffect(() => {
-		if (sessionStorage.getItem("role") == "Líder" || sessionStorage.getItem("role") == "ADMIN") {
-			setLeader(true)
-		}
-	}, [])
+
 
 	useEffect(() => {
-		setLoading(true)
 		if (instrumentosData) return;
+		setLoading(true)
 		getMethod<Instrumento[] | undefined>("v1/instrumento", setInstrumentosData)
-	}, [instrumentosData])
-
-	useEffect(() => {
-		if (instrumentosData) setLoading(false);
+			.finally(() => setLoading(false))
 	}, [instrumentosData])
 
 	return (
@@ -59,9 +54,8 @@ export default function Home() {
 								<BackButton />
 								<h1 className="ml-4 font-extrabold tracking-tight text-2xl sm:text-5xl">Instrumentos</h1>
 								{isOffline && Array.isArray(instrumentosData) && instrumentosData.length > 0 && (
-									<Badge variant="destructive" className="ml-4 mt-2 sm:mt-0 flex gap-1 items-center bg-red-500 hover:bg-red-600 cursor-default">
-										<WifiOff className="w-3 h-3" />
-										Dessincronizado
+									<Badge variant="destructive" className="ml-4 mt-2 sm:mt-0 flex items-center justify-center bg-red-500 hover:bg-red-600 cursor-default p-1.5 rounded-full" title="Dessincronizado">
+										<WifiOff className="w-3.5 h-3.5" />
 									</Badge>
 								)}
 							</div>
